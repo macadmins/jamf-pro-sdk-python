@@ -1,0 +1,13 @@
+*__pycache__/
+*.egg-info/
+.idea/
+.pytest_cache/
+.ruff_cache/
+.venv/
+build/
+dist/
+docs/reference/_autosummary/
+htmlcov/
+.coverage
+.DS_Store
+.vscode

@@ -1,0 +1,44 @@
+name: Publish Documentation
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+
+  build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Build Sphinx Docs
+        run: |
+          make install
+          make docs
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'build/docs/'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
