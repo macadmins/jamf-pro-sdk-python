@@ -171,7 +171,7 @@ class JamfProClient:
             capi_req["data"] = data if isinstance(data, str) else data.xml(exclude_read_only=True)
 
         with self.session.request(**capi_req) as capi_resp:
-            logger.info("Classic API Request - %s - %s", method.upper(), resource_path)
+            logger.info("ClassicAPIRequest %s %s", method.upper(), resource_path)
             try:
                 capi_resp.raise_for_status()
             except requests.HTTPError:
@@ -231,9 +231,10 @@ class JamfProClient:
 
         if data and (method.lower() in ("post", "put", "patch")):
             pro_req["headers"]["Content-Type"] = "application/json"
-            pro_req["json"] = data
+            pro_req["json"] = data.dict() if isinstance(data, BaseModel) else data
 
         with self.session.request(**pro_req) as pro_resp:
+            logger.info("ProAPIRequest %s %s", method.upper(), resource_path)
             try:
                 pro_resp.raise_for_status()
             except requests.HTTPError:
@@ -289,6 +290,7 @@ class JamfProClient:
             max_concurrency = self.session_config.max_concurrency
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency) as executor:
+            logger.info("ConcurrentAPIRequest %s ", handler.__name__)
             executor_results = list()
             for i in arguments:
                 if isinstance(i, dict):
