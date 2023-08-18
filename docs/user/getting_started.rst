@@ -118,3 +118,19 @@ Here are two examples on how to use a ``SessionConfig`` with the client to disab
 .. warning::
 
     It is strongly recommended you do not disable TLS certificate verification.
+
+Logging
+-------
+
+You can quickly setup console logging using the provided :func:`~jamf_pro_sdk.helpers.logger_quick_setup` function.
+
+    >>> import logging
+    >>> from jamf_pro_sdk.helpers import logger_quick_setup
+    >>> logger_quick_setup(level=logging.DEBUG)
+
+When set to ``DEBUG`` the stream handler and level will also be applied to ``urllib3``'s logger. All logs will appear
+
+If you require different handlers or formatting you may configure the SDK's logger manually.
+
+    >>> import logging
+    >>> sdk_logger = logging.getLogger("jamf_pro_sdk")
