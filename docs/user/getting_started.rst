@@ -8,7 +8,7 @@ Install the SDK from PyPI. The example is shown with your virtual environment ac
 
 .. code-block:: console
 
-   (.venv) % pip install jamf-pro-sdk
+   (.venv) % python -m pip install jamf-pro-sdk
 
 Install Locally
 ---------------
@@ -17,7 +17,7 @@ Install locally into your virtual environment. You must first clone the SDK repo
 
 .. code-block:: console
 
-    (.venv) % pip install /path/to/jamf-pro-sdk
+    (.venv) % python -m pip install /path/to/jamf-pro-sdk-python
 
 When running ``pip freeze`` the SDK will appear with a filepath to the source instead of the version.
 
@@ -25,7 +25,7 @@ When running ``pip freeze`` the SDK will appear with a filepath to the source in
 
     (.venv) % pip freeze
     ...
-    jamf-pro-sdk @ file:///path/to/jamf-pro-sdk
+    jamf-pro-sdk @ file:///path/to/jamf-pro-sdk-python
     ...
 
 Create a Client
