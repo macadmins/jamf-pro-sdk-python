@@ -5,7 +5,7 @@ import string
 import time
 import uuid
 from functools import lru_cache
-from typing import Generator, Type, Union, cast
+from typing import Iterator, Type, Union, cast
 
 import requests
 import requests.adapters
@@ -50,15 +50,18 @@ class WebhooksClient:
     @staticmethod
     def _batch(
         generator: Union[WebhookGenerator, Type[WebhookGenerator]], count: int
-    ) -> Generator[webhooks.WebhookModel, None, None]:
+    ) -> Iterator[webhooks.WebhookModel]:
         for _ in range(count):
             yield generator.build()
 
-    def send_webhook(self, webhook: webhooks.WebhookModel):
+    def send_webhook(self, webhook: webhooks.WebhookModel) -> requests.Response:
         """Send a single webhook in a HTTP POST request to the configured URL.
 
         :param webhook: The webhook object that will be serialized to JSON.
         :type webhook: ~webhooks.WebhookModel
+
+        :return: `Requests Response <https://requests.readthedocs.io/en/latest/api/#requests.Response>`_ object
+        :rtype: requests.Response
         """
         response = self.session.post(
             self.url, headers={"Content-Type": "application/json"}, data=webhook.json()
@@ -69,7 +72,7 @@ class WebhooksClient:
         self,
         webhook: Type[webhooks.WebhookModel],
         count: int = 1,
-    ) -> None:
+    ) -> Iterator[requests.Response]:
         """Send one or more randomized webhooks to the configured URL using a webhook model. This
         method will automatically make the requests concurrently up to the configured max concurrency.
 
@@ -78,6 +81,11 @@ class WebhooksClient:
 
         :param count: The number of webhook events to send (defaults to `1`).
         :type count: int
+
+        :return: An iterator that will yield
+            `Requests Response <https://requests.readthedocs.io/en/latest/api/#requests.Response>`_ object
+            objects.
+        :rtype: Iterator[requests.Response]
         """
         generator = get_webhook_generator(webhook)
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
@@ -85,8 +93,8 @@ class WebhooksClient:
                 self.send_webhook, self._batch(generator=generator, count=count)
             )
 
-        # for result in executor_results:
-        #     print(result)
+        for result in executor_results:
+            yield result
 
 
 def epoch() -> int:
