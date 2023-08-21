@@ -186,7 +186,7 @@ class ApiClientCredentialsProvider(CredentialsProvider):
                 type="oauth",
                 token=resp_data["access_token"],
                 expires=datetime.now(timezone.utc) + timedelta(seconds=resp_data["expires_in"]),
-                scope=resp_data["scope"].split()
+                scope=resp_data["scope"].split(),
             )
 
 
