@@ -7,6 +7,19 @@ Credentials Providers
     :members:
     :private-members:
 
+API Client Providers
+--------------------
+
+These credentials providers use Jamf Pro API clients for API authentication.
+
+.. autoclass:: jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider
+    :members:
+
+Basic Auth Providers
+--------------------
+
+These credentials providers use a username and password for API authentication.
+
 .. autoclass:: jamf_pro_sdk.clients.auth.BasicAuthProvider
     :members:
 

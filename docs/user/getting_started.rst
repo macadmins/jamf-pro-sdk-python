@@ -53,7 +53,10 @@ On the first request made the client will retrieve and cache an access token. Th
 
 You can retrieve the current token at any time:
 
-    >>> client.get_access_token()
+    >>> access_token = client.get_access_token()
+    >>> access_token
+    AccessToken(type='user', token='eyJhbGciOiJIUzI1NiJ9...', expires=datetime.datetime(2023, 8, 21, 16, 57, 1, 113000, tzinfo=datetime.timezone.utc), scope=None)
+    >>> access_token.token
     'eyJhbGciOiJIUzI1NiJ9.eyJhdXRoZW50aWNhdGVkLWFwcCI6IkdFTkVSSUMiLCJhdXRoZW50aWNhdGlvbi10eXBlIjoiSlNTIiwiZ3JvdXBzIjpbXSwic3ViamVjdC10eXBlIjoiSlNTX1VTRVJfSUQiLCJ0b2tlbi11dWlkIjoiM2Y4YzhmY2MtN2U1Ny00Njg5LThiOTItY2UzMTIxYjVlYTY5IiwibGRhcC1zZXJ2ZXItaWQiOi0xLCJzdWIiOiIyIiwiZXhwIjoxNTk1NDIxMDAwfQ.6T9VLA0ABoFO9cqGfp3vWmqllsp3zAbtIW0-M-M41-E'
     >>>
 

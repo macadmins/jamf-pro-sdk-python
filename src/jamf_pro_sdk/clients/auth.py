@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime, timedelta, timezone
 from getpass import getpass
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -36,37 +37,110 @@ class CredentialsProvider:
 
     def __init__(self):
         self._client: Optional["JamfProClient"] = None
-        self._access_token = AccessToken()
         self._global_lock = Lock()
+        self._access_token = AccessToken()
 
     def attach_client(self, client: "JamfProClient"):
         self._client = client
 
-    def get_access_token(self, thread_lock: Lock = None) -> str:
-        """Thread safe method for obtaining the current API access token."""
+    def get_access_token(self, thread_lock: Lock = None) -> AccessToken:
+        """Thread safe method for obtaining the current API access token.
+
+        :return: An ``AccessToken`` object.
+        :rtype: AccessToken
+        """
         if not thread_lock:
             thread_lock = self._global_lock
 
         with thread_lock:
             self._refresh_access_token()
-            return self._access_token.token
+            return self._access_token
 
-    def _refresh_access_token(self) -> AccessToken:
-        """This internal method creates/refreshes a Jamf Pro access token.
+    def _request_access_token(self) -> AccessToken:
+        """This internal method requests a new Jamf Pro access token.
 
-        Credentials providers should override this method. The ``BasicAuthProvider`` can act as a
-        template for how to do this. While it caches a single access token for the client, consider
-        use cases where the token is stored remotely in a cache or database.
+        Custom credentials providers should override this method. Refer to the ``ApiClientProvider``
+        and ``BasicAuthProvider`` classes for example implementations.
 
-        This method must always return an :class:`~jamf_pro_sdk.clients.auth.AccessToken` object.
+        This method must always return an :class:`~jamf_pro_sdk.models.client.AccessToken` object.
 
         :return: An ``AccessToken`` object.
         :rtype: AccessToken
         """
         return AccessToken()
 
+    def _keep_alive(self) -> AccessToken:
+        """Refresh an access token using the ``keep-alive`` endpoint.
 
-class ApiClientProvider(CredentialsProvider):
+        As of Jamf Pro 10.49 this is only supported by user bearer tokens.
+
+        This method may be removed in a future update.
+
+        :return: An ``AccessToken`` object.
+        :rtype: AccessToken
+        """
+        logger.debug("Refreshing access token with 'keep-alive'")
+        try:
+            with self._client.session.post(
+                url=f"{self._client.base_server_url}/api/v1/auth/keep-alive",
+                headers={
+                    "Authorization": f"Bearer {self._access_token.token}",
+                    "Accept": "application/json",
+                },
+                timeout=15,
+            ) as resp:
+                return AccessToken(type="user", **resp.json())
+        except requests.exceptions.HTTPError as err:
+            logger.error(err)
+            logger.debug(err.response.text)
+            raise
+
+    def _refresh_access_token(self) -> None:
+        """Requests and stores an API access token.
+
+        Refresh behavior is determined by the token's type.
+
+        For user bearer tokens, if the cached token's remaining time is greater than or equal to 60
+        seconds it will be returned. If the cached token's remaining time is greater than 5 seconds
+        but less than 60 seconds the token will be refreshed using the ``keep-alive`` API.
+
+        For OAuth tokens, if the cached token's remaining tims is greater than or equal to 3 seconds
+        it will be returned.
+
+        If the above conditions are not met a new token will be requested.
+        """
+        if self._client is None:
+            raise CredentialsError("A Jamf Pro client is not attached to this credentials provider")
+        kwargs: Dict[str, Any]
+
+        # TODO: Future OAuth flows may need to set different TTL values for refresh behavior
+        token_cache_ttl = 60 if self._access_token.type == "user" else 3
+
+        # Return the cached token if expiration is below the cache TTL
+        if (
+            self._access_token.token
+            and not self._access_token.is_expired
+            and self._access_token.seconds_remaining >= token_cache_ttl
+        ):
+            logger.debug(
+                "Using cached access token (%ds remaining)",
+                self._access_token.seconds_remaining,
+            )
+            self._access_token = self._access_token
+        # Refresh the cached user bearer token using 'keep-alive'
+        elif (
+            self._access_token.token
+            and self._access_token.type == "user"
+            and not self._access_token.is_expired
+            and 5 < self._access_token.seconds_remaining < token_cache_ttl
+        ):
+            self._access_token = self._keep_alive()
+        # Request a new token
+        else:
+            self._access_token = self._request_access_token()
+
+
+class ApiClientCredentialsProvider(CredentialsProvider):
     def __init__(self, client_id: str, client_secret: str):
         """A credentials provider that uses OAuth2 client credentials flow using an API client.
 
@@ -80,10 +154,46 @@ class ApiClientProvider(CredentialsProvider):
         self.client_secret = client_secret
         super().__init__()
 
+    def _request_access_token(self) -> AccessToken:
+        """Request a new an API access token using client credentials flow."""
+        with self._client.session.post(
+            url=f"{self._client.base_server_url}/api/oauth/token",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            data={
+                "client_id": self.client_id,
+                "client_secret": self.client_secret,
+                "grant_type": "client_credentials",
+            },
+            timeout=15,
+        ) as resp:
+            try:
+                logger.debug(
+                    "Requesting new access token (%ds remaining)",
+                    self._access_token.seconds_remaining,
+                )
+                resp.raise_for_status()
+            except requests.exceptions.HTTPError as err:
+                logger.error(err)
+                logger.debug(err.response.text)
+                raise
+
+            logger.debug(resp.content)
+            resp_data = resp.json()
+            return AccessToken(
+                type="oauth",
+                token=resp_data["access_token"],
+                expires=datetime.now(timezone.utc) + timedelta(seconds=resp_data["expires_in"]),
+                scope=resp_data["scope"].split()
+            )
+
 
 class BasicAuthProvider(CredentialsProvider):
     def __init__(self, username: str, password: str):
-        """A credentials provider that uses a username and password for obtaining access tokens.
+        """A basic auth credentials provider that uses a username and password for obtaining access
+        tokens.
 
         :param username: The Jamf Pro API username.
         :type username: str
@@ -95,63 +205,17 @@ class BasicAuthProvider(CredentialsProvider):
         self.password = password
         super().__init__()
 
-    def _refresh_access_token(self) -> AccessToken:
-        """Returns or obtains an API access token.
-
-        Jamf Pro access tokens have a default  expiration of 30 minutes.
-
-        If the cached token's remaining time is greater than or equal to 60 seconds it
-        will be returned.
-
-        If the cached token's remaining time is greater than 5 seconds but less than 60
-        seconds a new token will be created using the ``keep-alive`` API.
-
-        If the above conditions are not met a new token will be created using the original
-        username and password in the credentials object.
-        """
-        if self._client is None:
-            raise CredentialsError("A Jamf Pro client is not attached to this credentials provider")
-        kwargs: Dict[str, Any]
-
-        if (
-            self._access_token.token
-            and not self._access_token.is_expired
-            and self._access_token.seconds_remaining >= 60
-        ):
-            # The cached token does not need to be refreshed
-            logger.debug(
-                "Using cached access token (%ds remaining)",
-                self._access_token.seconds_remaining,
-            )
-            return self._access_token
-        if (
-            self._access_token.token
-            and not self._access_token.is_expired
-            and 5 < self._access_token.seconds_remaining < 60
-        ):
-            # Refresh the cached token if its expiration is 5-59 seconds
-            kwargs = {
-                "url": f"{self._client.base_server_url}/api/v1/auth/keep-alive",
-                "headers": {
-                    "Authorization": f"Bearer {self._access_token.token}",
-                    "Accept": "application/json",
-                },
-            }
-        else:
-            # Basic auth must be used to obtain a new token.
-            # A default timeout of 5 seconds is enforced.
-            kwargs = {
-                "url": f"{self._client.base_server_url}/api/v1/auth/token",
-                "auth": (self.username, self.password),
-                "headers": {"Accept": "application/json"},
-                "timeout": 5,
-            }
-
-        with self._client.session.post(**kwargs) as resp:
+    def _request_access_token(self) -> AccessToken:
+        """Request a new an API access token using user authentication."""
+        with self._client.session.post(
+            url=f"{self._client.base_server_url}/api/v1/auth/token",
+            auth=(self.username, self.password),
+            headers={"Accept": "application/json"},
+            timeout=15,
+        ) as resp:
             try:
                 logger.debug(
-                    "Requesting new access token %s (%ds remaining)",
-                    kwargs["url"],
+                    "Requesting new access token (%ds remaining)",
                     self._access_token.seconds_remaining,
                 )
                 resp.raise_for_status()
@@ -160,13 +224,13 @@ class BasicAuthProvider(CredentialsProvider):
                 logger.debug(err.response.text)
                 raise
 
-        self._access_token = AccessToken(**resp.json())
+            return AccessToken(type="user", **resp.json())
 
 
 class PromptForCredentials(BasicAuthProvider):
     def __init__(self, username: Optional[str] = None):
-        """A credentials provider for command-line uses cases. The user will be prompted for their
-        username (if not provided) and password.
+        """A basic auth credentials provider for command-line uses cases. The user will be prompted
+        for their username (if not provided) and password.
 
         :param username: The Jamf Pro API username.
         :type username: Optional[str]
@@ -179,8 +243,8 @@ class PromptForCredentials(BasicAuthProvider):
 
 class LoadFromAwsSecretsManager(BasicAuthProvider):
     def __init__(self, secret_id: str, version_id: str = None, version_stage: str = None):
-        """A credentials provider for AWS Secrets Manager.
-        Requires ``secretsmanager:GetSecretValue`` permission. May also require
+        """A basic auth credentials provider for AWS Secrets Manager.
+        Requires an IAM role with the ``secretsmanager:GetSecretValue`` permission. May also require
         ``kms:Decrypt`` if the secret is encrypted with a customer managed key.
 
         The ``SecretString`` is expected to be JSON string in this format:
@@ -191,6 +255,8 @@ class LoadFromAwsSecretsManager(BasicAuthProvider):
                 "username": "oscar",
                 "password": "*****"
             }
+
+        This credentials provider requires the ``aws`` extra dependency.
 
         :param secret_id: The ARN or name of the secret.
         :type secret_id: str
@@ -228,6 +294,8 @@ class LoadFromKeychain(BasicAuthProvider):
     def __init__(self, server: str, username: str):
         """A credentials provider for the macOS login keychain. The API password is stored in a
         keychain entry where the ``service_name`` is the server.
+
+        This credentials provider requires the ``macOS`` extra dependency.
 
         :param server: The Jamf Pro server name.
         :type server: str

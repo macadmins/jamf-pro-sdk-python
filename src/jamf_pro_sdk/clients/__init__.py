@@ -15,7 +15,7 @@ from ..clients.classic_api import ClassicApi
 from ..clients.pro_api import ProApi
 from ..models import BaseModel
 from ..models.classic import ClassicApiModel
-from ..models.client import AccessToken, SessionConfig
+from ..models.client import SessionConfig
 from .auth import CredentialsProvider
 
 logger = logging.getLogger("jamf_pro_sdk")
@@ -46,7 +46,6 @@ class JamfProClient:
         """
         self.session_config = SessionConfig() if not session_config else session_config
 
-        self._access_token = AccessToken()
         self._credentials = credentials
         self._credentials.attach_client(self)
         self.get_access_token = self._credentials.get_access_token
