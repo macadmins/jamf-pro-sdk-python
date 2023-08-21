@@ -43,11 +43,15 @@ Create a client object passing in your Jamf Pro server name and a username and p
     ... )
     >>>
 
-The ``BasicAuthProvider`` is an object that stores the username and password needed for the initial basic authentication to the Jamf Pro API. There are a number of built-in :doc:`/reference/credentials` available. Go to :ref:`user/advanced:Custom Credentials Providers` to learn how to implement your own.
+The ``BasicAuthProvider`` is a credentials provider. These objects are interfaces for authenticating for access tokens to the Jamf Pro APIs. Basic auth credentials providers use a username and password for authentication when requesting a new token.
+
+To use an API Client for authentication (`Jamf Pro 10.49+ <https://learn.jamf.com/bundle/jamf-pro-documentation-current/page/API_Roles_and_Clients.html>`_) use :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`.
+
+There are a number of built-in :doc:`/reference/credentials` available. To learn how to implement your own visit :ref:`user/advanced:Custom Credentials Providers`.
 
 .. important::
 
-    **Do not plaintext passwords in scripts or the console.** The use of the base ``BasicAuthProvider`` class in this guide is for demonstration purposes.
+    **Do not plaintext secrets (passwords, clients secrets, etc.) in scripts or the console.** The use of the base ``BasicAuthProvider`` class in this guide is for demonstration purposes.
 
 On the first request made the client will retrieve and cache an access token. This token will be used for all requests up until it nears expiration. At that point the client will refresh the token. If the token has expired the client will basic auth for a new one.
 
