@@ -4,11 +4,10 @@ Advanced Usage
 Custom Credentials Providers
 ----------------------------
 
-A :class:`~jamf_pro_sdk.clients.auth.CredentialsProvider` is an interface for the SDK to obtain an access token. The SDK comes with a number of built-in options that are detailed in the :doc:`/reference/credentials` reference. You can create your own provider by inheriting from the ``CredentialsProvider`` base class and overriding the ``_refresh_access_token`` method.
+A :class:`~jamf_pro_sdk.clients.auth.CredentialsProvider` is an interface for the SDK to obtain access tokens. The SDK comes with a number of built-in options that are detailed in the :doc:`/reference/credentials` reference. You can create your own provider by inheriting from the ``CredentialsProvider`` base class and overriding the ``_refresh_access_token`` method.
 
 The following example does not accept a username or password and retrieves a token from a DynamoDB table in an AWS account (it is assumed an external process is managing this table entry).
 
-    >>> from datetime import datetime
     >>> import boto3
     >>> from jamf_pro_sdk.clients.auth import CredentialsProvider
     >>> from jamf_pro_sdk.models.client import AccessToken
@@ -18,13 +17,13 @@ The following example does not accept a username or password and retrieves a tok
     ...         self.table = boto3.resource("dynamodb").Table(table_name)
     ...         super().__init__()
     ...     @property
-    ...     def _refresh_access_token(self) -> AccessToken:
+    ...     def _request_access_token(self) -> AccessToken:
     ...         item = table.get_item(Key={"pk": "access-token"})["Item"]
-    ...         return AccessToken(token=item["token"], expires=datetime.fromisoformat(item["expires"]))
+    ...         return AccessToken(type="user", token=item["token"], expires=item["expires"])
     ...
     >>> creds = DynamoDBProvider("my-table")
     >>> creds.get_access_token()
-    'eyJhbGciOiJIUzI1NiJ9...'
+    AccessToken(type='user', token='eyJhbGciOiJIUzI1NiJ9...' ...)
     >>>
 
 The built-in providers retrieve and store the username and password values on initialization, but by leveraging the override method shown above you can write providers that read/cache from remote locations on each invoke.

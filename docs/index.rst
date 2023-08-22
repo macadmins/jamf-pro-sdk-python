@@ -47,7 +47,12 @@ Read developer documentation on the classes and models within the SDK.
 
    reference/index
 
+Contributors
+------------
+
+Resources and guides for contributors to the Jamf Pro SDK.
+
 .. toctree::
    :maxdepth: 1
 
-   playground
+   contributors/index

@@ -15,7 +15,7 @@ from ..clients.classic_api import ClassicApi
 from ..clients.pro_api import ProApi
 from ..models import BaseModel
 from ..models.classic import ClassicApiModel
-from ..models.client import AccessToken, SessionConfig
+from ..models.client import SessionConfig
 from .auth import CredentialsProvider
 
 logger = logging.getLogger("jamf_pro_sdk")
@@ -46,7 +46,6 @@ class JamfProClient:
         """
         self.session_config = SessionConfig() if not session_config else session_config
 
-        self._access_token = AccessToken()
         self._credentials = credentials
         self._credentials.attach_client(self)
         self.get_access_token = self._credentials.get_access_token
@@ -171,7 +170,7 @@ class JamfProClient:
             capi_req["data"] = data if isinstance(data, str) else data.xml(exclude_read_only=True)
 
         with self.session.request(**capi_req) as capi_resp:
-            logger.info("Classic API Request - %s - %s", method.upper(), resource_path)
+            logger.info("ClassicAPIRequest %s %s", method.upper(), resource_path)
             try:
                 capi_resp.raise_for_status()
             except requests.HTTPError:
@@ -231,9 +230,10 @@ class JamfProClient:
 
         if data and (method.lower() in ("post", "put", "patch")):
             pro_req["headers"]["Content-Type"] = "application/json"
-            pro_req["json"] = data
+            pro_req["json"] = data.dict() if isinstance(data, BaseModel) else data
 
         with self.session.request(**pro_req) as pro_resp:
+            logger.info("ProAPIRequest %s %s", method.upper(), resource_path)
             try:
                 pro_resp.raise_for_status()
             except requests.HTTPError:
@@ -289,6 +289,7 @@ class JamfProClient:
             max_concurrency = self.session_config.max_concurrency
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_concurrency) as executor:
+            logger.info("ConcurrentAPIRequest %s ", handler.__name__)
             executor_results = list()
             for i in arguments:
                 if isinstance(i, dict):

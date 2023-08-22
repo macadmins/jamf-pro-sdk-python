@@ -1,11 +1,20 @@
-:tocdepth: 2
+:tocdepth: 3
 
 Credentials Providers
 =====================
 
-.. autoclass:: jamf_pro_sdk.clients.auth.CredentialsProvider
+API Client Providers
+--------------------
+
+These credentials providers use Jamf Pro API clients for API authentication.
+
+.. autoclass:: jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider
     :members:
-    :private-members:
+
+Basic Auth Providers
+--------------------
+
+These credentials providers use a username and password for API authentication.
 
 .. autoclass:: jamf_pro_sdk.clients.auth.BasicAuthProvider
     :members:
@@ -24,3 +33,10 @@ Access Token
 
 .. autopydantic_model:: jamf_pro_sdk.models.client.AccessToken
     :undoc-members: false
+
+Credentials Provider Base Class
+-------------------------------
+
+.. autoclass:: jamf_pro_sdk.clients.auth.CredentialsProvider
+    :members:
+    :private-members:

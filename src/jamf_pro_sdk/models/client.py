@@ -2,7 +2,7 @@ import platform
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Union
+from typing import List, Optional, Union
 
 from ..__about__ import __version__
 from . import BaseModel
@@ -66,15 +66,27 @@ class AccessToken(BaseModel):
     """Jamf Pro access token. Used by a :class:`~jamf_pro_sdk.clients.auth.CredentialsProvider`
     object to manage an access token.
 
+    :param type: The type name of the access token. This should only be ``user`` or ``oauth``.
+    :type type: str
+
     :param token: The raw access token string.
     :type token: str
 
     :param expires: The expiration time of the token represented as a ``datetime`` object.
     :type expires: datetime
+
+    :param scope: If the access token is an ``oauth`` type the scope claim will be passed as a list
+        of string values.
+    :type scope: List[str]
     """
 
+    type: str = ""
     token: str = ""
     expires: datetime = EPOCH_DATETIME
+    scope: Optional[List[str]]
+
+    def __str__(self):
+        return self.token
 
     @property
     def is_expired(self) -> bool:

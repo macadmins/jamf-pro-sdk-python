@@ -3,6 +3,14 @@ SDK Reference
 
 .. toctree::
     :maxdepth: 2
-    :glob:
 
-    *
+    clients
+    credentials
+    clients_classic
+    models_classic
+    clients_pro
+    models_pro
+    clients_webhooks
+    webhook_generators
+    models_webhooks
+    helpers
