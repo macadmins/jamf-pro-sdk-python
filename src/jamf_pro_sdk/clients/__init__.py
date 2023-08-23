@@ -12,6 +12,7 @@ from pydantic import BaseModel, parse_obj_as
 from requests.utils import cookiejar_from_dict
 
 from ..clients.classic_api import ClassicApi
+from ..clients.jcds2 import JCDS2
 from ..clients.pro_api import ProApi
 from ..models import BaseModel
 from ..models.classic import ClassicApiModel
@@ -30,6 +31,10 @@ class JamfProClient:
         session_config: SessionConfig = None,
     ):
         """The base client class for interacting with the Jamf Pro APIs.
+
+        Classic API, Pro API, and JCDS2 clients are instantiated with the base client.
+
+        If the ``aws`` extra dependency is not installed the JCDS2 client will not be created.
 
         :param server: The hostname of the Jamf Pro server to connect to.
         :type server: str
@@ -65,6 +70,11 @@ class JamfProClient:
 
         self.classic_api = ClassicApi(self.classic_api_request, self.concurrent_api_requests)
         self.pro_api = ProApi(self.pro_api_request, self.concurrent_api_requests)
+
+        try:
+            self.jcds2 = JCDS2(self.classic_api, self.pro_api, self.concurrent_api_requests)
+        except ImportError:
+            pass
 
     @staticmethod
     def _parse_cookie_file(cookie_file: Union[str, Path]) -> dict[str, str]:

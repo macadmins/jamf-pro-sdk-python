@@ -10,6 +10,7 @@ from ..models.classic.computer_groups import (
     ClassicComputerGroupMembershipUpdate,
 )
 from ..models.classic.computers import ClassicComputer, ClassicComputersItem
+from ..models.classic.packages import ClassicPackage, ClassicPackageItem
 
 if TYPE_CHECKING:
     import requests
@@ -29,6 +30,7 @@ VALID_COMPUTER_SUBSETS = (
 )  #: Valid subsets for the :meth:`~ClassicApi.list_computers` operation.
 
 ComputerId = Union[int, ClassicComputer, ClassicComputersItem]
+PackageId = Union[int, ClassicPackage, ClassicPackageItem]
 
 
 def parse_response_id(xml: str) -> int:
@@ -73,14 +75,16 @@ class ClassicApi:
         return [ClassicComputersItem(**i) for i in resp.json()["computers"]]
 
     @staticmethod
-    def _parse_computer_id(computer: ComputerId) -> int:
-        """If ``computer`` is a model and not an integer the ID will be returned."""
-        if isinstance(computer, ClassicComputer):
-            return computer.general.id
-        elif isinstance(computer, ClassicComputersItem):
-            return computer.id
+    def _parse_id(model: Union[int, object]) -> int:
+        """If the model has an ``id`` attribute return that value (most Classic API models have this
+        as top-level field).If the model is a ``ClassicComputer`` return the nested value.
+        """
+        if hasattr(model, "id"):
+            return model.id
+        elif isinstance(model, ClassicComputer):
+            return model.general.id
         else:
-            return computer
+            return model
 
     def get_computer_by_id(
         self, computer: ComputerId, subsets: Iterable[str] = None
@@ -100,7 +104,7 @@ class ClassicApi:
         :rtype: ~jamf_pro_sdk.models.classic.computers.Computer
 
         """
-        computer_id = ClassicApi._parse_computer_id(computer)
+        computer_id = ClassicApi._parse_id(computer)
         if subsets:
             if not all(i.lower() in VALID_COMPUTER_SUBSETS for i in subsets):
                 raise ValueError(f"Invalid subset(s). Must be one of: {VALID_COMPUTER_SUBSETS}.")
@@ -156,7 +160,7 @@ class ClassicApi:
         :type data: Union[str, ~jamf_pro_sdk.models.classic.computers.Computer]
 
         """
-        computer_id = ClassicApi._parse_computer_id(computer)
+        computer_id = ClassicApi._parse_id(computer)
         self.api_request(method="put", resource_path=f"computers/id/{computer_id}", data=data)
 
     def delete_computer_by_id(self, computer: ComputerId) -> None:
@@ -166,7 +170,7 @@ class ClassicApi:
         :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
 
         """
-        computer_id = ClassicApi._parse_computer_id(computer)
+        computer_id = ClassicApi._parse_id(computer)
         self.api_request(method="delete", resource_path=f"computers/id/{computer_id}")
 
     # /computergroups APIs
@@ -193,7 +197,7 @@ class ClassicApi:
         resp = self.api_request(method="post", resource_path="computergroups/id/0", data=data)
         return parse_response_id(resp.text)
 
-    def list_computer_groups(self) -> List[ClassicComputerGroup]:
+    def list_all_computer_groups(self) -> List[ClassicComputerGroup]:
         """Returns a list of all computer groups.
 
         Only ``id``, ``name`` and ``is_smart`` are populated.
@@ -293,7 +297,7 @@ class ClassicApi:
 
     # /advancedcomputersearches APIs
 
-    def list_advanced_computer_searches(self):
+    def list_all_advanced_computer_searches(self):
         """Not implemented..."""
         pass
 
@@ -312,3 +316,47 @@ class ClassicApi:
     def delete_advanced_computer_search_by_id(self):
         """Not implemented..."""
         pass
+
+    # /packages APIs
+
+    def list_all_packages(self) -> List[ClassicPackageItem]:
+        """Returns a list of all packages.
+
+        :return: List of packages.
+        :rtype: List[~jamf_pro_sdk.models.classic.packages.ClassicPackageItem]
+
+        """
+        resp = self.api_request(method="get", resource_path="packages")
+        return [ClassicPackageItem(**i) for i in resp.json()["packages"]]
+
+    def get_package_by_id(self, package: PackageId) -> ClassicPackage:
+        """Returns a single package record using the ID.
+
+        :param package: A package ID or supported Classic API model.
+        :type package: Union[int, ClassicPackage, ClassicPackageItem]
+
+        :return: Package.
+        :rtype: ~jamf_pro_sdk.models.classic.packages.ClassicPackage
+
+        """
+        package_id = ClassicApi._parse_id(package)
+        resp = self.api_request(method="get", resource_path=f"packages/id/{package_id}")
+        return ClassicPackage(**resp.json()["package"])
+
+    def create_package(self, data: Union[str, ClassicPackage]) -> int:
+        """Create a new package.
+
+        Only the ``name`` and ``filename`` are required.
+        Use with :meth:`~jamf_pro_sdk.clients.pro_api.ProApi.create_jcds_file_v1` to upload the
+        package file to a Jamf Cloud Distribution Point.
+
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.computer_groups.ClassicPackage` object.
+        :type data: Union[str, ClassicPackage]
+
+        :return: ID of the new package.
+        :rtype: int
+
+        """
+        resp = self.api_request(method="post", resource_path="packages/id/0", data=data)
+        return parse_response_id(resp.text)
