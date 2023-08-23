@@ -2,7 +2,11 @@ name: Publish Documentation
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - 'main'
+    paths:
+      - 'docs/**'
+      - 'src/**'
 
 permissions:
   contents: read
