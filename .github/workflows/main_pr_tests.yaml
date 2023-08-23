@@ -1,0 +1,35 @@
+name: Main Pull Request Tests
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - '**.md'
+
+permissions:
+  contents: read
+
+jobs:
+  automated-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install
+        run: make install
+
+      - name: Lint Checker
+        run: make lint
+
+      - name: Tests
+        run: make test
