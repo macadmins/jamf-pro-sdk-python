@@ -24,8 +24,8 @@ import jamf_pro_sdk
 
 ### Actual Result
 
-<!-- What happened instead. Include log and exception output if applicable. >
+<!-- What happened instead. Include log and exception output if applicable. -->
 
-## System Information
+### System Information
 
 <!-- OS and OS version, Python version, SDK version, and Jamf Pro version if applicable. -->
