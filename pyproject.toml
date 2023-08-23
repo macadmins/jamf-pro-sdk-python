@@ -45,8 +45,7 @@ dev = [
     "sphinx",
     "autodoc-pydantic",
     "furo",
-    "build",
-    "twine"
+    "build"
 ]
 
 
