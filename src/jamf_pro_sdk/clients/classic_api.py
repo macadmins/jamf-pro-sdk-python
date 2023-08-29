@@ -319,6 +319,24 @@ class ClassicApi:
 
     # /packages APIs
 
+    def create_package(self, data: Union[str, ClassicPackage]) -> int:
+        """Create a new package.
+
+        Only the ``name`` and ``filename`` are required.
+        Use with :meth:`~jamf_pro_sdk.clients.pro_api.ProApi.create_jcds_file_v1` to upload the
+        package file to a Jamf Cloud Distribution Point.
+
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.computer_groups.ClassicPackage` object.
+        :type data: Union[str, ClassicPackage]
+
+        :return: ID of the new package.
+        :rtype: int
+
+        """
+        resp = self.api_request(method="post", resource_path="packages/id/0", data=data)
+        return parse_response_id(resp.text)
+
     def list_all_packages(self) -> List[ClassicPackageItem]:
         """Returns a list of all packages.
 
@@ -343,20 +361,16 @@ class ClassicApi:
         resp = self.api_request(method="get", resource_path=f"packages/id/{package_id}")
         return ClassicPackage(**resp.json()["package"])
 
-    def create_package(self, data: Union[str, ClassicPackage]) -> int:
-        """Create a new package.
+    def delete_package_by_id(self, package: PackageId) -> None:
+        """Delete a single computer record using the ID.
 
-        Only the ``name`` and ``filename`` are required.
-        Use with :meth:`~jamf_pro_sdk.clients.pro_api.ProApi.create_jcds_file_v1` to upload the
-        package file to a Jamf Cloud Distribution Point.
+        .. warning::
 
-        :param data: Can be an XML string or a
-            :class:`~jamf_pro_sdk.models.classic.computer_groups.ClassicPackage` object.
-        :type data: Union[str, ClassicPackage]
+            This operation *WILL* delete an associated JCDS file.
 
-        :return: ID of the new package.
-        :rtype: int
+        :param package: A package ID or supported Classic API model.
+        :type package: Union[int, ClassicPackage, ClassicPackageItem]
 
         """
-        resp = self.api_request(method="post", resource_path="packages/id/0", data=data)
-        return parse_response_id(resp.text)
+        package_id = ClassicApi._parse_id(package)
+        self.api_request(method="delete", resource_path=f"packages/id/{package_id}")

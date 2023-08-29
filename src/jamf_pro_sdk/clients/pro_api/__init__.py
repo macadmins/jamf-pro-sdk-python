@@ -203,17 +203,32 @@ class ProApi:
     # JCDS APIs
 
     def get_jcds_files_v1(self) -> List[File]:
-        """Return a list of files in the JCDS."""
+        """Return a list of files in the JCDS.
+
+        :return: List JCDS File objects.
+        :rtype: List[File]
+
+        """
         resp = self.api_request(method="get", resource_path="v1/jcds/files")
         return [File(**i) for i in resp.json()]
 
     def create_jcds_file_v1(self) -> NewFile:
-        """Create a new file in the JCDS."""
+        """Create a new file in the JCDS.
+
+        :return: A JCDS NewFile object.
+        :rtype: NewFile
+
+        """
         resp = self.api_request(method="post", resource_path="v1/jcds/files")
         return NewFile(**resp.json())
 
     def get_jcds_file_v1(self, file_name: str) -> DownloadUrl:
-        """Read a JCDS file record by its filename."""
+        """Read a JCDS file record by its filename.
+
+        :return: A JCDS DownloadUrl object.
+        :rtype: DownloadUrl
+
+        """
         resp = self.api_request(method="get", resource_path=f"v1/jcds/files/{file_name}")
         return DownloadUrl(**resp.json())
 
@@ -222,7 +237,8 @@ class ProApi:
 
         .. warning::
 
-            This operation does not delete the corresponding package object.
+            This operation *WILL NOT* delete an associated package object. It is recommended to use
+            :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.delete_package_by_id`.
 
         """
-        self.api_request(method="get", resource_path=f"v1/jcds/files/{file_name}")
+        self.api_request(method="delete", resource_path=f"v1/jcds/files/{file_name}")
