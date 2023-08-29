@@ -5,6 +5,7 @@ User Guide
     :maxdepth: 3
 
     getting_started
-    basic_classic
-    basic_pro
+    classic_api
+    pro_api
+    jcds2
     advanced

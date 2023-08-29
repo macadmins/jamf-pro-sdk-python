@@ -1,5 +1,5 @@
-Basic Usage: Pro API
-====================
+Pro API
+=======
 
 The Pro API only returns and accepts JSON data. API responses are returned as data models that can be interacted with using dot notation.
 

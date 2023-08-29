@@ -10,6 +10,7 @@ SDK Reference
     models_classic
     clients_pro
     models_pro
+    clients_jcds2
     clients_webhooks
     webhook_generators
     models_webhooks
