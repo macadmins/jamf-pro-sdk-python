@@ -256,7 +256,9 @@ class LoadFromAwsSecretsManager(BasicAuthProvider):
                 "password": "*****"
             }
 
-        This credentials provider requires the ``aws`` extra dependency.
+        .. important::
+
+            This credentials provider requires the ``aws`` extra dependency.
 
         :param secret_id: The ARN or name of the secret.
         :type secret_id: str
@@ -295,7 +297,9 @@ class LoadFromKeychain(BasicAuthProvider):
         """A credentials provider for the macOS login keychain. The API password is stored in a
         keychain entry where the ``service_name`` is the server.
 
-        This credentials provider requires the ``macOS`` extra dependency.
+        .. important::
+
+            This credentials provider requires the ``macOS`` extra dependency.
 
         :param server: The Jamf Pro server name.
         :type server: str

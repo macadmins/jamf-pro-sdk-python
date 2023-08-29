@@ -64,9 +64,6 @@ class JCDS2:
         pro_api_client: ProApi,
         concurrent_requests_method: Callable[..., Iterator],
     ):
-        if not BOTO3_IS_INSTALLED:
-            raise ImportError("The 'aws' extra dependency is required.")
-
         self.classic_api_client = classic_api_client
         self.pro_api_client = pro_api_client
         self.concurrent_api_requests = concurrent_requests_method
@@ -143,13 +140,20 @@ class JCDS2:
         If the file is less than 1 GiB in size the upload will be performed in a single request. If
         the file is greater than 1 GiB in size a multipart upload operation will be performed.
 
-        A `JCDS2FileExistsError` is raised if any file of the same name exists and is associated to
+        A ``JCDS2FileExistsError`` is raised if any file of the same name exists and is associated to
         a package.
 
-        :param file_path: The path to the file to upload. Will raise `FileNotFoundError` if the path
+        .. important::
+
+            This operation requires the ``aws`` extra dependency.
+
+        :param file_path: The path to the file to upload. Will raise ``FileNotFoundError`` if the path
             to the file's location does not exist.
         :type file_path: Union[str, Path]
         """
+        if not BOTO3_IS_INSTALLED:
+            raise ImportError("The 'aws' extra dependency is required.")
+
         if not isinstance(file_path, Path):
             file_path = Path(file_path)
 
