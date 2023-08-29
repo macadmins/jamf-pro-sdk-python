@@ -29,6 +29,10 @@ CHUNK_SIZE = 1024 * 1024 * 20  # 20 MB
 logger = logging.getLogger("jamf_pro_sdk")
 
 
+class JCDS2FileExistsError(Exception):
+    """The file already exists in Jamf Pro associated to a package."""
+
+
 class FileUpload:
     def __init__(self, path: Path):
         self.path = path
@@ -128,6 +132,18 @@ class JCDS2:
 
     def upload_file(self, file_path: Path):
         file_upload = FileUpload(file_path)
+
+        packages = [
+            self.classic_api_client.get_package_by_id(p)
+            for p in self.classic_api_client.list_all_packages()
+        ]
+
+        for p in packages:
+            if file_upload.path.name == p.filename:
+                raise JCDS2FileExistsError(
+                    f"The file '{file_upload.path.name}' exists and is associated to package ({p.id}) '{p.name}'"
+                )
+
         new_jcds_file = self.pro_api_client.create_jcds_file_v1()
 
         boto3_session = boto3.Session(
@@ -178,9 +194,7 @@ class JCDS2:
         download_session = requests.Session()
         download_session.mount(
             prefix="https://",
-            adapter=requests.adapters.HTTPAdapter(
-                max_retries=3, pool_connections=5, pool_maxsize=5
-            ),
+            adapter=HTTPAdapter(max_retries=3, pool_connections=5, pool_maxsize=5),
         )
 
         with download_session.head(download_file.uri) as download_file_head:
