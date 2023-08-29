@@ -4,7 +4,7 @@ import logging
 import math
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import TYPE_CHECKING, Callable, Iterator
+from typing import TYPE_CHECKING, Callable, Iterator, Union
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -33,13 +33,20 @@ class JCDS2FileExistsError(Exception):
     """The file already exists in Jamf Pro associated to a package."""
 
 
+class JCDS2FileNotFoundError(Exception):
+    """The requested file does not exist in the JCDS."""
+
+
 class FileUpload:
+    """Represents a file that will be uploaded to the JCDS."""
+
     def __init__(self, path: Path):
         self.path = path
         self.size = path.stat().st_size
         self.total_chunks = math.ceil(self.size / CHUNK_SIZE)
 
     def get_chunk(self, chunk_number: int) -> bytes:
+        """Returns a range of bytes for a given chunk (index)."""
         if chunk_number > self.total_chunks:
             raise ValueError(f"Chunk number must be less than or equal to {self.total_chunks}")
 
@@ -130,7 +137,25 @@ class JCDS2:
         logger.debug(part_resp)
         return {"PartNumber": part_number, "ETag": part_resp["ETag"]}
 
-    def upload_file(self, file_path: Path):
+    def upload_file(self, file_path: Union[str, Path]) -> None:
+        """Upload a file to the JCDS and create the package object.
+
+        If the file is less than 1 GiB in size the upload will be performed in a single request. If
+        the file is greater than 1 GiB in size a multipart upload operation will be performed.
+
+        A `JCDS2FileExistsError` is raised if any file of the same name exists and is associated to
+        a package.
+
+        :param file_path: The path to the file to upload. Will raise `FileNotFoundError` if the path
+            to the file's location does not exist.
+        :type file_path: Union[str, Path]
+        """
+        if not isinstance(file_path, Path):
+            file_path = Path(file_path)
+
+        if not file_path.exists():
+            raise FileNotFoundError("A file or directory at the download path already exists")
+
         file_upload = FileUpload(file_path)
 
         packages = [
@@ -184,11 +209,33 @@ class JCDS2:
             with open(temp_dir + f"/chunk_{str(index).zfill(9)}", "wb") as fobj:
                 fobj.write(range_response.content)
 
-    def download_file(self, file_name: str, download_path: Path):
+    def download_file(self, file_name: str, download_path: Union[str, Path]) -> None:
+        """Download a file from the JCDS by filename.
+
+        :param file_name: The name of the file in the JCDS to download.
+        :type file_name: str
+
+        :param download_path: The path to download the file to. If the provided path is directory
+            the file name will be appended to it. Will raise `FileExistsError` if the path is to a
+            file location that already exists.
+        :type download_path: Union[str, Path]
+        """
+        if not isinstance(download_path, Path):
+            download_path = Path(download_path)
+
+        if download_path.is_dir():
+            download_path = download_path / file_name
+
         if download_path.exists():
             raise FileExistsError("A file or directory at the download path already exists")
 
-        download_file = self.pro_api_client.get_jcds_file_v1(file_name=file_name)
+        try:
+            download_file = self.pro_api_client.get_jcds_file_v1(file_name=file_name)
+        except requests.HTTPError as error:
+            if error.response.status_code == 404:
+                raise JCDS2FileNotFoundError(f"The file '{file_name}' does not exist")
+            else:
+                raise
 
         # TODO: Retry feature that's not relying on urllib3's implementation
         download_session = requests.Session()
