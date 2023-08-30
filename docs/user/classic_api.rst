@@ -1,5 +1,5 @@
-Basic Usage: Classic API
-========================
+Classic API
+===========
 
 The Classic API only accepts XML for write operations, but allows JSON for read operations. The Classic API interface for the SDK only accepts JSON data in read responses. API responses are returned as data models that can be more easily interacted with using dot notation.
 

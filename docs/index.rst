@@ -17,10 +17,10 @@ APIs proceed to the **User Guide** to get started. If you are building webhook-b
 for real-time operations proceed to the **Webhooks** section to learn about the tools in this SDK
 to assist you.
 
-User Guide
-----------
+User Guides
+-----------
 
-Learn how to use the Jamf Pro API clients with walkthroughs and examples.
+Learn how to use the Jamf Pro SDK clients with walkthroughs and examples.
 
 .. toctree::
    :maxdepth: 2

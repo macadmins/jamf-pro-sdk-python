@@ -44,3 +44,15 @@ Computers
     ComputerExtensionAttribute
     ComputerContentCaching
     ComputerGroupMembership
+
+JCDS2
+-----
+
+.. currentmodule:: jamf_pro_sdk.models.pro.jcds2
+
+.. autosummary::
+    :toctree: _autosummary
+
+    NewFile
+    File
+    DownloadUrl

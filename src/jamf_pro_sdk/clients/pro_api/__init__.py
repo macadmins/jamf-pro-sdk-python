@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, Iterator, List, Union
 
 from ...models.pro.computers import Computer
+from ...models.pro.jcds2 import DownloadUrl, File, NewFile
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -21,6 +22,8 @@ class ProApi:
     ):
         self.api_request = request_method
         self.concurrent_api_requests = concurrent_requests_method
+
+    # Computer Inventory APIs
 
     def get_computer_inventory_v1(
         self,
@@ -196,3 +199,46 @@ class ProApi:
         )
 
         return paginator(return_generator=return_generator)
+
+    # JCDS APIs
+
+    def get_jcds_files_v1(self) -> List[File]:
+        """Return a list of files in the JCDS.
+
+        :return: List JCDS File objects.
+        :rtype: List[File]
+
+        """
+        resp = self.api_request(method="get", resource_path="v1/jcds/files")
+        return [File(**i) for i in resp.json()]
+
+    def create_jcds_file_v1(self) -> NewFile:
+        """Create a new file in the JCDS.
+
+        :return: A JCDS NewFile object.
+        :rtype: NewFile
+
+        """
+        resp = self.api_request(method="post", resource_path="v1/jcds/files")
+        return NewFile(**resp.json())
+
+    def get_jcds_file_v1(self, file_name: str) -> DownloadUrl:
+        """Read a JCDS file record by its filename.
+
+        :return: A JCDS DownloadUrl object.
+        :rtype: DownloadUrl
+
+        """
+        resp = self.api_request(method="get", resource_path=f"v1/jcds/files/{file_name}")
+        return DownloadUrl(**resp.json())
+
+    def delete_jcds_file_v1(self, file_name: str) -> None:
+        """Delete a file from the JCDS.
+
+        .. warning::
+
+            This operation *WILL NOT* delete an associated package object. It is recommended to use
+            :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.delete_package_by_id`.
+
+        """
+        self.api_request(method="delete", resource_path=f"v1/jcds/files/{file_name}")

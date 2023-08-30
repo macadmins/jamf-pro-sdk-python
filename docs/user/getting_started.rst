@@ -72,7 +72,7 @@ Both the Classic and Pro APIs are exposed through two interfaces:
     <jamf_pro_sdk.clients.pro_api.ProApi object at 0x10503c9d0>
     >>>
 
-Continue on to :doc:`/user/basic_classic` or the :doc:`/user/basic_pro`.
+Continue on to :doc:`/user/classic_api` or the :doc:`/user/pro_api`.
 
 Configuring the Client
 ----------------------
