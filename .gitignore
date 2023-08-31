@@ -6,6 +6,7 @@
 .venv/
 build/
 dist/
+docs/contributors/_autosummary/
 docs/reference/_autosummary/
 htmlcov/
 .coverage

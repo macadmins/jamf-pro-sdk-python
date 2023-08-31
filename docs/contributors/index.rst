@@ -72,6 +72,10 @@ The top of a docstring should include a brief description plus a longer explanat
 
 .. code-block:: python
 
+        from typing import Iterable
+
+        from jamf_pro_sdk.models.classic.computers import ClassicComputersItem
+
         def list_all_computers(self, subsets: Iterable[str] = None) -> List[ClassicComputersItem]:
             """Returns a list of all computers.
 
@@ -102,6 +106,7 @@ Pro API Pydantic models can be created by referencing the resources from the `Op
 
 Classic API Pydantic models are more complex as they convert to XML for write operations, and JSON responses from Jamf Pro are known to deviate from the XML representation. If you need to create a Pydantic model for a Classic API resource use the following guidance:
 
+* All Classic API Pydantic models must start with ``Classic`` in the name to prevent conflicts with Pro API models.
 * Use an API response from a running Jamf Pro instance as your reference.
 * Base your model on the JSON response. Be sure to note and deviations from the XML representation and include those in the doctrings.
 * The top-level Pydantic model should subclass from :class:`~jamf_pro_sdk.models.classic.ClassicApiModel`.
@@ -114,7 +119,7 @@ All API models must be added in the model documentation pages. Model docs are se
 
 Here is an example from the Classic API Models page. Follow this pattern for all new model sections.
 
-.. code-block:: text
+.. code-block:: rst
 
     Computer Groups
     ---------------

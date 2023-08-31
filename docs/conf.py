@@ -30,7 +30,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = ["contributors/_autosummary/*.rst"]
 
 autodoc_typehints = "both"
 
