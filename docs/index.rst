@@ -53,6 +53,6 @@ Contributors
 Resources and guides for contributors to the Jamf Pro SDK.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    contributors/index
