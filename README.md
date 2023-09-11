@@ -17,10 +17,16 @@ Read the full documentation on [GitHub Pages](https://macadmins.github.io/jamf-p
 
 ## Installing
 
-Install from PyPI:
+Install releases from PyPI:
 
 ```console
 % python -m pip install jamf-pro-sdk
+```
+
+You may also install directly from GitHub if you are testing in-development features and/or changes:
+
+```console
+% pip install git+https://github.com/macadmins/jamf-pro-sdk-python.git@<target-ref-or-branch>
 ```
 
 The Jamf Pro SDK supports Python 3.9+.
