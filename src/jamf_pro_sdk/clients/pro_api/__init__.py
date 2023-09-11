@@ -1,11 +1,20 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterator, List, Union
+from uuid import UUID
 
 from ...models.pro.api_options import *  # noqa: F403
 from ...models.pro.computers import Computer
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
-from ...models.pro.mdm import MdmCommandStatus
+from ...models.pro.mdm import (
+    EnableLostModeCommand,
+    EraseDeviceCommand,
+    RestartDeviceCommand,
+    ShutDownDeviceCommand,
+    SendMdmCommand,
+    SendMdmCommandClientData,
+    MdmCommandStatus,
+)
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -159,7 +168,7 @@ class ProApi:
     def renew_mdm_profile_v1(self, udids: List[str]) -> List[dict]:
         """Renews device MDM Profiles, including the device identity certificate within the MDM Profile.
 
-        :param udids: A list of devices UDIDs to issue the profile renewal action to.
+        :param udids: A list of device UDIDs to issue the profile renewal action to.
         :type udids: List[str]
 
         :return: The dictionary returned may contain a ``udidsNotProcessed`` key with UDIDs that
@@ -169,6 +178,42 @@ class ProApi:
         resp = self.api_request(
             method="post", resource_path="v1/mdm/renew-profile", data={"udids": udids}
         )
+        return resp.json()
+
+    def send_mdm_command_preview(
+        self,
+        management_ids: List[Union[str, UUID]],
+        command: Union[
+            EnableLostModeCommand,
+            EraseDeviceCommand,
+            RestartDeviceCommand,
+            ShutDownDeviceCommand,
+            dict,
+        ],
+    ) -> List[dict]:
+        """Send an MDM command to one or more devices.
+
+        .. caution::
+
+            This API is labeled as a **Preview** by Jamf. It may change or become deprecated in
+            favor of another API in a future release.
+
+        :param management_ids: A list of device management IDs to issue the MSM command to.
+        :type management_ids: Union[EnableLostModeCommand, EraseDeviceCommand, RestartDeviceCommand,
+            ShutDownDeviceCommand]
+
+        :param command:
+        :type command:
+
+        :return: Array of responses.
+        :rtype: List[dict]
+        """
+        data = SendMdmCommand(
+            clientData=[SendMdmCommandClientData(managementId=i) for i in management_ids],
+            commandData=command,
+        )
+
+        resp = self.api_request(method="post", resource_path="preview/mdm/commands", data=data)
         return resp.json()
 
     def get_mdm_commands_v2(

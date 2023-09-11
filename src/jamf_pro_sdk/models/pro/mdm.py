@@ -1,11 +1,83 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import List, Literal, Optional, Union
 from uuid import UUID
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field, constr
 
 from .api_options import get_mdm_commands_v2_allowed_command_types
+
+
+# Enable Lost Mode Command
+
+
+class EnableLostModeCommand(BaseModel):
+    commandType: Literal["EnableLostModeCommand"]
+    lostModeMessage: str
+    lostModePhone: str
+    lostModeFootnote: str
+
+
+# Erase Device Command Models
+
+
+class EraseDeviceCommandObliterationBehavior(str, Enum):
+    Default = "Default"
+    DoNotObliterate = "DoNotObliterate"
+    ObliterateWithWarning = "ObliterateWithWarning"
+    Always = "Always"
+
+
+class EraseDeviceCommandReturnToService(BaseModel):
+    enabled: Literal[True]
+    mdmProfileData: str
+    wifiProfileData: str
+
+
+class EraseDeviceCommand(BaseModel):
+    commandType: Literal["EraseDeviceCommand"]
+    preserveDataPlan: Optional[bool]
+    disallowProximitySetup: Optional[bool]
+    pin: Optional[constr(min_length=6, max_length=6)]
+    obliterationBehavior: Optional[EraseDeviceCommandObliterationBehavior]
+    returnToService: Optional[EraseDeviceCommandReturnToService]
+
+
+# Restart Device
+
+
+class RestartDeviceCommand(BaseModel):
+    commandType: Literal["RestartDeviceCommand"]
+    rebuildKernelCache: Optional[bool]
+    kextPaths: Optional[List[str]]
+    notifyUser: Optional[bool]
+
+
+# Shut Down Device
+
+
+class ShutDownDeviceCommand(BaseModel):
+    commandType: Literal["ShutDownDeviceCommand"]
+
+
+# MDM Send Command Models
+
+
+class SendMdmCommandClientData(BaseModel):
+    managementId: UUID
+
+
+class SendMdmCommand(BaseModel):
+    clientData: SendMdmCommandClientData
+    commandData: Union[
+        EnableLostModeCommand,
+        EraseDeviceCommand,
+        RestartDeviceCommand,
+        ShutDownDeviceCommand,
+    ] = Field(..., discriminator="commandType")
+
+
+# MDM Command Status Models
 
 
 class MdmCommandStatusClientTypes(str, Enum):
