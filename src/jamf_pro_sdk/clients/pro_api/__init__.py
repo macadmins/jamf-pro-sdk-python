@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterator, List, Union
 
+from ...models.pro.api_options import *
 from ...models.pro.computers import Computer
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
-from .api_options import *
+from ...models.pro.mdm import MdmCommandStatus
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -152,3 +153,91 @@ class ProApi:
 
         """
         self.api_request(method="delete", resource_path=f"v1/jcds/files/{file_name}")
+
+    # MDM APIs
+
+    def renew_mdm_profile_v1(self, udids: List[str]) -> List[dict]:
+        """Renews device MDM Profiles, including the device identity certificate within the MDM Profile.
+
+        :params udids: A list of devices UDIDs to issue the profile renewal action to.
+        :type udids: List[str]
+
+        :return: The dictionary returned may contain a ``udidsNotProcessed`` key with UDIDs that
+            were not processed for renewal.
+        :rtype: dict
+        """
+        resp = self.api_request(
+            method="post", resource_path="v1/mdm/renew-profile", data={"udids": udids}
+        )
+        return resp.json()
+
+    def get_mdm_commands_v2(
+        self,
+        filter_expression: FilterExpression,
+        start_page: int = 0,
+        page_size: int = 100,
+        sort_expression: SortExpression = None,
+        return_generator: bool = False,
+    ) -> Union[List[MdmCommandStatus], Iterator[Page]]:
+        """Returns a list of MDM commands.
+
+        :param filter_expression: The filter expression to apply to the request. At least **one**
+            filter is required for this operation. See the documentation for
+            :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_mdm_commands_v2_allowed_filter_fields
+
+        :type filter_expression: FilterExpression
+
+        :param start_page: (optional) The page to begin returning results from. See
+            :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param page_size: (optional) The number of results to include in each requested page. See
+            :class:`Paginator` for more information.
+        :type page_size: int
+
+        :param sort_expression: (optional) The sort fields to apply to the request. See the
+            documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_mdm_commands_v2_allowed_sort_fields
+
+        :type sort_expression: SortExpression
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. By
+            default, the results for all pages will be returned in a single response.
+        :type return_generator: bool
+
+        :return: List of computers OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.mdm.MdmCommand] | Iterator[Page]
+        """
+
+        if command_filters := [i for i in filter_expression.fields if i.name == "command"]:
+            if not all(
+                [i.value in get_mdm_commands_v2_allowed_command_types for i in command_filters]
+            ):
+                raise ValueError(
+                    f"Values for 'command' filters must be one of: {', '.join(get_mdm_commands_v2_allowed_command_types)}"
+                )
+
+        if sort_expression:
+            sort_expression.validate(get_mdm_commands_v2_allowed_sort_fields)
+
+        if filter_expression:
+            filter_expression.validate(get_mdm_commands_v2_allowed_filter_fields)
+
+        paginator = Paginator(
+            api_client=self,
+            resource_path="v2/mdm/commands",
+            return_model=MdmCommandStatus,
+            start_page=start_page,
+            page_size=page_size,
+            sort_expression=sort_expression,
+            filter_expression=filter_expression,
+        )
+
+        return paginator(return_generator=return_generator)
