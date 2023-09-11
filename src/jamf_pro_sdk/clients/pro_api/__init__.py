@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterator, List, Union
 
-from ...models.pro.api_options import *
+from ...models.pro.api_options import *  # noqa: F403
 from ...models.pro.computers import Computer
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
 from ...models.pro.mdm import MdmCommandStatus
@@ -44,7 +44,7 @@ class ProApi:
 
             Allowed sections:
 
-            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_computer_inventory_v1_allowed_sections
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_sections
 
         :type sections: List[str]
 
@@ -61,7 +61,7 @@ class ProApi:
 
             Allowed sort fields:
 
-            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_computer_inventory_v1_allowed_sort_fields
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_sort_fields
 
         :type sort_expression: SortExpression
 
@@ -70,7 +70,7 @@ class ProApi:
 
             Allowed filter fields:
 
-            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_computer_inventory_v1_allowed_filter_fields
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_filter_fields
 
         :type filter_expression: FilterExpression
 
@@ -159,7 +159,7 @@ class ProApi:
     def renew_mdm_profile_v1(self, udids: List[str]) -> List[dict]:
         """Renews device MDM Profiles, including the device identity certificate within the MDM Profile.
 
-        :params udids: A list of devices UDIDs to issue the profile renewal action to.
+        :param udids: A list of devices UDIDs to issue the profile renewal action to.
         :type udids: List[str]
 
         :return: The dictionary returned may contain a ``udidsNotProcessed`` key with UDIDs that
@@ -187,7 +187,7 @@ class ProApi:
 
             Allowed filter fields:
 
-            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_mdm_commands_v2_allowed_filter_fields
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mdm_commands_v2_allowed_filter_fields
 
         :type filter_expression: FilterExpression
 
@@ -204,7 +204,7 @@ class ProApi:
 
             Allowed sort fields:
 
-            .. autoapioptions:: jamf_pro_sdk.clients.pro_api.api_options.get_mdm_commands_v2_allowed_sort_fields
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mdm_commands_v2_allowed_sort_fields
 
         :type sort_expression: SortExpression
 
