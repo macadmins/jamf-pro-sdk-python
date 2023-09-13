@@ -223,7 +223,7 @@ class Paginator:
         yield first_page
 
         total_count = (
-            min(first_page.total_count, (self.end_page * self.page_size))
+            min(first_page.total_count, (self.end_page + 1) * self.page_size)
             if self.end_page
             else first_page.total_count
         )
