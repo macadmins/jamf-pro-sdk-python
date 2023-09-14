@@ -171,6 +171,12 @@ class Paginator:
 
         :param start_page: (optional) The page to begin returning results from. Generally this value
             should be left at the default (``0``).
+
+            .. note::
+
+                Pages in the Pro API are zero-indexed. In a response that includes 10 pages the first
+                page is ``0`` and the last page is ``9``.
+
         :type start_page: int
 
         :param end_page: (optional) The page number to stop pagination on. The ``end_page`` argument

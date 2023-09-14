@@ -40,6 +40,7 @@ class ProApi:
         self,
         sections: List[str] = None,
         start_page: int = 0,
+        end_page: int = None,
         page_size: int = 100,
         sort_expression: SortExpression = None,
         filter_expression: FilterExpression = None,
@@ -59,6 +60,10 @@ class ProApi:
 
         :param start_page: (optional) The page to begin returning results from. See
             :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param end_page: (optional) The page to end returning results at. See :class:`Paginator` for
+            more information.
         :type start_page: int
 
         :param page_size: (optional) The number of results to include in each requested page. See
@@ -112,6 +117,7 @@ class ProApi:
             resource_path="v1/computers-inventory",
             return_model=Computer,
             start_page=start_page,
+            end_page=end_page,
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
