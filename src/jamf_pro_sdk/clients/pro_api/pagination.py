@@ -139,6 +139,7 @@ class Paginator:
         resource_path: str,
         return_model: Type[BaseModel] = None,
         start_page: int = 0,
+        end_page: int = None,
         page_size: int = 100,
         sort_expression: SortExpression = None,
         filter_expression: FilterExpression = None,
@@ -161,6 +162,17 @@ class Paginator:
 
         :param start_page: (optional) The page to begin returning results from. Generally this value
             should be left at the default (``0``).
+
+            .. note::
+
+                Pages in the Pro API are zero-indexed. In a response that includes 10 pages the first
+                page is ``0`` and the last page is ``9``.
+
+        :type start_page: int
+
+        :param end_page: (optional) The page number to stop pagination on. The ``end_page`` argument
+            allows for retrieving page ranges (e.g. 2 - 4) or a single page result by using the same
+            number for both start and end values.
         :type start_page: int
 
         :param page_size: (optional) The number of results to include in each requested page. The
@@ -184,6 +196,7 @@ class Paginator:
         self.resource_path = resource_path
         self.return_model = return_model
         self.start_page = start_page
+        self.end_page = end_page
         self.page_size = page_size
         self.sort_expression = sort_expression
         self.filter_expression = filter_expression
@@ -215,13 +228,19 @@ class Paginator:
         first_page = self._paginated_request(page=self.start_page)
         yield first_page
 
-        if (total_count := first_page.total_count) > (results_count := len(first_page.results)):
+        total_count = (
+            min(first_page.total_count, (self.end_page + 1) * self.page_size)
+            if self.end_page
+            else first_page.total_count
+        )
+
+        if total_count > (results_count := len(first_page.results)):
             for page in self._api_client.concurrent_api_requests(
                 self._paginated_request,
                 [
                     {"page": i}
                     for i in range(
-                        self.start_page + 1,
+                        self.start_page,
                         math.ceil((total_count - results_count) / self.page_size) + 1,
                     )
                 ],
