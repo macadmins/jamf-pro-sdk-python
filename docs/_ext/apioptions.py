@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from docutils.statemachine import StringList
 from sphinx.ext.autodoc import ClassDocumenter
 
@@ -11,6 +13,13 @@ class ApiOptionsDocumenter(ClassDocumenter):
 
     # must be higher than ClassDocumenter
     priority = 16
+
+    @classmethod
+    def can_document_member(cls, member: Any, membername: str, isattr: bool, parent: Any) -> bool:
+        try:
+            return isinstance(member, list)
+        except TypeError:
+            return False
 
     def add_directive_header(self, sig):
         pass

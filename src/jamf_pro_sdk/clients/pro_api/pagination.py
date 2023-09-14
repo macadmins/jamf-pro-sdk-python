@@ -257,6 +257,16 @@ class Paginator:
                 yield page
 
     def __call__(self, return_generator: bool = True) -> Union[List, Iterator[Page]]:
+        """Call the instantiated paginator to return results.
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. If
+            ``False`` the results for all pages will be returned in a single list response.
+        :type return_generator: bool
+
+        :return: An iterator that yields :class:`~Page` objects, or a list of responses if
+            ``return_generator`` is ``False``.
+        :rtype: Union[List, Iterator[Page]]
+        """
         generator = self._request()
         if return_generator:
             return generator

@@ -1,31 +1,22 @@
+:tocdepth: 3
+
 Pro API
 =======
 
 The Pro API only returns and accepts JSON data. API responses are returned as data models that can be interacted with using dot notation.
-
-Read Requests
--------------
-
-Write Requests
---------------
 
 Pagination
 ----------
 
 Some Pro API read operations support pagination. The API will return a partial response if there are more results than the set page size of the request. To obtain more results the next page must be requested.
 
-The SDK uses a ``Paginator`` to automatically handle this.
-
-.. autoclass:: jamf_pro_sdk.clients.pro_api.Paginator
-    :members:
-
-If the total number of results in the first request are greater than the page size the paginator will fetch all of the remaining pages concurrently.
+The SDK uses a :class:`~jamf_pro_sdk.clients.pro_api.pagination.Paginator` to automatically handle this. If the total number of results in the first request are greater than the page size the paginator will fetch all of the remaining pages concurrently.
 
 .. tip::
 
     If you have large number of records in a paginated request, you may find that using a smaller page size is *faster* than setting a larger (or max) page size.
 
-Paginators can either return the full response of all pages at once, or it can return a generator to iterate over the pages. This can be useful if results may contain hundreds or thousands of items that you do not want to keep in memory as you are processing them.
+Paginators can either return the full response of all pages at once, or it can return an iterator to yield the page objects.
 
 The curated methods will return all results by default. Each operation that supports pagination allows this behavior to be overridden to return the generator.
 
@@ -33,19 +24,40 @@ The curated methods will return all results by default. Each operation that supp
 
     >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
     >>> client = JamfProClient("dummy.jamfcloud.com", BasicAuthProvider("demo", "tryitout"))
+
+    >>> response = client.pro_api.get_computer_inventory_v1()
+    >>> response
+    [Computer(id='117', udid='a311b7c8-75ee-48cf-9b1b-a8598f013366', general=ComputerGeneral(name='Backancient',...
+    >>> for r in response:
+    ...     # Interact with return
+    ...     pass
+    ...
+    >>>
+
     >>> response = client.pro_api.get_computer_inventory_v1(return_generator=True)
     >>> response
     <generator object Paginator._request at 0x105290120>
+    >>> for page in response:
+    ...     # Interact with the page
+    ...     for r in page.results:
+    ...         # Interact with return
+    ...         pass
+    ...
+    >>>
 
 The paginator object itself will return the generator by default. This can be overridden in much the same way.
+
+.. code-block:: python
 
     >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
     >>> from jamf_pro_sdk.clients.pro_api.pagination import Paginator
     >>> from jamf_pro_sdk.models.pro.computers import Computer
     >>> client = JamfProClient("dummy.jamfcloud.com", BasicAuthProvider("demo", "tryitout"))
+
     >>> paginator = Paginator(api_client=client.pro_api, resource_path="v1/computers-inventory", return_model=Computer)
     >>> paginator()
     <generator object Paginator._request at 0x1052c2dd0>
+
     >>> paginator(return_generator=False)
     [Computer(id='117', udid='a311b7c8-75ee-48cf-9b1b-a8598f013366', general=ComputerGeneral(name='Backancient',...
 
@@ -56,7 +68,7 @@ The SDK provides programmatic interfaces for both of these options that will pro
 .. _Pro API Filtering:
 
 Filtering
----------
+^^^^^^^^^
 
 A filter expression is returned from a ``FilterField`` object when one of the operators is called.
 
@@ -97,7 +109,7 @@ The example below creates a filter expression requiring either the barcode or th
 .. _Pro API Sorting:
 
 Sorting
--------
+^^^^^^^
 
 Sorting expressions work similarly. A sort expression is returned from a ``SortField`` object when one of the operators is called.
 
@@ -117,4 +129,28 @@ Sortable fields can be combined together using Python's ``&`` binary operands. U
     >>> sort_expression = SortField("name").asc() & SortField("id").desc()
     >>> print(sort_expression)
     name:asc,id:desc
+    >>>
+
+Full Example
+^^^^^^^^^^^^
+
+Here is an example of a paginated request using the SDK with the sorting and filtering options.
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
+    >>> from jamf_pro_sdk.clients.pro_api.pagination import FilterField, SortField
+
+    >>> client = JamfProClient(
+    ...     server="dummy.jamfcloud.com",
+    ...     credentials=BasicAuthProvider("demo", "tryitout")
+    ... )
+    >>>
+
+    >>> response = client.pro_api.get_computer_inventory_v1(
+    ...     sections=["GENERAL", "USER_AND_LOCATION", "OPERATING_SYSTEM"],
+    ...     page_size=1000,
+    ...     sort_expression=SortField("id").asc(),
+    ...     filter_expression=FilterField("operatingSystem.version").lt("13.")
+    ... )
     >>>

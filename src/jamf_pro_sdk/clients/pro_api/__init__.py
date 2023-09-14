@@ -259,8 +259,8 @@ class ProApi:
 
         :type sort_expression: SortExpression
 
-        :param return_generator: If ``True`` a generator is returned to iterate over pages. By
-            default, the results for all pages will be returned in a single response.
+        :param return_generator: If ``True`` an iterator is returned that yields pages. By default,
+            the results for all pages will be returned in a single response.
         :type return_generator: bool
 
         :return: List of computers OR a paginator generator.
