@@ -9,7 +9,9 @@ from ...models.pro.jcds2 import DownloadUrl, File, NewFile
 from ...models.pro.mdm import (
     EnableLostModeCommand,
     EraseDeviceCommand,
+    LogOutUserCommand,
     RestartDeviceCommand,
+    SetRecoveryLockCommand,
     ShutDownDeviceCommand,
     CustomCommand,
     SendMdmCommand,
@@ -189,7 +191,13 @@ class ProApi:
             resource_path="v1/mdm/renew-profile",
             data={"udids": [str(i) for i in udids]},
         )
-        return resp.json()
+
+        try:
+            return RenewMdmProfileResponse(
+                udidsNotProcessed=resp.json()["udidsNotProcessed"]["udids"]
+            )
+        except KeyError:
+            return RenewMdmProfileResponse(udidsNotProcessed=[])
 
     def send_mdm_command_preview(
         self,
@@ -197,7 +205,9 @@ class ProApi:
         command: Union[
             EnableLostModeCommand,
             EraseDeviceCommand,
+            LogOutUserCommand,
             RestartDeviceCommand,
+            SetRecoveryLockCommand,
             ShutDownDeviceCommand,
             CustomCommand,
         ],
