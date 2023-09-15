@@ -240,7 +240,10 @@ class JamfProClient:
 
         if data and (method.lower() in ("post", "put", "patch")):
             pro_req["headers"]["Content-Type"] = "application/json"
-            pro_req["json"] = data.dict() if isinstance(data, BaseModel) else data
+            if isinstance(data, dict):
+                pro_req["json"] = data
+            else:
+                pro_req["data"] = data.json(exclude_none=True)
 
         with self.session.request(**pro_req) as pro_resp:
             logger.info("ProAPIRequest %s %s", method.upper(), resource_path)
