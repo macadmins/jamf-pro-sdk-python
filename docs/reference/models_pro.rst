@@ -65,14 +65,17 @@ MDM Commands
 .. autosummary::
     :toctree: _autosummary
 
+    SendMdmCommand
+    SendMdmCommandClientData
     EnableLostModeCommand
     EraseDeviceCommand
     EraseDeviceCommandObliterationBehavior
     EraseDeviceCommandReturnToService
     RestartDeviceCommand
     ShutDownDeviceCommand
-    SendMdmCommand
-    SendMdmCommandClientData
+    SendMdmCommandResponse
+    RenewMdmProfileResponse
+    RenewMdmProfileResponseUdids
     MdmCommandStatus
     MdmCommandStatusClient
     MdmCommandStatusClientTypes

@@ -60,6 +60,15 @@ class ShutDownDeviceCommand(BaseModel):
     commandType: Literal["ShutDownDeviceCommand"]
 
 
+# Custom Command
+
+
+class CustomCommand(BaseModel, extra=Extra.allow):
+    """A free form model for new commands not yet supported by the SDK."""
+
+    commandType: str
+
+
 # MDM Send Command Models
 
 
@@ -74,7 +83,24 @@ class SendMdmCommand(BaseModel):
         EraseDeviceCommand,
         RestartDeviceCommand,
         ShutDownDeviceCommand,
+        CustomCommand,  # Must be last
     ] = Field(..., discriminator="commandType")
+
+
+# MDM Command Responses
+
+
+class SendMdmCommandResponse(BaseModel, extra=Extra.allow):
+    id: str
+    href: str
+
+
+class RenewMdmProfileResponseUdids(BaseModel, extra=Extra.allow):
+    udids: List[str]
+
+
+class RenewMdmProfileResponse(BaseModel, extra=Extra.allow):
+    udidsNotProcessed: Optional[RenewMdmProfileResponseUdids]
 
 
 # MDM Command Status Models
