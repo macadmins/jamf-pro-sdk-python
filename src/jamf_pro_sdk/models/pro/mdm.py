@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Literal, Optional, Union
+from typing import Annotated, List, Literal, Optional, Union
 from uuid import UUID
 
 from pydantic import BaseModel, Extra, Field, constr
@@ -8,11 +8,17 @@ from pydantic import BaseModel, Extra, Field, constr
 from .api_options import get_mdm_commands_v2_allowed_command_types
 
 
+# A note on MDM Command Types:
+# The ``get_mdm_commands_v2_allowed_command_types`` list in the ``api_options`` file is referenced
+# in the Jamf Pro OpenAPI schema (10.50) for allowed command types, but the API will reject all but
+# a few allowed types.
+
+
 # Enable Lost Mode Command
 
 
 class EnableLostModeCommand(BaseModel):
-    commandType: Literal["EnableLostModeCommand"]
+    commandType: Literal["ENABLE_LOST_MODE"] = "ENABLE_LOST_MODE"
     lostModeMessage: str
     lostModePhone: str
     lostModeFootnote: str
@@ -35,7 +41,7 @@ class EraseDeviceCommandReturnToService(BaseModel):
 
 
 class EraseDeviceCommand(BaseModel):
-    commandType: Literal["EraseDeviceCommand"]
+    commandType: Literal["ERASE_DEVICE"] = "ERASE_DEVICE"
     preserveDataPlan: Optional[bool]
     disallowProximitySetup: Optional[bool]
     pin: Optional[constr(min_length=6, max_length=6)]
@@ -43,21 +49,36 @@ class EraseDeviceCommand(BaseModel):
     returnToService: Optional[EraseDeviceCommandReturnToService]
 
 
+# Log Out User
+
+
+class LogOutUserCommand(BaseModel):
+    commandType: Literal["LOG_OUT_USER"] = "LOG_OUT_USER"
+
+
 # Restart Device
 
 
 class RestartDeviceCommand(BaseModel):
-    commandType: Literal["RestartDeviceCommand"]
+    commandType: Literal["RESTART_DEVICE"] = "RESTART_DEVICE"
     rebuildKernelCache: Optional[bool]
     kextPaths: Optional[List[str]]
     notifyUser: Optional[bool]
+
+
+# Set Recovery Lock
+
+
+class SetRecoveryLockCommand(BaseModel):
+    commandType: Literal["SET_RECOVERY_LOCK"] = "SET_RECOVERY_LOCK"
+    newPassword: str
 
 
 # Shut Down Device
 
 
 class ShutDownDeviceCommand(BaseModel):
-    commandType: Literal["ShutDownDeviceCommand"]
+    commandType: Literal["SHUT_DOWN_DEVICE"] = "SHUT_DOWN_DEVICE"
 
 
 # Custom Command
@@ -76,15 +97,22 @@ class SendMdmCommandClientData(BaseModel):
     managementId: UUID
 
 
-class SendMdmCommand(BaseModel):
-    clientData: SendMdmCommandClientData
-    commandData: Union[
+BuiltInCommands = Annotated[
+    Union[
         EnableLostModeCommand,
         EraseDeviceCommand,
+        LogOutUserCommand,
         RestartDeviceCommand,
+        SetRecoveryLockCommand,
         ShutDownDeviceCommand,
-        CustomCommand,  # Must be last
-    ] = Field(..., discriminator="commandType")
+    ],
+    Field(..., discriminator="commandType"),
+]
+
+
+class SendMdmCommand(BaseModel):
+    clientData: List[SendMdmCommandClientData]
+    commandData: Union[BuiltInCommands, CustomCommand]
 
 
 # MDM Command Responses
@@ -95,12 +123,12 @@ class SendMdmCommandResponse(BaseModel, extra=Extra.allow):
     href: str
 
 
-class RenewMdmProfileResponseUdids(BaseModel, extra=Extra.allow):
-    udids: List[str]
-
-
 class RenewMdmProfileResponse(BaseModel, extra=Extra.allow):
-    udidsNotProcessed: Optional[RenewMdmProfileResponseUdids]
+    """This response model flattens the normal API JSON response from a nested
+    ``udidsNotProcessed.uuids`` array to just ``udidsNotProcessed``.
+    """
+
+    udidsNotProcessed: Optional[List[UUID]]
 
 
 # MDM Command Status Models
