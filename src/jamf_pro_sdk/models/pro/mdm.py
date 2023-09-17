@@ -7,7 +7,6 @@ from pydantic import BaseModel, Extra, Field, constr
 
 from .api_options import get_mdm_commands_v2_allowed_command_types
 
-
 # A note on MDM Command Types:
 # The ``get_mdm_commands_v2_allowed_command_types`` list in the ``api_options`` file is referenced
 # in the Jamf Pro OpenAPI schema (10.50) for allowed command types, but the API will reject all but
