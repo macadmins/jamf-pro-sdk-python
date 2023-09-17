@@ -6,7 +6,7 @@ The Classic API only accepts XML for write operations, but allows JSON for read 
 Read Requests
 -------------
 
-The supported API methods
+The curated methods return data models of the JSON response. Data models can be interacted with using dot notation.
 
 .. code-block:: python
 
