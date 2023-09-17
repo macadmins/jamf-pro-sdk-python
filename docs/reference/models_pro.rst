@@ -75,7 +75,6 @@ MDM Commands
     ShutDownDeviceCommand
     SendMdmCommandResponse
     RenewMdmProfileResponse
-    RenewMdmProfileResponseUdids
     MdmCommandStatus
     MdmCommandStatusClient
     MdmCommandStatusClientTypes
