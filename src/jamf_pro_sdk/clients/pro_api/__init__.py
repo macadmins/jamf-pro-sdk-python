@@ -1,9 +1,25 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Iterator, List, Union
+from uuid import UUID
 
+from ...models.pro.api_options import *  # noqa: F403
 from ...models.pro.computers import Computer
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
+from ...models.pro.mdm import (
+    CustomCommand,
+    EnableLostModeCommand,
+    EraseDeviceCommand,
+    LogOutUserCommand,
+    MdmCommandStatus,
+    RenewMdmProfileResponse,
+    RestartDeviceCommand,
+    SendMdmCommand,
+    SendMdmCommandClientData,
+    SendMdmCommandResponse,
+    SetRecoveryLockCommand,
+    ShutDownDeviceCommand,
+)
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -40,6 +56,11 @@ class ProApi:
         :param sections: (optional) Select which sections of the computer's details to return. If
             not specific the request will default to ``GENERAL``. If ``ALL`` is passed then all
             sections will be returned.
+
+            Allowed sections:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_sections
+
         :type sections: List[str]
 
         :param start_page: (optional) The page to begin returning results from. See
@@ -56,10 +77,20 @@ class ProApi:
 
         :param sort_expression: (optional) The sort fields to apply to the request. See the
             documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_sort_fields
+
         :type sort_expression: SortExpression
 
         :param filter_expression: (optional) The filter expression to apply to the request. See the
             documentation for :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_filter_fields
+
         :type filter_expression: FilterExpression
 
         :param return_generator: If ``True`` a generator is returned to iterate over pages. By
@@ -70,127 +101,21 @@ class ProApi:
         :rtype: List[~jamf_pro_sdk.models.pro.computer.Computer] | Iterator[Page]
 
         """
-        allowed_sections = [
-            "ALL",
-            "GENERAL",
-            "DISK_ENCRYPTION",
-            "PURCHASING",
-            "APPLICATIONS",
-            "STORAGE",
-            "USER_AND_LOCATION",
-            "CONFIGURATION_PROFILES",
-            "PRINTERS",
-            "SERVICES",
-            "HARDWARE",
-            "LOCAL_USER_ACCOUNTS",
-            "CERTIFICATES",
-            "ATTACHMENTS",
-            "PLUGINS",
-            "PACKAGE_RECEIPTS",
-            "FONTS",
-            "SECURITY",
-            "OPERATING_SYSTEM",
-            "LICENSED_SOFTWARE",
-            "IBEACONS",
-            "SOFTWARE_UPDATES",
-            "EXTENSION_ATTRIBUTES",
-            "CONTENT_CACHING",
-            "GROUP_MEMBERSHIPS",
-        ]
-
-        allowed_sort_fields = [
-            "general.name",
-            "udid",
-            "id",
-            "general.assetTag",
-            "general.jamfBinaryVersion",
-            "general.lastContactTime",
-            "general.lastEnrolledDate",
-            "general.lastCloudBackupDate",
-            "general.reportDate",
-            "general.remoteManagement.managementUsername",
-            "general.mdmCertificateExpiration",
-            "general.platform",
-            "hardware.make",
-            "hardware.model",
-            "operatingSystem.build",
-            "operatingSystem.supplementalBuildVersion",
-            "operatingSystem.rapidSecurityResponse",
-            "operatingSystem.name",
-            "operatingSystem.version",
-            "userAndLocation.realname",
-            "purchasing.lifeExpectancy",
-            "purchasing.warrantyDate",
-        ]
-
-        allowed_filter_fields = [
-            "general.name",
-            "udid",
-            "id",
-            "general.assetTag",
-            "general.barcode1",
-            "general.barcode2",
-            "general.enrolledViaAutomatedDeviceEnrollment",
-            "general.lastIpAddress",
-            "general.itunesStoreAccountActive",
-            "general.jamfBinaryVersion",
-            "general.lastContactTime",
-            "general.lastEnrolledDate",
-            "general.lastCloudBackupDate",
-            "general.reportDate",
-            "general.lastReportedIp",
-            "general.remoteManagement.managed",
-            "general.remoteManagement.managementUsername",
-            "general.mdmCapable.capable",
-            "general.mdmCertificateExpiration",
-            "general.platform",
-            "general.supervised",
-            "general.userApprovedMdm",
-            "general.declarativeDeviceManagementEnabled",
-            "hardware.bleCapable",
-            "hardware.macAddress",
-            "hardware.make",
-            "hardware.model",
-            "hardware.modelIdentifier",
-            "hardware.serialNumber",
-            "hardware.supportsIosAppInstalls,hardware.isAppleSilicon",
-            "operatingSystem.activeDirectoryStatus",
-            "operatingSystem.fileVault2Status",
-            "operatingSystem.build",
-            "operatingSystem.supplementalBuildVersion",
-            "operatingSystem.rapidSecurityResponse",
-            "operatingSystem.name",
-            "operatingSystem.version",
-            "operatingSystem.softwareUpdateDeviceId",
-            "security.activationLockEnabled",
-            "security.recoveryLockEnabled,security.firewallEnabled,userAndLocation.buildingId",
-            "userAndLocation.departmentId",
-            "userAndLocation.email",
-            "userAndLocation.realname",
-            "userAndLocation.phone",
-            "userAndLocation.position,userAndLocation.room",
-            "userAndLocation.username",
-            "purchasing.appleCareId",
-            "purchasing.lifeExpectancy",
-            "purchasing.purchased",
-            "purchasing.leased",
-            "purchasing.vendor",
-            "purchasing.warrantyDate",
-        ]
-
         if not sections:
             sections = ["GENERAL"]
         elif "ALL" in sections:
-            sections = allowed_sections[1:]
+            sections = get_computer_inventory_v1_allowed_sections[1:]
 
-        if not all([i in allowed_sections for i in sections]):
-            raise ValueError(f"Values for 'sections' must be one of: {', '.join(allowed_sections)}")
+        if not all([i in get_computer_inventory_v1_allowed_sections for i in sections]):
+            raise ValueError(
+                f"Values for 'sections' must be one of: {', '.join(get_computer_inventory_v1_allowed_sections)}"
+            )
 
         if sort_expression:
-            sort_expression.validate(allowed_sort_fields)
+            sort_expression.validate(get_computer_inventory_v1_allowed_sort_fields)
 
         if filter_expression:
-            filter_expression.validate(allowed_filter_fields)
+            filter_expression.validate(get_computer_inventory_v1_allowed_filter_fields)
 
         paginator = Paginator(
             api_client=self,
@@ -248,3 +173,137 @@ class ProApi:
 
         """
         self.api_request(method="delete", resource_path=f"v1/jcds/files/{file_name}")
+
+    # MDM APIs
+
+    def renew_mdm_profile_v1(self, udids: List[Union[str, UUID]]) -> RenewMdmProfileResponse:
+        """Renews device MDM Profiles, including the device identity certificate within the MDM Profile.
+
+        :param udids: A list of device UDIDs to issue the profile renewal action to.
+        :type udids: List[str, UUID]
+
+        :return: The ``RenewMdmProfileResponse`` returned may or may not contain a UDIDs not
+            processed for renewal.
+        :rtype: RenewMdmProfileResponse
+        """
+        resp = self.api_request(
+            method="post",
+            resource_path="v1/mdm/renew-profile",
+            data={"udids": [str(i) for i in udids]},
+        )
+
+        try:
+            return RenewMdmProfileResponse(
+                udidsNotProcessed=resp.json()["udidsNotProcessed"]["udids"]
+            )
+        except KeyError:
+            return RenewMdmProfileResponse(udidsNotProcessed=[])
+
+    def send_mdm_command_preview(
+        self,
+        management_ids: List[Union[str, UUID]],
+        command: Union[
+            EnableLostModeCommand,
+            EraseDeviceCommand,
+            LogOutUserCommand,
+            RestartDeviceCommand,
+            SetRecoveryLockCommand,
+            ShutDownDeviceCommand,
+            CustomCommand,
+        ],
+    ) -> List[SendMdmCommandResponse]:
+        """Send an MDM command to one or more devices.
+
+        .. caution::
+
+            This API is labeled as a **Preview** by Jamf. It may change or become deprecated in
+            favor of another API in a future release.
+
+        :param management_ids: A list of device management IDs to issue the MDM command to.
+        :type management_ids: List[Union[str, UUID]],
+
+        :param command: The MDM command to send.
+        :type command: Union[EnableLostModeCommand, EraseDeviceCommand, RestartDeviceCommand,
+            ShutDownDeviceCommand, CustomCommand]
+
+        :return: A list of command responses.
+        :rtype: List[SendMdmCommandResponse]
+        """
+        data = SendMdmCommand(
+            clientData=[SendMdmCommandClientData(managementId=i) for i in management_ids],
+            commandData=command,
+        )
+
+        resp = self.api_request(method="post", resource_path="preview/mdm/commands", data=data)
+        return [SendMdmCommandResponse(**i) for i in resp.json()]
+
+    def get_mdm_commands_v2(
+        self,
+        filter_expression: FilterExpression,
+        start_page: int = 0,
+        page_size: int = 100,
+        sort_expression: SortExpression = None,
+        return_generator: bool = False,
+    ) -> Union[List[MdmCommandStatus], Iterator[Page]]:
+        """Returns a list of MDM commands.
+
+        :param filter_expression: The filter expression to apply to the request. At least **one**
+            filter is required for this operation. See the documentation for
+            :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mdm_commands_v2_allowed_filter_fields
+
+        :type filter_expression: FilterExpression
+
+        :param start_page: (optional) The page to begin returning results from. See
+            :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param page_size: (optional) The number of results to include in each requested page. See
+            :class:`Paginator` for more information.
+        :type page_size: int
+
+        :param sort_expression: (optional) The sort fields to apply to the request. See the
+            documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mdm_commands_v2_allowed_sort_fields
+
+        :type sort_expression: SortExpression
+
+        :param return_generator: If ``True`` an iterator is returned that yields pages. By default,
+            the results for all pages will be returned in a single response.
+        :type return_generator: bool
+
+        :return: List of computers OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.mdm.MdmCommand] | Iterator[Page]
+        """
+
+        if command_filters := [i for i in filter_expression.fields if i.name == "command"]:
+            if not all(
+                [i.value in get_mdm_commands_v2_allowed_command_types for i in command_filters]
+            ):
+                raise ValueError(
+                    f"Values for 'command' filters must be one of: {', '.join(get_mdm_commands_v2_allowed_command_types)}"
+                )
+
+        if sort_expression:
+            sort_expression.validate(get_mdm_commands_v2_allowed_sort_fields)
+
+        if filter_expression:
+            filter_expression.validate(get_mdm_commands_v2_allowed_filter_fields)
+
+        paginator = Paginator(
+            api_client=self,
+            resource_path="v2/mdm/commands",
+            return_model=MdmCommandStatus,
+            start_page=start_page,
+            page_size=page_size,
+            sort_expression=sort_expression,
+            filter_expression=filter_expression,
+        )
+
+        return paginator(return_generator=return_generator)

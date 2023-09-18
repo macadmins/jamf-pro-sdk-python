@@ -56,3 +56,38 @@ JCDS2
     NewFile
     File
     DownloadUrl
+
+MDM Commands
+------------
+
+.. currentmodule:: jamf_pro_sdk.models.pro.mdm
+
+.. autosummary::
+    :toctree: _autosummary
+
+    SendMdmCommand
+    SendMdmCommandClientData
+    EnableLostModeCommand
+    EraseDeviceCommand
+    EraseDeviceCommandObliterationBehavior
+    EraseDeviceCommandReturnToService
+    RestartDeviceCommand
+    ShutDownDeviceCommand
+    SendMdmCommandResponse
+    RenewMdmProfileResponse
+    MdmCommandStatus
+    MdmCommandStatusClient
+    MdmCommandStatusClientTypes
+    MdmCommandStatusStates
+    MdmCommandStatusTypes
+
+Pagination
+----------
+
+.. currentmodule:: jamf_pro_sdk.clients.pro_api.pagination
+
+.. autosummary::
+    :toctree: _autosummary
+
+    Page
+    FilterEntry

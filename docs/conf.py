@@ -8,6 +8,8 @@
 import os
 import sys
 
+sys.path.append(os.path.abspath("./_ext"))
+
 sys.path.insert(0, os.path.abspath(".."))
 
 from src.jamf_pro_sdk.__about__ import __version__
@@ -27,10 +29,13 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.autodoc_pydantic",
+    "apioptions",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = ["contributors/_autosummary/*.rst"]
+
+add_module_names = False
 
 autodoc_typehints = "both"
 

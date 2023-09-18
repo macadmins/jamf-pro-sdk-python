@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, Iterable, Iterator, List, Type, Union
 
 from pydantic import BaseModel
@@ -12,8 +13,15 @@ if TYPE_CHECKING:
 # QUERY FILTERING
 
 
+@dataclass
+class FilterEntry:
+    name: str
+    op: str
+    value: str
+
+
 class FilterExpression:
-    def __init__(self, filter_expression: str, fields: List[str]):
+    def __init__(self, filter_expression: str, fields: List[FilterEntry]):
         self.filter_expression = filter_expression
         self.fields = fields
 
@@ -33,19 +41,20 @@ class FilterExpression:
         return self._compose(expression=expression, sep=",")
 
     def validate(self, allowed_fields: List[str]):
-        if not all([i in allowed_fields for i in self.fields]):
+        if not all([i.name in allowed_fields for i in self.fields]):
             raise ValueError(
                 f"A field is not in allowed filter fields: {', '.join(allowed_fields)}"
             )
 
 
 class FilterField:
-    def __init__(self, field: str):
-        self.field = field
+    def __init__(self, name: str):
+        self.name = name
 
     def _return_expression(self, operator: str, value: Union[bool, int, str]) -> FilterExpression:
         return FilterExpression(
-            filter_expression=f"{self.field}{operator}{value}", fields=[self.field]
+            filter_expression=f"{self.name}{operator}{value}",
+            fields=[FilterEntry(name=self.name, op=operator, value=value)],
         )
 
     def eq(self, value: Union[bool, int, str]) -> FilterExpression:
@@ -248,6 +257,16 @@ class Paginator:
                 yield page
 
     def __call__(self, return_generator: bool = True) -> Union[List, Iterator[Page]]:
+        """Call the instantiated paginator to return results.
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. If
+            ``False`` the results for all pages will be returned in a single list response.
+        :type return_generator: bool
+
+        :return: An iterator that yields :class:`~Page` objects, or a list of responses if
+            ``return_generator`` is ``False``.
+        :rtype: Union[List, Iterator[Page]]
+        """
         generator = self._request()
         if return_generator:
             return generator
