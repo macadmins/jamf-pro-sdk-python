@@ -8,7 +8,7 @@ Installation Requirements
 
 .. code-block:: console
 
-    (.venv) % pip install fastapi 'uvicorn[standard]"'
+    (.venv) % pip install fastapi 'uvicorn[standard]'
 
 The App
 -------
