@@ -24,6 +24,17 @@ Shared Models
     ClassicDevicePurchasing
     ClassicSite
 
+Categories
+----------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.categories
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicCategory
+    ClassicCategoriesItem
+
 Computers
 ---------
 
