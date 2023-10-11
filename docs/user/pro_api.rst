@@ -154,3 +154,58 @@ Here is an example of a paginated request using the SDK with the sorting and fil
     ...     filter_expression=FilterField("operatingSystem.version").lt("13.")
     ... )
     >>>
+
+MDM Commands
+------------
+
+The SDK provides MDM commands in the form of models that are passed to the :meth:`~jamf_pro_sdk.clients.pro_api.ProApi.send_mdm_command_preview` method.
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
+    >>> from jamf_pro_sdk.models.pro.mdm import LogOutUserCommand
+    >>> client = JamfProClient("dummy.jamfcloud.com", BasicAuthProvider("demo", "tryitout"))
+    >>> response client.pro_api.send_mdm_command_preview(
+    ...     management_ids=["4eecc1fb-f52d-48c5-9560-c246b23601d3"],
+    ...     command=LogOutUserCommand()
+    ... )
+
+The ``response`` will contain an array of :class:`~jamf_pro_sdk.models.pro.mdm.SendMdmCommandResponse` objects that have the IDs of the commands sent. Those IDs can be used with the ``uuid`` filter of :meth:`~jamf_pro_sdk.clients.pro_api.ProApi.get_mdm_commands_v2` to get the command's status.
+
+Basic MDM commands with no additional properties can be passed as instantiated objects as shown above with the ``LogOutUserCommand`` command. For other commands the additional properties can be set after instantiation, or a dictionary of values can be unpacked.
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk.models.pro.mdm import EraseDeviceCommand
+
+    >>> command = EraseDeviceCommand()
+    >>> command.pin = "123456"
+
+    >>> command = EraseDeviceCommand(**{"pin": "123456"})
+
+Commands with required properties must have those values passed at instantiation.
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk.models.pro.mdm import EnableLostModeCommand
+
+    >>> command = EnableLostModeCommand()
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "pydantic/main.py", line 341, in pydantic.main.BaseModel.__init__
+    pydantic.error_wrappers.ValidationError: 3 validation errors for EnableLostModeCommand
+    lostModeMessage
+      field required (type=value_error.missing)
+    lostModePhone
+      field required (type=value_error.missing)
+    lostModeFootnote
+      field required (type=value_error.missing)
+
+    >>> command = EnableLostModeCommand(
+    ...     lostModeMessage="Please return me to my owner.",
+    ...     lostModePhone="123-456-7890",
+    ...     lostModeFootnote="No reward."
+    ... )
+    >>>
+
+Read the documentation for :ref:`MDM Command Models` for all support MDM commands and their properties.

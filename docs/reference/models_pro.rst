@@ -57,6 +57,8 @@ JCDS2
     File
     DownloadUrl
 
+.. _MDM Command Models:
+
 MDM Commands
 ------------
 
@@ -71,6 +73,7 @@ MDM Commands
     EraseDeviceCommand
     EraseDeviceCommandObliterationBehavior
     EraseDeviceCommandReturnToService
+    LogOutUserCommand
     RestartDeviceCommand
     ShutDownDeviceCommand
     SendMdmCommandResponse
