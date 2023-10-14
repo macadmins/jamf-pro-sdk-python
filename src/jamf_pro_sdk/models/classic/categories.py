@@ -35,4 +35,3 @@ class ClassicCategory(ClassicApiModel):
     id: Optional[int]
     name: Optional[str]
     priority: Optional[int]
-    
