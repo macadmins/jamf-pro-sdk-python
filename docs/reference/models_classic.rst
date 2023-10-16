@@ -79,3 +79,15 @@ Computer Groups
     ClassicComputerGroupMember
     ClassicComputerGroupCriterion
     ClassicComputerGroupCriterionSearchType
+
+Networks
+----------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.networks
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicNetworkSegment
+    ClassicNetworkSegmentsItem
+    
