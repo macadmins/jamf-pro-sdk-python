@@ -28,5 +28,5 @@ class ClassicNetworkSegment(ClassicApiModel):
 
     id: Optional[int]
     name: Optional[str]
-    starting_address: Optional[int]
-    ending_address: Optional[int]
+    starting_address: Optional[str]
+    ending_address: Optional[str]
