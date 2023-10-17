@@ -80,10 +80,10 @@ Computer Groups
     ClassicComputerGroupCriterion
     ClassicComputerGroupCriterionSearchType
 
-Networks
-----------
+NetworkSegments
+---------------
 
-.. currentmodule:: jamf_pro_sdk.models.classic.networks
+.. currentmodule:: jamf_pro_sdk.models.classic.network_segments
 
 .. autosummary::
     :toctree: _autosummary
