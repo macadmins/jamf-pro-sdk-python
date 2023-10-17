@@ -89,5 +89,15 @@ NetworkSegments
     :toctree: _autosummary
 
     ClassicNetworkSegment
-    ClassicNetworkSegmentsItem
-    
+    ClassicNetworkSegmentItem
+
+Sites
+-----
+
+.. currentmodule:: jamf_pro_sdk.models.classic.sites
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicSite
+    ClassicSiteItem
