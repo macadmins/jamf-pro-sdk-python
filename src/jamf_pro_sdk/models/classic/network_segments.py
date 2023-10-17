@@ -9,8 +9,8 @@ _XML_ARRAY_ITEM_NAMES = {"starting_address": "starting_address", "ending_address
 
 
 class ClassicNetworkSegmentItem(BaseModel, extra=Extra.allow):
-    """Represents a category record returned by the
-    :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.list_networks` operation.
+    """Represents a network_segment record returned by the
+    :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.list_network_segments` operation.
     """
 
     id: Optional[int]
@@ -19,7 +19,7 @@ class ClassicNetworkSegmentItem(BaseModel, extra=Extra.allow):
 
 class ClassicNetworkSegment(ClassicApiModel):
     """Represents a network_segment record returned by the
-    :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.get_network_by_id` operation.
+    :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.get_network_segment_by_id` operation.
     """
 
     _xml_root_name = "network_segment"

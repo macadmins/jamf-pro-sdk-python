@@ -21,11 +21,6 @@ class ClassicCategoryItem(BaseModel, extra=Extra.allow):
 class ClassicCategory(ClassicApiModel):
     """Represents a category record returned by the
     :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.get_category_by_id` operation.
-
-    When exporting to XML for a ``POST``/``PUT`` operation, the SDK by default will only
-    include ``name``, and ``priority. To bypass this
-    behavior export the model using :meth:`~jamf_pro_sdk.models.classic.ClassicApiModel.xml` before
-    pasting to the API operation.
     """
 
     _xml_root_name = "category"
