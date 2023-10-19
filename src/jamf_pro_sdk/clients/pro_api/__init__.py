@@ -219,6 +219,24 @@ class ProApi:
             This API is labeled as a **Preview** by Jamf. It may change or become deprecated in
             favor of another API in a future release.
 
+        Example usage:
+
+        .. code-block:: python
+
+            from jamf_pro_sdk.models.pro.mdm import LogOutUserCommand
+
+            client.pro_api.send_mdm_command_preview(
+                management_ids=["4eecc1fb-f52d-48c5-9560-c246b23601d3"],
+                command=LogOutUserCommand()
+            )
+
+        Read the documentation for :ref:`MDM Command Models` to view all the options for the
+        supported MDM commands . The management IDs can be obtained from computer inventory records
+        at ``computer.general.managementId``.
+
+        This value is only available through the Pro API. See
+        :class:`~jamf_pro_sdk.models.pro.computers.ComputerGeneral` for more details.
+
         :param management_ids: A list of device management IDs to issue the MDM command to.
         :type management_ids: List[Union[str, UUID]],
 

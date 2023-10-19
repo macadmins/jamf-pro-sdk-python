@@ -83,6 +83,7 @@ class ComputerGeneral(BaseModel, extra=Extra.allow):
     userApprovedMdm: Optional[bool]
     declarativeDeviceManagementEnabled: Optional[bool]
     extensionAttributes: Optional[List[ComputerExtensionAttribute]]
+    managementId: Optional[str]
 
 
 # Computer Disk Encryption Models
