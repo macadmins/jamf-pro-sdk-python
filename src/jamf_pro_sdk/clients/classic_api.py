@@ -120,7 +120,7 @@ class ClassicApi:
         """Returns a single computer record using the ID.
 
         :param computer: A computer ID or supported Classic API model.
-        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        :type computer: Union[int, ClassicComputer, ClassicComputersItem]
 
         :param subsets: (optional) This operation accepts subset values to limit the
             details returned with the computer record. The following subset values are
@@ -152,7 +152,7 @@ class ClassicApi:
         the full list of computer IDs.
 
         :param computers: (optional) A list of computer IDs or supported Classic API models.
-        :type computers: List[Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]]
+        :type computers: List[Union[int, ClassicComputer, ClassicComputersItem]]
 
         :param subsets: (optional) This operation accepts subset values to limit the
             details returned with the computer record. The following subset values are
@@ -181,7 +181,7 @@ class ClassicApi:
             Not all fields in a computer record can be updated.
 
         :param computer: A computer ID or supported Classic API model.
-        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        :type computer: Union[int, ClassicComputer, ClassicComputersItem]
 
         :param data: Can be an XML string or a
             :class:`~jamf_pro_sdk.models.classic.computers.ClassicComputer` object.
@@ -195,7 +195,7 @@ class ClassicApi:
         """Delete a single computer record using the ID.
 
         :param computer: A computer ID or supported Classic API model.
-        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        :type computer: Union[int, ClassicComputer, ClassicComputersItem]
 
         """
         computer_id = ClassicApi._parse_id(computer)
