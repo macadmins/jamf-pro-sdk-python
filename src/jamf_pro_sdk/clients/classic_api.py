@@ -384,7 +384,7 @@ class ClassicApi:
         )
         return ClassicAdvancedComputerSearch(**resp.json()["advanced_computer_search"])
 
-    def update_advanced_computer_search(
+    def update_advanced_computer_search_by_id(
         self,
         advanced_search: AdvancedComputerSearchId,
         data: Union[str, ClassicAdvancedComputerSearch],
