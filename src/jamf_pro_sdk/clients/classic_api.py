@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Union
 
 from defusedxml.ElementTree import fromstring
 
+from ..models.classic.categories import ClassicCategory, ClassicCategoriesItem
 from ..models.classic.computer_groups import (
     ClassicComputerGroup,
     ClassicComputerGroupMember,
@@ -29,6 +30,7 @@ VALID_COMPUTER_SUBSETS = (
     "configurationprofiles",
 )  #: Valid subsets for the :meth:`~ClassicApi.list_computers` operation.
 
+CategoryId = Union[int, ClassicCategory, ClassicCategoriesItem]
 ComputerId = Union[int, ClassicComputer, ClassicComputersItem]
 PackageId = Union[int, ClassicPackage, ClassicPackageItem]
 
@@ -49,6 +51,32 @@ class ClassicApi:
     ):
         self.api_request = request_method
         self.concurrent_api_requests = concurrent_requests_method
+
+    # /categories APIs
+
+    def list_all_categories(self) -> List[ClassicCategoriesItem]:
+        """Returns a list of all categories.
+
+        :return: List of categories.
+        :rtype: List[ClassicCategoriesItem]
+
+        """
+        resp = self.api_request(method="get", resource_path="categories")
+        return [ClassicCategoriesItem(**i) for i in resp.json()["categories"]]
+
+    def get_category_by_id(self, category: CategoryId) -> ClassicCategory:
+        """Returns a single category record using the ID.
+
+        :param category: A category ID or supported Classic API model.
+        :type category: Union[int, ClassicCategory, ClassicCategoriesItem]
+
+        :return: Category.
+        :rtype: ~jamf_pro_sdk.models.classic.categories.Category
+
+        """
+        category_id = ClassicApi._parse_id(category)
+        resp = self.api_request(method="get", resource_path=f"categories/id/{category_id}")
+        return ClassicCategory(**resp.json()["category"])
 
     # /computers APIs
 
