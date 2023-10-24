@@ -4,7 +4,11 @@ from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Union
 
 from defusedxml.ElementTree import fromstring
 
-from ..models.classic.categories import ClassicCategory, ClassicCategoriesItem
+from ..models.classic.advanced_computer_searches import (
+    ClassicAdvancedComputerSearch,
+    ClassicAdvancedComputerSearchesItem,
+)
+from ..models.classic.categories import ClassicCategoriesItem, ClassicCategory
 from ..models.classic.computer_groups import (
     ClassicComputerGroup,
     ClassicComputerGroupMember,
@@ -32,6 +36,9 @@ VALID_COMPUTER_SUBSETS = (
 
 CategoryId = Union[int, ClassicCategory, ClassicCategoriesItem]
 ComputerId = Union[int, ClassicComputer, ClassicComputersItem]
+AdvancedComputerSearchId = Union[
+    int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem
+]
 PackageId = Union[int, ClassicPackage, ClassicPackageItem]
 
 
@@ -325,25 +332,103 @@ class ClassicApi:
 
     # /advancedcomputersearches APIs
 
-    def list_all_advanced_computer_searches(self):
-        """Not implemented..."""
-        pass
+    def create_advanced_computer_search(
+        self, data: Union[str, ClassicAdvancedComputerSearch]
+    ) -> int:
+        """Create a new advanced computer search.
 
-    def create_advanced_computer_search(self):
-        """Not implemented..."""
-        pass
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch`
+            object.
+        :type data: Union[str, ClassicAdvancedComputerSearch]
 
-    def update_advanced_computer_search(self):
-        """Not implemented..."""
-        pass
+        :return: ID of the new computer group.
+        :rtype: int
 
-    def get_advanced_computer_search_by_id(self):
-        """Not implemented..."""
-        pass
+        """
+        resp = self.api_request(method="post", resource_path="advancedcomputersearches", data=data)
+        return parse_response_id(resp.text)
 
-    def delete_advanced_computer_search_by_id(self):
-        """Not implemented..."""
-        pass
+    def list_all_advanced_computer_searches(self) -> List[ClassicAdvancedComputerSearchesItem]:
+        """Returns a list of all advanced computer searches.
+
+        :return: List of advanced computer searches.
+        :rtype: List[ClassicAdvancedComputerSearchesItem]
+
+        """
+        resp = self.api_request(method="get", resource_path="advancedcomputersearches")
+        return [
+            ClassicAdvancedComputerSearchesItem(**i)
+            for i in resp.json()["advanced_computer_searches"]
+        ]
+
+    def get_advanced_computer_search_by_id(self, advanced_search: AdvancedComputerSearchId):
+        """Returns a single advanced computer search using the ID.
+
+        This operation returns the results of the advanced search when called. The ``computers``
+        field will contain an array of the results with data fields matching those in the
+        ``display_fields`` field.
+
+        Results are calculated on each call to this operation.
+
+        :param advanced_search: An advanced computer search ID or supported Classic API model.
+        :type advanced_search: Union[int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem]
+
+        :return: Advanced computer search.
+        :rtype: ~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch
+
+        """
+        advanced_search_id = ClassicApi._parse_id(advanced_search)
+        resp = self.api_request(
+            method="get", resource_path=f"advancedcomputersearches/id/{advanced_search_id}"
+        )
+        return ClassicAdvancedComputerSearch(**resp.json()["advanced_computer_search"])
+
+    def update_advanced_computer_search(
+        self,
+        advanced_search: AdvancedComputerSearchId,
+        data: Union[str, ClassicAdvancedComputerSearch],
+        return_updated: bool = False,
+    ):
+        """Update an advanced computer search using the ID.
+
+        :param advanced_search: An advanced computer search ID or supported Classic API model.
+        :type advanced_search: Union[int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem]
+
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch`
+            object.
+        :type data: Union[str, ClassicAdvancedComputerSearch]
+
+        :param return_updated: If ``True`` the :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.get_advanced_computer_search_by_id`
+            operation will be called after the update operation to return the updated results.
+        :type return_updated: bool
+
+        :return: Advanced computer search if ``return_updated`` is ``True``.
+        :rtype: Union[None, ~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch]
+
+        """
+        advanced_search_id = ClassicApi._parse_id(advanced_search)
+        self.api_request(
+            method="put",
+            resource_path=f"advancedcomputersearches/id/{advanced_search_id}",
+            data=data,
+        )
+        if return_updated:
+            return self.get_advanced_computer_search_by_id(advanced_search_id)
+
+    def delete_advanced_computer_search_by_id(self, advanced_search: AdvancedComputerSearchId):
+        """Delete an advanced computer search using the ID.
+
+        :param advanced_search: An advanced computer search ID or supported Classic API model.
+        :type advanced_search: Union[int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem]
+
+        """
+        advanced_search_id = ClassicApi._parse_id(advanced_search)
+        self.api_request(
+            method="delete",
+            resource_path=f"advancedcomputersearches/id/{advanced_search_id}",
+        )
 
     # /packages APIs
 
