@@ -35,6 +35,19 @@ Categories
     ClassicCategory
     ClassicCategoriesItem
 
+Advanced Computer Searches
+--------------------------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.advanced_computer_searches
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicAdvancedComputerSearch
+    ClassicAdvancedComputerSearchesItem
+    ClassicAdvancedComputerSearchMember
+    ClassicAdvancedComputerSearchDisplayField
+
 Computers
 ---------
 
@@ -75,7 +88,17 @@ Computer Groups
     :nosignatures:
 
     ClassicComputerGroup
-    ClassicComputerGroupMembershipUpdate
     ClassicComputerGroupMember
-    ClassicComputerGroupCriterion
-    ClassicComputerGroupCriterionSearchType
+    ClassicComputerGroupMembershipUpdate
+
+
+Group and Search Criteria
+-------------------------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.criteria
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicCriterion
+    ClassicCriterionSearchType
