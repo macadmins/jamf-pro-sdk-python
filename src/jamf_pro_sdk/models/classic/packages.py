@@ -9,7 +9,7 @@ _XML_ARRAY_ITEM_NAMES = {}
 
 
 class ClassicPackageItem(BaseModel, extra=Extra.allow):
-    """Represents a computer record returned by the
+    """Represents a package record returned by the
     :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.list_packages` operation.
     """
 

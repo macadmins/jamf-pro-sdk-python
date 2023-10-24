@@ -52,6 +52,18 @@ class ClassicApi:
         self.api_request = request_method
         self.concurrent_api_requests = concurrent_requests_method
 
+    @staticmethod
+    def _parse_id(model: Union[int, object]) -> int:
+        """If the model has an ``id`` attribute return that value (most Classic API models have this
+        as top-level field).If the model is a ``ClassicComputer`` return the nested value.
+        """
+        if hasattr(model, "id"):
+            return model.id
+        elif isinstance(model, ClassicComputer):
+            return model.general.id
+        else:
+            return model
+
     # /categories APIs
 
     def list_all_categories(self) -> List[ClassicCategoriesItem]:
@@ -71,7 +83,7 @@ class ClassicApi:
         :type category: Union[int, ClassicCategory, ClassicCategoriesItem]
 
         :return: Category.
-        :rtype: ~jamf_pro_sdk.models.classic.categories.Category
+        :rtype: ClassicCategory
 
         """
         category_id = ClassicApi._parse_id(category)
@@ -89,7 +101,7 @@ class ClassicApi:
         :type subsets: Iterable
 
         :return: List of computers.
-        :rtype: List[ClassicComputersItem]
+        :rtype: List[~jamf_pro_sdk.models.classic.computers.ClassicComputersItem]
 
         """
         if subsets:
@@ -101,18 +113,6 @@ class ClassicApi:
 
         resp = self.api_request(method="get", resource_path=path)
         return [ClassicComputersItem(**i) for i in resp.json()["computers"]]
-
-    @staticmethod
-    def _parse_id(model: Union[int, object]) -> int:
-        """If the model has an ``id`` attribute return that value (most Classic API models have this
-        as top-level field).If the model is a ``ClassicComputer`` return the nested value.
-        """
-        if hasattr(model, "id"):
-            return model.id
-        elif isinstance(model, ClassicComputer):
-            return model.general.id
-        else:
-            return model
 
     def get_computer_by_id(
         self, computer: ComputerId, subsets: Iterable[str] = None
@@ -129,7 +129,7 @@ class ClassicApi:
             ``groupsaccounts``, and ``configurationprofiles``.
 
         :return: Computer.
-        :rtype: ~jamf_pro_sdk.models.classic.computers.Computer
+        :rtype: ~jamf_pro_sdk.models.classic.computers.ClassicComputer
 
         """
         computer_id = ClassicApi._parse_id(computer)
@@ -161,7 +161,7 @@ class ClassicApi:
             ``groupsaccounts``, and ``configurationprofiles``.
 
         :return: List of computers.
-        :rtype: List[~jamf_pro_sdk.models.classic.computers.Computer]
+        :rtype: List[~jamf_pro_sdk.models.classic.computers.ClassicComputer]
 
         """
         if not computers:

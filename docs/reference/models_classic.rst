@@ -91,6 +91,16 @@ Computer Groups
     ClassicComputerGroupMember
     ClassicComputerGroupMembershipUpdate
 
+Packages
+--------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.packages
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicPackage
+    ClassicPackageItem
 
 Group and Search Criteria
 -------------------------
