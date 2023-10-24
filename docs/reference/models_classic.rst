@@ -45,7 +45,7 @@ Advanced Computer Searches
 
     ClassicAdvancedComputerSearch
     ClassicAdvancedComputerSearchesItem
-    ClassicAdvancedComputerSearchMember
+    ClassicAdvancedComputerSearchResult
     ClassicAdvancedComputerSearchDisplayField
 
 Computers

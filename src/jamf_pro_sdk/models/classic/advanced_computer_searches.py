@@ -24,7 +24,7 @@ class ClassicAdvancedComputerSearchDisplayField(BaseModel, extra=Extra.allow):
     name: Optional[str]
 
 
-class ClassicAdvancedComputerSearchMember(BaseModel, extra=Extra.allow):
+class ClassicAdvancedComputerSearchResult(BaseModel, extra=Extra.allow):
     """ClassicAdvancedComputerSearch nested model: advanced_computer_search.computers.
 
     In addition to the ``id``, ``name``, and ``udid`` fields, any defined display fields will also
@@ -67,4 +67,4 @@ class ClassicAdvancedComputerSearch(ClassicApiModel):
     site: Optional[ClassicSite]
     criteria: Optional[List[ClassicCriterion]]
     display_fields: Optional[List[ClassicAdvancedComputerSearchDisplayField]]
-    computers: Optional[List[ClassicAdvancedComputerSearchMember]]
+    computers: Optional[List[ClassicAdvancedComputerSearchResult]]
