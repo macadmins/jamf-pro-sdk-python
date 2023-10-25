@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import secrets
+import string
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Union
 
 from defusedxml.ElementTree import fromstring
@@ -14,7 +16,10 @@ from ..models.classic.computer_groups import (
     ClassicComputerGroupMember,
     ClassicComputerGroupMembershipUpdate,
 )
-from ..models.classic.computers import ClassicComputer, ClassicComputersItem
+from ..models.classic.computers import (
+    ClassicComputer,
+    ClassicComputersItem,
+)
 from ..models.classic.packages import ClassicPackage, ClassicPackageItem
 
 if TYPE_CHECKING:
@@ -207,6 +212,68 @@ class ClassicApi:
         """
         computer_id = ClassicApi._parse_id(computer)
         self.api_request(method="delete", resource_path=f"computers/id/{computer_id}")
+
+    def set_computer_unmanaged_by_id(self, computer: ComputerId) -> None:
+        """Sets the management status to `unmanaged` for a single computer using the ID
+
+        .. important::
+            This action does not remove the management framework or mdm profile from the device
+
+        :param computer: A computer ID or supported Classic API model.
+        :type computer: Union[int,  ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        """
+        data = {
+            "general": {
+                "remote_management": {
+                    "managed": False,
+                    "management_username": "",
+                    "management_password": "",
+                }
+            }
+        }
+        update_management = ClassicComputer(**data)
+        computer_id = ClassicApi._parse_id(computer)
+        self.api_request(
+            method="put", resource_path=f"computers/id/{computer_id}", data=update_management
+        )
+
+    def set_computer_managed_by_id(
+        self, computer: ComputerId, management_user: str = "admin", management_password: str = None
+    ) -> None:
+        """Sets the management status to `managed` for a single computer using the ID.
+
+        .. important::
+            The management user does not need to match any local user account but is required for the device to be "managed"
+
+        :param computer: A computer ID or supported Classic API model.
+        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+
+        :param management_user: (optional) The management username. Defaults to 'admin' if not specified
+        :type management_user: str
+
+        :param management_password: (optional) The management password. Defaults to a randomly generated password if not specified
+        :type management_password: str
+
+        """
+        if not management_password:
+            management_password = "".join(
+                secrets.choice(string.ascii_letters + string.punctuation) for _ in range(16)
+            )
+        computer_id = ClassicApi._parse_id(computer)
+
+        data = {
+            "general": {
+                "remote_management": {
+                    "managed": True,
+                    "management_username": management_user,
+                    "management_password": management_password,
+                }
+            }
+        }
+        manage_computer = ClassicComputer(**data)
+        self.api_request(
+            method="put", resource_path=f"computers/id/{computer_id}", data=manage_computer
+        )
 
     # /computergroups APIs
 

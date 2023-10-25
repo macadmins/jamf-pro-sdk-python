@@ -91,6 +91,17 @@ Computer Groups
     ClassicComputerGroupMember
     ClassicComputerGroupMembershipUpdate
 
+Network Segments
+----------------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.network_segments
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicNetworkSegment
+    ClassicNetworkSegmentsItem
+
 Packages
 --------
 
