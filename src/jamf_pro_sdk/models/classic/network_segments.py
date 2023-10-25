@@ -5,7 +5,7 @@ from pydantic import Extra
 from .. import BaseModel
 from . import ClassicApiModel
 
-_XML_ARRAY_ITEM_NAMES = {"starting_address": "starting_address", "ending_address": "ending_address"}
+_XML_ARRAY_ITEM_NAMES = {}
 
 
 class ClassicNetworkSegmentItem(BaseModel, extra=Extra.allow):
