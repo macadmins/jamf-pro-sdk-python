@@ -6,6 +6,11 @@ from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Union
 
 from defusedxml.ElementTree import fromstring
 
+from ..models.classic.advanced_computer_searches import (
+    ClassicAdvancedComputerSearch,
+    ClassicAdvancedComputerSearchesItem,
+)
+from ..models.classic.categories import ClassicCategoriesItem, ClassicCategory
 from ..models.classic.computer_groups import (
     ClassicComputerGroup,
     ClassicComputerGroupMember,
@@ -34,7 +39,11 @@ VALID_COMPUTER_SUBSETS = (
     "configurationprofiles",
 )  #: Valid subsets for the :meth:`~ClassicApi.list_computers` operation.
 
+CategoryId = Union[int, ClassicCategory, ClassicCategoriesItem]
 ComputerId = Union[int, ClassicComputer, ClassicComputersItem]
+AdvancedComputerSearchId = Union[
+    int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem
+]
 PackageId = Union[int, ClassicPackage, ClassicPackageItem]
 
 
@@ -55,30 +64,6 @@ class ClassicApi:
         self.api_request = request_method
         self.concurrent_api_requests = concurrent_requests_method
 
-    # /computers APIs
-
-    def list_all_computers(self, subsets: Iterable[str] = None) -> List[ClassicComputersItem]:
-        """Returns a list of all computers.
-
-        :param subsets: (optional) This operations accepts the ``basic`` subset to return
-            additional details for every computer record. No other subset values are
-            supported.
-        :type subsets: Iterable
-
-        :return: List of computers.
-        :rtype: List[ClassicComputersItem]
-
-        """
-        if subsets:
-            if not all(i.lower() in ("basic",) for i in subsets):
-                raise ValueError(f"Invalid subset(s). Must be one of: ('basic').")
-            path = "computers/subset/basic"
-        else:
-            path = "computers"
-
-        resp = self.api_request(method="get", resource_path=path)
-        return [ClassicComputersItem(**i) for i in resp.json()["computers"]]
-
     @staticmethod
     def _parse_id(model: Union[int, object]) -> int:
         """If the model has an ``id`` attribute return that value (most Classic API models have this
@@ -91,13 +76,63 @@ class ClassicApi:
         else:
             return model
 
+    # /categories APIs
+
+    def list_all_categories(self) -> List[ClassicCategoriesItem]:
+        """Returns a list of all categories.
+
+        :return: List of categories.
+        :rtype: List[ClassicCategoriesItem]
+
+        """
+        resp = self.api_request(method="get", resource_path="categories")
+        return [ClassicCategoriesItem(**i) for i in resp.json()["categories"]]
+
+    def get_category_by_id(self, category: CategoryId) -> ClassicCategory:
+        """Returns a single category record using the ID.
+
+        :param category: A category ID or supported Classic API model.
+        :type category: Union[int, ClassicCategory, ClassicCategoriesItem]
+
+        :return: Category.
+        :rtype: ClassicCategory
+
+        """
+        category_id = ClassicApi._parse_id(category)
+        resp = self.api_request(method="get", resource_path=f"categories/id/{category_id}")
+        return ClassicCategory(**resp.json()["category"])
+
+    # /computers APIs
+
+    def list_all_computers(self, subsets: Iterable[str] = None) -> List[ClassicComputersItem]:
+        """Returns a list of all computers.
+
+        :param subsets: (optional) This operations accepts the ``basic`` subset to return
+            additional details for every computer record. No other subset values are
+            supported.
+        :type subsets: Iterable
+
+        :return: List of computers.
+        :rtype: List[~jamf_pro_sdk.models.classic.computers.ClassicComputersItem]
+
+        """
+        if subsets:
+            if not all(i.lower() in ("basic",) for i in subsets):
+                raise ValueError(f"Invalid subset(s). Must be one of: ('basic').")
+            path = "computers/subset/basic"
+        else:
+            path = "computers"
+
+        resp = self.api_request(method="get", resource_path=path)
+        return [ClassicComputersItem(**i) for i in resp.json()["computers"]]
+
     def get_computer_by_id(
         self, computer: ComputerId, subsets: Iterable[str] = None
     ) -> ClassicComputer:
         """Returns a single computer record using the ID.
 
         :param computer: A computer ID or supported Classic API model.
-        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        :type computer: Union[int, ClassicComputer, ClassicComputersItem]
 
         :param subsets: (optional) This operation accepts subset values to limit the
             details returned with the computer record. The following subset values are
@@ -106,7 +141,7 @@ class ClassicApi:
             ``groupsaccounts``, and ``configurationprofiles``.
 
         :return: Computer.
-        :rtype: ~jamf_pro_sdk.models.classic.computers.Computer
+        :rtype: ~jamf_pro_sdk.models.classic.computers.ClassicComputer
 
         """
         computer_id = ClassicApi._parse_id(computer)
@@ -129,7 +164,7 @@ class ClassicApi:
         the full list of computer IDs.
 
         :param computers: (optional) A list of computer IDs or supported Classic API models.
-        :type computers: List[Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]]
+        :type computers: List[Union[int, ClassicComputer, ClassicComputersItem]]
 
         :param subsets: (optional) This operation accepts subset values to limit the
             details returned with the computer record. The following subset values are
@@ -138,7 +173,7 @@ class ClassicApi:
             ``groupsaccounts``, and ``configurationprofiles``.
 
         :return: List of computers.
-        :rtype: List[~jamf_pro_sdk.models.classic.computers.Computer]
+        :rtype: List[~jamf_pro_sdk.models.classic.computers.ClassicComputer]
 
         """
         if not computers:
@@ -158,7 +193,7 @@ class ClassicApi:
             Not all fields in a computer record can be updated.
 
         :param computer: A computer ID or supported Classic API model.
-        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        :type computer: Union[int, ClassicComputer, ClassicComputersItem]
 
         :param data: Can be an XML string or a
             :class:`~jamf_pro_sdk.models.classic.computers.ClassicComputer` object.
@@ -172,7 +207,7 @@ class ClassicApi:
         """Delete a single computer record using the ID.
 
         :param computer: A computer ID or supported Classic API model.
-        :type computer: Union[int, ~jamf_pro_sdk.models.classic.computers.Computer, ComputersItem]
+        :type computer: Union[int, ClassicComputer, ClassicComputersItem]
 
         """
         computer_id = ClassicApi._parse_id(computer)
@@ -364,25 +399,103 @@ class ClassicApi:
 
     # /advancedcomputersearches APIs
 
-    def list_all_advanced_computer_searches(self):
-        """Not implemented..."""
-        pass
+    def create_advanced_computer_search(
+        self, data: Union[str, ClassicAdvancedComputerSearch]
+    ) -> int:
+        """Create a new advanced computer search.
 
-    def create_advanced_computer_search(self):
-        """Not implemented..."""
-        pass
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch`
+            object.
+        :type data: Union[str, ClassicAdvancedComputerSearch]
 
-    def update_advanced_computer_search(self):
-        """Not implemented..."""
-        pass
+        :return: ID of the new computer group.
+        :rtype: int
 
-    def get_advanced_computer_search_by_id(self):
-        """Not implemented..."""
-        pass
+        """
+        resp = self.api_request(method="post", resource_path="advancedcomputersearches", data=data)
+        return parse_response_id(resp.text)
 
-    def delete_advanced_computer_search_by_id(self):
-        """Not implemented..."""
-        pass
+    def list_all_advanced_computer_searches(self) -> List[ClassicAdvancedComputerSearchesItem]:
+        """Returns a list of all advanced computer searches.
+
+        :return: List of advanced computer searches.
+        :rtype: List[ClassicAdvancedComputerSearchesItem]
+
+        """
+        resp = self.api_request(method="get", resource_path="advancedcomputersearches")
+        return [
+            ClassicAdvancedComputerSearchesItem(**i)
+            for i in resp.json()["advanced_computer_searches"]
+        ]
+
+    def get_advanced_computer_search_by_id(self, advanced_search: AdvancedComputerSearchId):
+        """Returns a single advanced computer search using the ID.
+
+        This operation returns the results of the advanced search when called. The ``computers``
+        field will contain an array of the results with data fields matching those in the
+        ``display_fields`` field.
+
+        Results are calculated on each call to this operation.
+
+        :param advanced_search: An advanced computer search ID or supported Classic API model.
+        :type advanced_search: Union[int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem]
+
+        :return: Advanced computer search.
+        :rtype: ~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch
+
+        """
+        advanced_search_id = ClassicApi._parse_id(advanced_search)
+        resp = self.api_request(
+            method="get", resource_path=f"advancedcomputersearches/id/{advanced_search_id}"
+        )
+        return ClassicAdvancedComputerSearch(**resp.json()["advanced_computer_search"])
+
+    def update_advanced_computer_search_by_id(
+        self,
+        advanced_search: AdvancedComputerSearchId,
+        data: Union[str, ClassicAdvancedComputerSearch],
+        return_updated: bool = False,
+    ):
+        """Update an advanced computer search using the ID.
+
+        :param advanced_search: An advanced computer search ID or supported Classic API model.
+        :type advanced_search: Union[int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem]
+
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch`
+            object.
+        :type data: Union[str, ClassicAdvancedComputerSearch]
+
+        :param return_updated: If ``True`` the :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.get_advanced_computer_search_by_id`
+            operation will be called after the update operation to return the updated results.
+        :type return_updated: bool
+
+        :return: Advanced computer search if ``return_updated`` is ``True``.
+        :rtype: Union[None, ~jamf_pro_sdk.models.classic.advanced_computer_searches.ClassicAdvancedComputerSearch]
+
+        """
+        advanced_search_id = ClassicApi._parse_id(advanced_search)
+        self.api_request(
+            method="put",
+            resource_path=f"advancedcomputersearches/id/{advanced_search_id}",
+            data=data,
+        )
+        if return_updated:
+            return self.get_advanced_computer_search_by_id(advanced_search_id)
+
+    def delete_advanced_computer_search_by_id(self, advanced_search: AdvancedComputerSearchId):
+        """Delete an advanced computer search using the ID.
+
+        :param advanced_search: An advanced computer search ID or supported Classic API model.
+        :type advanced_search: Union[int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem]
+
+        """
+        advanced_search_id = ClassicApi._parse_id(advanced_search)
+        self.api_request(
+            method="delete",
+            resource_path=f"advancedcomputersearches/id/{advanced_search_id}",
+        )
 
     # /packages APIs
 

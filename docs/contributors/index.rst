@@ -131,10 +131,8 @@ Here is an example from the Classic API Models page. Follow this pattern for all
         :nosignatures:
 
         ClassicComputerGroup
-        ClassicComputerGroupMembershipUpdate
         ClassicComputerGroupMember
-        ClassicComputerGroupCriterion
-        ClassicComputerGroupCriterionSearchType
+        ClassicComputerGroupMembershipUpdate
 
 Other
 -----

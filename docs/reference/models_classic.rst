@@ -35,6 +35,19 @@ Categories
     ClassicCategory
     ClassicCategoriesItem
 
+Advanced Computer Searches
+--------------------------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.advanced_computer_searches
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicAdvancedComputerSearch
+    ClassicAdvancedComputerSearchesItem
+    ClassicAdvancedComputerSearchResult
+    ClassicAdvancedComputerSearchDisplayField
+
 Computers
 ---------
 
@@ -75,10 +88,8 @@ Computer Groups
     :nosignatures:
 
     ClassicComputerGroup
-    ClassicComputerGroupMembershipUpdate
     ClassicComputerGroupMember
-    ClassicComputerGroupCriterion
-    ClassicComputerGroupCriterionSearchType
+    ClassicComputerGroupMembershipUpdate
 
 Network Segments
 ----------------
@@ -87,7 +98,28 @@ Network Segments
 
 .. autosummary::
     :toctree: _autosummary
-    :nosignatures:
 
     ClassicNetworkSegment
     ClassicNetworkSegmentsItem
+
+Packages
+--------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.packages
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicPackage
+    ClassicPackageItem
+
+Group and Search Criteria
+-------------------------
+
+.. currentmodule:: jamf_pro_sdk.models.classic.criteria
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicCriterion
+    ClassicCriterionSearchType

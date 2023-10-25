@@ -1,10 +1,10 @@
-from enum import Enum
 from typing import List, Optional
 
 from pydantic import Extra
 
 from .. import BaseModel
 from . import ClassicApiModel, ClassicSite
+from .criteria import ClassicCriterion
 
 _XML_ARRAY_ITEM_NAMES = {
     "criteria": "criterion",
@@ -12,40 +12,6 @@ _XML_ARRAY_ITEM_NAMES = {
     "computer_additions": "computer",
     "computer_deletions": "computer",
 }
-
-
-class ClassicComputerGroupCriterionAndOr(str, Enum):
-    and_: str = "and"
-    or_: str = "or"
-
-
-class ClassicComputerGroupCriterionSearchType(str, Enum):
-    """ComputerGroup nested model: computer_group.criteria.search_type
-
-    .. attention::
-
-        The supported search types are dependent on the field that is entered in ``name``.
-
-    """
-
-    is_: str = "is"
-    is_not: str = "is not"
-    like: str = "like"
-    not_like: str = "not like"
-    has: str = "has"
-    does_not_have: str = "does not have"
-    matches_regex: str = "matches regex"
-    does_not_match_regex: str = "does not match regex"
-    before_yyyy_mm_dd: str = "before (yyyy-mm-dd)"
-    after_yyyy_mm_dd: str = "after (yyyy-mm-dd)"
-    more_than_x_days_ago: str = "more than x days ago"
-    less_than_x_days_ago: str = "less than x days ago"
-    current: str = "current"
-    not_current: str = "not current"
-    greater_than: str = "greater than"
-    less_than: str = "less than"
-    greater_than_or_equal: str = "greater than or equal"
-    less_than_or_equal: str = "less than or equal"
 
 
 # class ClassicComputerGroupsItem(BaseModel, extra=Extra.allow):
@@ -56,21 +22,6 @@ class ClassicComputerGroupCriterionSearchType(str, Enum):
 #     id: int
 #     name: str
 #     is_smart: bool
-
-
-class ClassicComputerGroupCriterion(BaseModel, extra=Extra.allow):
-    """ComputerGroup nested model: computer_group.criteria
-
-    Only valid for smart groups (``is_smart == True``).
-    """
-
-    name: str
-    priority: int
-    and_or: ClassicComputerGroupCriterionAndOr
-    search_type: ClassicComputerGroupCriterionSearchType
-    value: str
-    opening_paren: bool
-    closing_paren: bool
 
 
 class ClassicComputerGroupMember(BaseModel, extra=Extra.allow):
@@ -109,7 +60,7 @@ class ClassicComputerGroup(ClassicApiModel):
     name: Optional[str]
     is_smart: Optional[bool]
     site: Optional[ClassicSite]
-    criteria: Optional[List[ClassicComputerGroupCriterion]]
+    criteria: Optional[List[ClassicCriterion]]
     computers: Optional[List[ClassicComputerGroupMember]]
 
 
