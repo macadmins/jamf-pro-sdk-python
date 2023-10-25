@@ -207,7 +207,7 @@ class ClassicApi:
     ) -> None:
         """Sets the management status to `managed` for a single computer using the ID.
 
-        ..important::
+        .. important::
             The management user does not need to match any local user account but is required for the device to be "managed"
 
         :param computer: A computer ID or supported Classic API model.
