@@ -221,9 +221,8 @@ class ClassicApi:
 
         """
         if not management_password:
-            management_password = secrets.choice(
-                string.ascii_uppercase + string.ascii_lowercase + string.punctuation
-                for _ in range(16)
+            management_password = "".join(
+                secrets.choice(string.ascii_letters + string.punctuation) for _ in range(16)
             )
         computer_id = ClassicApi._parse_id(computer)
 
