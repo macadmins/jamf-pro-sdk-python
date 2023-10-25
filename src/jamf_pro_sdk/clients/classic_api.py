@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Union
 import secrets
 import string
+from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Union
 
 from defusedxml.ElementTree import fromstring
 
