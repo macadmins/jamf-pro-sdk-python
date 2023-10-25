@@ -223,3 +223,44 @@ get_mdm_commands_v2_allowed_command_types = [
     "SET_AUTO_ADMIN_PASSWORD",
     "UNKNOWN",
 ]
+
+
+get_scripts_v1_allowed_sort_criteria = [
+    "id",
+    "name",
+    "info",
+    "notes",
+    "priority",
+    "categoryId",
+    "categoryName",
+    "parameter4",
+    "parameter5",
+    "parameter6",
+    "parameter7",
+    "parameter8",
+    "parameter9",
+    "parameter10",
+    "parameter11",
+    "osRequirements",
+    "scriptContents",
+]
+
+get_scripts_v1_allowed_filter_criteria = [
+    "id",
+    "name",
+    "info",
+    "notes",
+    "priority",
+    "categoryId",
+    "categoryName",
+    "parameter4",
+    "parameter5",
+    "parameter6",
+    "parameter7",
+    "parameter8",
+    "parameter9",
+    "parameter10",
+    "parameter11",
+    "osRequirements",
+    "scriptContents",
+]

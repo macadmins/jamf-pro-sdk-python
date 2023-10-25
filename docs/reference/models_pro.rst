@@ -94,3 +94,14 @@ Pagination
 
     Page
     FilterEntry
+
+
+Scripts
+-------
+
+.. currentmodule:: jamf_pro_sdk.models.pro.scripts
+
+.. autosummary::
+    :toctree: _autosummary
+
+    Script
