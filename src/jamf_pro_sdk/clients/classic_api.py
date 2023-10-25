@@ -181,7 +181,7 @@ class ClassicApi:
     def set_computer_unmanaged_by_id(self, computer: ComputerId) -> None:
         """Sets the management status to `unmanaged` for a single computer using the ID
 
-        ..important::
+        .. important::
             This action does not remove the management framework or mdm profile from the device
 
         :param computer: A computer ID or supported Classic API model.
