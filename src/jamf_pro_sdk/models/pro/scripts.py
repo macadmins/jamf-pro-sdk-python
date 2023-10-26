@@ -1,8 +1,15 @@
+from enum import Enum
 from typing import Optional
 
 from pydantic import Extra
 
 from .. import BaseModel
+
+
+class ScriptPriority(str, Enum):
+    BEFORE: str = "BEFORE"
+    AFTER: str = "AFTER"
+    AT_REBOOT: str = "AT_REBOOT"
 
 
 class Script(BaseModel, extra=Extra.allow):
@@ -13,7 +20,7 @@ class Script(BaseModel, extra=Extra.allow):
     name: Optional[str]
     info: Optional[str]
     notes: Optional[str]
-    priority: Optional[str]
+    priority: Optional[ScriptPriority]
     parameter4: Optional[str]
     parameter5: Optional[str]
     parameter6: Optional[str]
