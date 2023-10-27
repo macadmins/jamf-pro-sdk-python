@@ -20,6 +20,10 @@ from ..models.classic.computers import (
     ClassicComputer,
     ClassicComputersItem,
 )
+from ..models.classic.network_segments import (
+    ClassicNetworkSegment,
+    ClassicNetworkSegmentItem,
+)
 from ..models.classic.packages import ClassicPackage, ClassicPackageItem
 
 if TYPE_CHECKING:
@@ -45,6 +49,7 @@ AdvancedComputerSearchId = Union[
     int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem
 ]
 PackageId = Union[int, ClassicPackage, ClassicPackageItem]
+NetworkSegmentId = Union[int, ClassicNetworkSegment, ClassicNetworkSegmentItem]
 
 
 def parse_response_id(xml: str) -> int:
@@ -180,7 +185,8 @@ class ClassicApi:
             computers = self.list_all_computers()
 
         return self.concurrent_api_requests(
-            self.get_computer_by_id, [{"computer": i, "subsets": subsets} for i in computers]
+            self.get_computer_by_id,
+            [{"computer": i, "subsets": subsets} for i in computers],
         )
 
     def update_computer_by_id(
@@ -234,11 +240,16 @@ class ClassicApi:
         update_management = ClassicComputer(**data)
         computer_id = ClassicApi._parse_id(computer)
         self.api_request(
-            method="put", resource_path=f"computers/id/{computer_id}", data=update_management
+            method="put",
+            resource_path=f"computers/id/{computer_id}",
+            data=update_management,
         )
 
     def set_computer_managed_by_id(
-        self, computer: ComputerId, management_user: str = "admin", management_password: str = None
+        self,
+        computer: ComputerId,
+        management_user: str = "admin",
+        management_password: str = None,
     ) -> None:
         """Sets the management status to `managed` for a single computer using the ID.
 
@@ -272,7 +283,9 @@ class ClassicApi:
         }
         manage_computer = ClassicComputer(**data)
         self.api_request(
-            method="put", resource_path=f"computers/id/{computer_id}", data=manage_computer
+            method="put",
+            resource_path=f"computers/id/{computer_id}",
+            data=manage_computer,
         )
 
     # /computergroups APIs
@@ -416,7 +429,9 @@ class ClassicApi:
         resp = self.api_request(method="post", resource_path="advancedcomputersearches", data=data)
         return parse_response_id(resp.text)
 
-    def list_all_advanced_computer_searches(self) -> List[ClassicAdvancedComputerSearchesItem]:
+    def list_all_advanced_computer_searches(
+        self,
+    ) -> List[ClassicAdvancedComputerSearchesItem]:
         """Returns a list of all advanced computer searches.
 
         :return: List of advanced computer searches.
@@ -447,7 +462,8 @@ class ClassicApi:
         """
         advanced_search_id = ClassicApi._parse_id(advanced_search)
         resp = self.api_request(
-            method="get", resource_path=f"advancedcomputersearches/id/{advanced_search_id}"
+            method="get",
+            resource_path=f"advancedcomputersearches/id/{advanced_search_id}",
         )
         return ClassicAdvancedComputerSearch(**resp.json()["advanced_computer_search"])
 
@@ -495,6 +511,68 @@ class ClassicApi:
         self.api_request(
             method="delete",
             resource_path=f"advancedcomputersearches/id/{advanced_search_id}",
+        )
+
+    # /networksegments APIs
+
+    def list_all_network_segments(self) -> List[ClassicNetworkSegmentItem]:
+        """Returns a list of all network segments.
+
+        :return: List of network segments.
+        :rtype: List[ClassicNetworkSegmentItem]
+
+        """
+        resp = self.api_request(method="get", resource_path="networksegments")
+        return [ClassicNetworkSegmentItem(**i) for i in resp.json()["network_segments"]]
+
+    def get_network_segment_by_id(self, network_segment: NetworkSegmentId) -> ClassicNetworkSegment:
+        """Returns a single network segment record using the ID.
+
+        :param network_segment: A network segment ID or supported Classic API model.
+        :type network_segment: Union[int, ClassicNetworkSegment, ClassicNetworkSegmentItem]
+
+        :return: Network segment.
+        :rtype: ClassicNetworkSegment
+
+        """
+        network_segment_id = ClassicApi._parse_id(network_segment)
+        resp = self.api_request(
+            method="get", resource_path=f"networksegments/id/{network_segment_id}"
+        )
+        return ClassicNetworkSegment(**resp.json()["network_segment"])
+
+    def update_network_segment_by_id(
+        self, network_segment: NetworkSegmentId, data: Union[str, ClassicNetworkSegment]
+    ) -> None:
+        """Update a single network segment record using the ID.
+
+        :param network_segment: A network segment ID or supported Classic API model.
+        :type network_segment: Union[int, ClassicNetworkSegment, ClassicNetworkSegmentItem]
+
+        param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.network_segments.ClassicNetworkSegment` object.
+        :type data: Union[str, ClassicNetworkSegment]
+
+        """
+
+        network_segment_id = ClassicApi._parse_id(network_segment)
+        self.api_request(
+            method="put",
+            resource_path=f"networksegments/id/{network_segment_id}",
+            data=data,
+        )
+
+    def delete_network_segment_by_id(self, network_segment: NetworkSegmentId) -> None:
+        """Delete a single network segment record using the ID.
+
+        :param network_segment: A network segment ID or supported Classic API model.
+        :type network_segment: Union[int, ClassicNetworkSegment, ClassicNetworkSegmentItem]
+
+        """
+        network_segment_id = ClassicApi._parse_id(network_segment)
+        self.api_request(
+            method="delete",
+            resource_path=f"networksegments/id/{network_segment_id}",
         )
 
     # /packages APIs
