@@ -10,23 +10,18 @@ from ..models.classic.advanced_computer_searches import (
     ClassicAdvancedComputerSearch,
     ClassicAdvancedComputerSearchesItem,
 )
-
 from ..models.classic.categories import ClassicCategoriesItem, ClassicCategory
-
 from ..models.classic.computer_groups import (
     ClassicComputerGroup,
     ClassicComputerGroupMember,
     ClassicComputerGroupMembershipUpdate,
 )
-
 from ..models.classic.computers import (
     ClassicComputer,
     ClassicComputersItem,
 )
-
 from ..models.classic.packages import ClassicPackage, ClassicPackageItem
-
-from ..models.classic.sites import ClassicSite, ClassicSitesItem
+from ..models.classic.sites import ClassicSite, ClassicSiteItem
 
 if TYPE_CHECKING:
     import requests
@@ -51,7 +46,7 @@ AdvancedComputerSearchId = Union[
     int, ClassicAdvancedComputerSearch, ClassicAdvancedComputerSearchesItem
 ]
 PackageId = Union[int, ClassicPackage, ClassicPackageItem]
-SiteId = Union[int, ClassicSite, ClassicSitesItem]
+SiteId = Union[int, ClassicSite, ClassicSiteItem]
 
 
 def parse_response_id(xml: str) -> int:
@@ -583,22 +578,22 @@ def create_site(self, data: Union[str, ClassicSite]) -> int:
     return parse_response_id(resp.text)
 
 
-def list_all_sites(self) -> List[ClassicSitesItem]:
+def list_all_sites(self) -> List[ClassicSiteItem]:
     """Returns a list of all sites.
 
     :return: List of sites.
-    :rtype: List[~jamf_pro_sdk.models.classic.sites.ClassicSitesItem]
+    :rtype: List[~jamf_pro_sdk.models.classic.sites.ClassicSiteItem]
 
     """
     resp = self.api_request(method="get", resource_path="sites")
-    return [ClassicSitesItem(**i) for i in resp.json()["sites"]]
+    return [ClassicSiteItem(**i) for i in resp.json()["sites"]]
 
 
 def get_site_by_id(self, site: SiteId) -> ClassicSite:
     """Returns a single site record using the ID.
 
     :param site: A site ID or supported Classic API model.
-    :type site: Union[int, ClassicSite, ClassicSitesItem]
+    :type site: Union[int, ClassicSite, ClassicSiteItem]
 
     :return: Site.
     :rtype: ~jamf_pro_sdk.models.classic.sites.ClassicSite
@@ -615,7 +610,7 @@ def update_site_by_id(
     """Update a site using the ID.
 
     :param site: A site ID or supported Classic API model.
-    :type site: Union[int, ClassicSite, ClassicSitesItem]
+    :type site: Union[int, ClassicSite, ClassicSiteItem]
 
     :param data: Can be an XML string or a
         :class:`~jamf_pro_sdk.models.classic.sites.ClassicSite` object.
@@ -632,7 +627,7 @@ def delete_site_by_id(self, site: SiteId) -> None:
     """Delete a site using the ID.
 
     :param site: A site ID or supported Classic API model.
-    :type site: Union[int, ClassicSite, ClassicSitesItem]
+    :type site: Union[int, ClassicSite, ClassicSiteItem]
 
     """
     site_id = ClassicApi._parse_id(site)
