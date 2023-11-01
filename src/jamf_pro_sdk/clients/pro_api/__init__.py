@@ -328,14 +328,14 @@ class ProApi:
 
         return paginator(return_generator=return_generator)
 
-    def get_scripts(
-            self, 
-            start_page: int = 0, 
-            end_page: int = None,
-            page_size: int = 100, 
-            sort_expression: SortExpression = None, 
-            filter_expression: FilterExpression = None,
-            return_generator: bool = False,
+    def get_scripts_v1(
+        self,
+        start_page: int = 0,
+        end_page: int = None,
+        page_size: int = 100,
+        sort_expression: SortExpression = None,
+        filter_expression: FilterExpression = None,
+        return_generator: bool = False,
     ) -> Union[List[Script], Iterator[Page]]:
         """Returns a list of script records.
 
@@ -376,4 +376,70 @@ class ProApi:
         :return: List of scripts OR a paginator generator.
         :rtype: List[~jamf_pro_sdk.models.pro.script.Script] | Iterator[Page]
         """
-     
+        if sort_expression:
+            sort_expression.validate(get_scripts_v1_allowed_sort_fields)
+
+        if filter_expression:
+            filter_expression.validate(get_scripts_v1_allowed_filter_fields)
+
+        paginator = Paginator(
+            api_client=self,
+            resource_path="v1/scripts",
+            return_model=Script,
+            start_page=start_page,
+            end_page=end_page,
+            page_size=page_size,
+            sort_expression=sort_expression,
+            filter_expression=filter_expression,
+        )
+
+        return paginator(return_generator=return_generator)
+
+    def get_script_v1(self, script_id: int) -> Script:
+        """Returns a script record.
+
+        :param script_id: The ID of the script to return.
+        :type script_id: int
+
+        :return: A script record.
+        :rtype: ~jamf_pro_sdk.models.pro.script.Script
+        """
+        resp = self.api_request(method="get", resource_path=f"v1/scripts/id/{script_id}")
+        return Script(**resp.json())
+
+    def set_script(self, script_id: int, script: Script) -> Script:
+        """Updates or creates a script record.
+
+        :param script_id: The ID of the script to update.
+        :type script_id: int
+
+        :param script: The script record to update.
+        :type script: ~jamf_pro_sdk.models.pro.script.Script
+
+        :return: The updated script record.
+        :rtype: ~jamf_pro_sdk.models.pro.script.Script
+        """
+        resp = self.api_request(
+            method="put", resource_path=f"v1/scripts/id/{script_id}", data=script
+        )
+        return Script(**resp.json())
+
+    def delete_script(self, script_id: int) -> None:
+        """Deletes a script record.
+
+        :param script_id: The ID of the script to delete.
+        :type script_id: int
+        """
+        self.api_request(method="delete", resource_path=f"v1/scripts/id/{script_id}")
+
+    def create_script(self, script: Script) -> Script:
+        """Creates a script record.
+
+        :param script: The script record to create.
+        :type script: ~jamf_pro_sdk.models.pro.script.Script
+
+        :return: The created script record.
+        :rtype: ~jamf_pro_sdk.models.pro.script.Script
+        """
+        resp = self.api_request(method="post", resource_path="v1/scripts", data=script)
+        return Script(**resp.json())

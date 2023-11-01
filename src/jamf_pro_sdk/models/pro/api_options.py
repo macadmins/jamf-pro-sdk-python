@@ -225,7 +225,7 @@ get_mdm_commands_v2_allowed_command_types = [
 ]
 
 
-get_scripts_v1_allowed_sort_criteria = [
+get_scripts_v1_allowed_sort_fields = [
     "id",
     "name",
     "info",
@@ -245,7 +245,7 @@ get_scripts_v1_allowed_sort_criteria = [
     "scriptContents",
 ]
 
-get_scripts_v1_allowed_filter_criteria = [
+get_scripts_v1_allowed_filter_fields = [
     "id",
     "name",
     "info",
