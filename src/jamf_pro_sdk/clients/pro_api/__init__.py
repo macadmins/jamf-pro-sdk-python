@@ -20,6 +20,8 @@ from ...models.pro.mdm import (
     SetRecoveryLockCommand,
     ShutDownDeviceCommand,
 )
+from ...models.pro.scripts import *
+
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -325,3 +327,53 @@ class ProApi:
         )
 
         return paginator(return_generator=return_generator)
+
+    def get_scripts(
+            self, 
+            start_page: int = 0, 
+            end_page: int = None,
+            page_size: int = 100, 
+            sort_expression: SortExpression = None, 
+            filter_expression: FilterExpression = None,
+            return_generator: bool = False,
+    ) -> Union[List[Script], Iterator[Page]]:
+        """Returns a list of script records.
+
+                :param start_page: (optional) The page to begin returning results from. See
+            :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param end_page: (optional) The page to end returning results at. See :class:`Paginator` for
+            more information.
+        :type start_page: int
+
+        :param page_size: (optional) The number of results to include in each requested page. See
+            :class:`Paginator` for more information.
+        :type page_size: int
+
+        :param sort_expression: (optional) The sort fields to apply to the request. See the
+            documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_scripts_v1_allowed_sort_criteria
+
+        :type sort_expression: SortExpression
+
+        :param filter_expression: (optional) The filter expression to apply to the request. See the
+            documentation for :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_scripts_inventory_v1_allowed_filter_criteriascripts
+
+        :type filter_expression: FilterExpression
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. By
+            default, the results for all pages will be returned in a single response.
+        :type return_generator: bool
+
+        :return: List of scripts OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.script.Script] | Iterator[Page]
+        """
+     
