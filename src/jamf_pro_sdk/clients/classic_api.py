@@ -102,6 +102,45 @@ class ClassicApi:
         resp = self.api_request(method="get", resource_path=f"categories/id/{category_id}")
         return ClassicCategory(**resp.json()["category"])
 
+    def update_category_by_id(
+        self, category: CategoryId, data: Union[str, ClassicCategory]
+    ) -> None:
+        """Update a single category record using the ID.
+
+        :param category: A category ID or supported Classic API model.
+        :type category: Union[int, ClassicCategory, ClassicCategoriesItem]
+
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.categories.ClassicCategory` object.
+        :type data: Union[str, ClassicCategory]
+        """
+        category_id = ClassicApi._parse_id(category)
+        self.api_request(method="put", resource_path=f"categories/id/{category_id}", data=data)
+
+    def delete_category_by_id(self, category: CategoryId) -> None:
+        """Delete a single category record using the ID.
+
+        :param category: A category ID or supported Classic API model.
+        :type category: Union[int, ClassicCategory, ClassicCategoriesItem]
+
+        """
+        category_id = ClassicApi._parse_id(category)
+        self.api_request(method="delete", resource_path=f"categories/id/{category_id}")
+
+    def create_category(self, data: Union[str, ClassicCategory]) -> int:
+        """Create a new category.
+
+        :param data: Can be an XML string or a
+            :class:`~jamf_pro_sdk.models.classic.categories.ClassicCategory` object.
+        :type data: Union[str, ClassicCategory]
+
+        :return: ID of the new category.
+        :rtype: int
+
+        """
+        resp = self.api_request(method="post", resource_path="categories/id/0", data=data)
+        return parse_response_id(resp.text)
+
     # /computers APIs
 
     def list_all_computers(self, subsets: Iterable[str] = None) -> List[ClassicComputersItem]:
