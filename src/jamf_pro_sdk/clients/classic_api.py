@@ -185,8 +185,7 @@ class ClassicApi:
             computers = self.list_all_computers()
 
         return self.concurrent_api_requests(
-            self.get_computer_by_id,
-            [{"computer": i, "subsets": subsets} for i in computers],
+            self.get_computer_by_id,[{"computer": i, "subsets": subsets} for i in computers]
         )
 
     def update_computer_by_id(
