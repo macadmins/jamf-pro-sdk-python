@@ -51,7 +51,9 @@ class FilterField:
     def __init__(self, name: str):
         self.name = name
 
-    def _return_expression(self, operator: str, value: Union[bool, int, str]) -> FilterExpression:
+    def _return_expression(
+        self, operator: str, value: Union[bool, int, str]
+    ) -> FilterExpression:
         return FilterExpression(
             filter_expression=f"{self.name}{operator}{value}",
             fields=[FilterEntry(name=self.name, op=operator, value=value)],
@@ -112,7 +114,9 @@ class SortExpression:
 
     def validate(self, allowed_fields: List[str]):
         if not all([i in allowed_fields for i in self.fields]):
-            raise ValueError(f"A field is not in allowed sort fields: {', '.join(allowed_fields)}")
+            raise ValueError(
+                f"A field is not in allowed sort fields: {', '.join(allowed_fields)}"
+            )
 
 
 class SortField:
@@ -120,7 +124,9 @@ class SortField:
         self.field = field
 
     def _return_expression(self, order: str) -> SortExpression:
-        return SortExpression(sort_expression=f"{self.field}:{order}", fields=[self.field])
+        return SortExpression(
+            sort_expression=f"{self.field}:{order}", fields=[self.field]
+        )
 
     def asc(self) -> SortExpression:
         return self._return_expression("asc")
@@ -249,7 +255,7 @@ class Paginator:
                 [
                     {"page": i}
                     for i in range(
-                        self.start_page,
+                        self.start_page + 1,
                         math.ceil((total_count - results_count) / self.page_size) + 1,
                     )
                 ],
