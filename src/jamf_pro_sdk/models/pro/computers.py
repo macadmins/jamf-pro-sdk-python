@@ -2,7 +2,7 @@ from datetime import date, datetime  # date in models: 2019-01-01
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import Extra, Field
+from pydantic import ConfigDict, Field
 
 from .. import BaseModel
 from . import V1Site
@@ -23,67 +23,77 @@ class ComputerExtensionAttributeInputType(Enum):
     LDAP: str = "LDAP"
 
 
-class ComputerExtensionAttribute(BaseModel, extra=Extra.allow):
-    definitionId: Optional[str]
-    name: Optional[str]
-    description: Optional[str]
-    enabled: Optional[bool]
-    multiValue: Optional[bool]
-    values: Optional[List[str]]
-    dataType: Optional[ComputerExtensionAttributeDataType]
-    options: Optional[List[str]]
-    inputType: Optional[ComputerExtensionAttributeInputType]
+class ComputerExtensionAttribute(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    definitionId: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    enabled: Optional[bool] = None
+    multiValue: Optional[bool] = None
+    values: Optional[List[str]] = None
+    dataType: Optional[ComputerExtensionAttributeDataType] = None
+    options: Optional[List[str]] = None
+    inputType: Optional[ComputerExtensionAttributeInputType] = None
 
 
 # Computer General Models
 
 
-class ComputerRemoteManagement(BaseModel, extra=Extra.allow):
-    managed: Optional[bool]
-    managementUsername: Optional[str]
-    managementPassword: Optional[str]
+class ComputerRemoteManagement(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    managed: Optional[bool] = None
+    managementUsername: Optional[str] = None
+    managementPassword: Optional[str] = None
 
 
-class ComputerMdmCapability(BaseModel, extra=Extra.allow):
-    capable: Optional[bool]
-    capableUsers: Optional[List[str]]
+class ComputerMdmCapability(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    capable: Optional[bool] = None
+    capableUsers: Optional[List[str]] = None
 
 
-class EnrollmentMethod(BaseModel, extra=Extra.allow):
-    id: Optional[str]
-    objectName: Optional[str]
-    objectType: Optional[str]
+class EnrollmentMethod(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    objectName: Optional[str] = None
+    objectType: Optional[str] = None
 
 
-class ComputerGeneral(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    lastIpAddress: Optional[str]
-    lastReportedIp: Optional[str]
-    jamfBinaryVersion: Optional[str]
-    platform: Optional[str]
-    barcode1: Optional[str]
-    barcode2: Optional[str]
-    assetTag: Optional[str]
+class ComputerGeneral(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    lastIpAddress: Optional[str] = None
+    lastReportedIp: Optional[str] = None
+    jamfBinaryVersion: Optional[str] = None
+    platform: Optional[str] = None
+    barcode1: Optional[str] = None
+    barcode2: Optional[str] = None
+    assetTag: Optional[str] = None
     remoteManagement: Optional[ComputerRemoteManagement] = Field(
         default_factory=ComputerRemoteManagement
     )
-    supervised: Optional[bool]
-    mdmCapable: Optional[ComputerMdmCapability]
-    reportDate: Optional[datetime]
-    lastContactTime: Optional[datetime]
-    lastCloudBackupDate: Optional[datetime]
-    lastEnrolledDate: Optional[datetime]
-    mdmProfileExpiration: Optional[datetime]
-    initialEntryDate: Optional[date]  # 2018-10-31
-    distributionPoint: Optional[str]
-    enrollmentMethod: Optional[EnrollmentMethod]
+    supervised: Optional[bool] = None
+    mdmCapable: Optional[ComputerMdmCapability] = None
+    reportDate: Optional[datetime] = None
+    lastContactTime: Optional[datetime] = None
+    lastCloudBackupDate: Optional[datetime] = None
+    lastEnrolledDate: Optional[datetime] = None
+    mdmProfileExpiration: Optional[datetime] = None
+    initialEntryDate: Optional[date] = None  # 2018-10-31
+    distributionPoint: Optional[str] = None
+    enrollmentMethod: Optional[EnrollmentMethod] = None
     site: Optional[V1Site] = Field(default_factory=V1Site)
-    itunesStoreAccountActive: Optional[bool]
-    enrolledViaAutomatedDeviceEnrollment: Optional[bool]
-    userApprovedMdm: Optional[bool]
-    declarativeDeviceManagementEnabled: Optional[bool]
-    extensionAttributes: Optional[List[ComputerExtensionAttribute]]
-    managementId: Optional[str]
+    itunesStoreAccountActive: Optional[bool] = None
+    enrolledViaAutomatedDeviceEnrollment: Optional[bool] = None
+    userApprovedMdm: Optional[bool] = None
+    declarativeDeviceManagementEnabled: Optional[bool] = None
+    extensionAttributes: Optional[List[ComputerExtensionAttribute]] = None
+    managementId: Optional[str] = None
 
 
 # Computer Disk Encryption Models
@@ -110,52 +120,62 @@ class IndividualRecoveryKeyValidityStatus(str, Enum):
     NOT_APPLICABLE: str = "NOT_APPLICABLE"
 
 
-class ComputerPartitionEncryption(BaseModel, extra=Extra.allow):
-    partitionName: Optional[str]
-    partitionFileVault2State: Optional[ComputerPartitionFileVault2State]
-    partitionFileVault2Percent: Optional[int]
+class ComputerPartitionEncryption(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    partitionName: Optional[str] = None
+    partitionFileVault2State: Optional[ComputerPartitionFileVault2State] = None
+    partitionFileVault2Percent: Optional[int] = None
 
 
-class ComputerDiskEncryption(BaseModel, extra=Extra.allow):
-    bootPartitionEncryptionDetails: Optional[ComputerPartitionEncryption]
-    individualRecoveryKeyValidityStatus: Optional[IndividualRecoveryKeyValidityStatus]
-    institutionalRecoveryKeyPresent: Optional[bool]
-    diskEncryptionConfigurationName: Optional[str]
-    fileVault2EnabledUserNames: Optional[List[str]]
-    fileVault2EligibilityMessage: Optional[str]
+class ComputerDiskEncryption(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    bootPartitionEncryptionDetails: Optional[ComputerPartitionEncryption] = None
+    individualRecoveryKeyValidityStatus: Optional[
+        IndividualRecoveryKeyValidityStatus
+    ] = None
+    institutionalRecoveryKeyPresent: Optional[bool] = None
+    diskEncryptionConfigurationName: Optional[str] = None
+    fileVault2EnabledUserNames: Optional[List[str]] = None
+    fileVault2EligibilityMessage: Optional[str] = None
 
 
 # Computer Purchase Model
 
 
-class ComputerPurchase(BaseModel, extra=Extra.allow):
-    leased: Optional[bool]
-    purchased: Optional[bool]
-    poNumber: Optional[str]
-    poDate: Optional[date]
-    vendor: Optional[str]
-    warrantyDate: Optional[date]
-    appleCareId: Optional[str]
-    leaseDate: Optional[date]
-    purchasePrice: Optional[str]
-    lifeExpectancy: Optional[int]
-    purchasingAccount: Optional[str]
-    purchasingContact: Optional[str]
-    extensionAttributes: Optional[List[ComputerExtensionAttribute]]
+class ComputerPurchase(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    leased: Optional[bool] = None
+    purchased: Optional[bool] = None
+    poNumber: Optional[str] = None
+    poDate: Optional[date] = None
+    vendor: Optional[str] = None
+    warrantyDate: Optional[date] = None
+    appleCareId: Optional[str] = None
+    leaseDate: Optional[date] = None
+    purchasePrice: Optional[str] = None
+    lifeExpectancy: Optional[int] = None
+    purchasingAccount: Optional[str] = None
+    purchasingContact: Optional[str] = None
+    extensionAttributes: Optional[List[ComputerExtensionAttribute]] = None
 
 
 # Computer Application Model
 
 
-class ComputerApplication(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    path: Optional[str]
-    version: Optional[str]
-    macAppStore: Optional[bool]
-    sizeMegabytes: Optional[int]
-    bundleId: Optional[str]
-    updateAvailable: Optional[bool]
-    externalVersionId: Optional[str]
+class ComputerApplication(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    path: Optional[str] = None
+    version: Optional[str] = None
+    macAppStore: Optional[bool] = None
+    sizeMegabytes: Optional[int] = None
+    bundleId: Optional[str] = None
+    updateAvailable: Optional[bool] = None
+    externalVersionId: Optional[str] = None
 
 
 # Computer Storage Models
@@ -167,108 +187,124 @@ class PartitionType(str, Enum):
     OTHER: str = "OTHER"
 
 
-class ComputerPartition(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    sizeMegabytes: Optional[int]
-    availableMegabytes: Optional[int]
-    partitionType: Optional[PartitionType]
-    percentUsed: Optional[int]
-    fileVault2State: Optional[ComputerPartitionFileVault2State]
-    fileVault2ProgressPercent: Optional[int]
-    lvmManaged: Optional[bool]
+class ComputerPartition(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    sizeMegabytes: Optional[int] = None
+    availableMegabytes: Optional[int] = None
+    partitionType: Optional[PartitionType] = None
+    percentUsed: Optional[int] = None
+    fileVault2State: Optional[ComputerPartitionFileVault2State] = None
+    fileVault2ProgressPercent: Optional[int] = None
+    lvmManaged: Optional[bool] = None
 
 
-class ComputerDisk(BaseModel, extra=Extra.allow):
-    id: Optional[str]
-    device: Optional[str]
-    model: Optional[str]
-    revision: Optional[str]
-    serialNumber: Optional[str]
-    sizeMegabytes: Optional[int]
-    smartStatus: Optional[str]
-    type: Optional[str]
+class ComputerDisk(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    device: Optional[str] = None
+    model: Optional[str] = None
+    revision: Optional[str] = None
+    serialNumber: Optional[str] = None
+    sizeMegabytes: Optional[int] = None
+    smartStatus: Optional[str] = None
+    type: Optional[str] = None
     partitions: Optional[List[ComputerPartition]] = None
 
 
-class ComputerStorage(BaseModel, extra=Extra.allow):
-    bootDriveAvailableSpaceMegabytes: Optional[int]
-    disks: Optional[List[ComputerDisk]]
+class ComputerStorage(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    bootDriveAvailableSpaceMegabytes: Optional[int] = None
+    disks: Optional[List[ComputerDisk]] = None
 
 
 # Computer User and Location Model
 
 
-class ComputerUserAndLocation(BaseModel, extra=Extra.allow):
-    username: Optional[str]
-    realname: Optional[str]
-    email: Optional[str]
-    position: Optional[str]
-    phone: Optional[str]
-    departmentId: Optional[str]
-    buildingId: Optional[str]
-    room: Optional[str]
-    extensionAttributes: Optional[List[ComputerExtensionAttribute]]
+class ComputerUserAndLocation(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    username: Optional[str] = None
+    realname: Optional[str] = None
+    email: Optional[str] = None
+    position: Optional[str] = None
+    phone: Optional[str] = None
+    departmentId: Optional[str] = None
+    buildingId: Optional[str] = None
+    room: Optional[str] = None
+    extensionAttributes: Optional[List[ComputerExtensionAttribute]] = None
 
 
 # Computer Configuration Profile Model
 
 
-class ComputerConfigurationProfile(BaseModel, extra=Extra.allow):
-    id: Optional[str]
-    username: Optional[str]
-    lastInstalled: Optional[datetime]
-    removable: Optional[bool]
-    displayName: Optional[str]
-    profileIdentifier: Optional[str]
+class ComputerConfigurationProfile(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    username: Optional[str] = None
+    lastInstalled: Optional[datetime] = None
+    removable: Optional[bool] = None
+    displayName: Optional[str] = None
+    profileIdentifier: Optional[str] = None
 
 
 # Computer Printer Model
 
 
-class ComputerPrinter(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    type: Optional[str]
-    uri: Optional[str]
-    location: Optional[str]
+class ComputerPrinter(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    type: Optional[str] = None
+    uri: Optional[str] = None
+    location: Optional[str] = None
 
 
 # Computer Service Model
 
 
-class ComputerService(BaseModel, extra=Extra.allow):
-    name: Optional[str]
+class ComputerService(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
 
 
 # Computer Hardware Models
 
 
-class ComputerHardware(BaseModel, extra=Extra.allow):
-    make: Optional[str]
-    model: Optional[str]
-    modelIdentifier: Optional[str]
-    serialNumber: Optional[str]
-    processorSpeedMhz: Optional[int]
-    processorCount: Optional[int]
-    coreCount: Optional[int]
-    processorType: Optional[str]
-    processorArchitecture: Optional[str]
-    busSpeedMhz: Optional[int]
-    cacheSizeKilobytes: Optional[int]
-    networkAdapterType: Optional[str]
-    macAddress: Optional[str]
-    altNetworkAdapterType: Optional[str]
-    altMacAddress: Optional[str]
-    totalRamMegabytes: Optional[int]
-    openRamSlots: Optional[int]
-    batteryCapacityPercent: Optional[int]
-    smcVersion: Optional[str]
-    nicSpeed: Optional[str]
-    opticalDrive: Optional[str]
-    bootRom: Optional[str]
-    bleCapable: Optional[bool]
-    supportsIosAppInstalls: Optional[bool]
-    appleSilicon: Optional[bool]
-    extensionAttributes: Optional[List[ComputerExtensionAttribute]]
+class ComputerHardware(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    make: Optional[str] = None
+    model: Optional[str] = None
+    modelIdentifier: Optional[str] = None
+    serialNumber: Optional[str] = None
+    processorSpeedMhz: Optional[int] = None
+    processorCount: Optional[int] = None
+    coreCount: Optional[int] = None
+    processorType: Optional[str] = None
+    processorArchitecture: Optional[str] = None
+    busSpeedMhz: Optional[int] = None
+    cacheSizeKilobytes: Optional[int] = None
+    networkAdapterType: Optional[str] = None
+    macAddress: Optional[str] = None
+    altNetworkAdapterType: Optional[str] = None
+    altMacAddress: Optional[str] = None
+    totalRamMegabytes: Optional[int] = None
+    openRamSlots: Optional[int] = None
+    batteryCapacityPercent: Optional[int] = None
+    smcVersion: Optional[str] = None
+    nicSpeed: Optional[str] = None
+    opticalDrive: Optional[str] = None
+    bootRom: Optional[str] = None
+    bleCapable: Optional[bool] = None
+    supportsIosAppInstalls: Optional[bool] = None
+    appleSilicon: Optional[bool] = None
+    extensionAttributes: Optional[List[ComputerExtensionAttribute]] = None
 
 
 # Computer Local User Account Models
@@ -287,23 +323,25 @@ class AzureActiveDirectoryId(str, Enum):
     UNKNOWN: str = "UNKNOWN"
 
 
-class ComputerLocalUserAccount(BaseModel, extra=Extra.allow):
-    uid: Optional[str]
-    username: Optional[str]
-    fullName: Optional[str]
-    admin: Optional[bool]
-    homeDirectory: Optional[str]
-    homeDirectorySizeMb: Optional[int]
-    fileVault2Enabled: Optional[bool]
-    userAccountType: Optional[UserAccountType]
-    passwordMinLength: Optional[int]
-    passwordMaxAge: Optional[int]
-    passwordMinComplexCharacters: Optional[int]
-    passwordHistoryDepth: Optional[int]
-    passwordRequireAlphanumeric: Optional[bool]
-    computerAzureActiveDirectoryId: Optional[str]
-    userAzureActiveDirectoryId: Optional[str]
-    azureActiveDirectoryId: Optional[AzureActiveDirectoryId]
+class ComputerLocalUserAccount(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    uid: Optional[str] = None
+    username: Optional[str] = None
+    fullName: Optional[str] = None
+    admin: Optional[bool] = None
+    homeDirectory: Optional[str] = None
+    homeDirectorySizeMb: Optional[int] = None
+    fileVault2Enabled: Optional[bool] = None
+    userAccountType: Optional[UserAccountType] = None
+    passwordMinLength: Optional[int] = None
+    passwordMaxAge: Optional[int] = None
+    passwordMinComplexCharacters: Optional[int] = None
+    passwordHistoryDepth: Optional[int] = None
+    passwordRequireAlphanumeric: Optional[bool] = None
+    computerAzureActiveDirectoryId: Optional[str] = None
+    userAzureActiveDirectoryId: Optional[str] = None
+    azureActiveDirectoryId: Optional[AzureActiveDirectoryId] = None
 
 
 # Computer Certificate Models
@@ -322,54 +360,64 @@ class CertificateStatus(str, Enum):
     ISSUED: str = "ISSUED"
 
 
-class ComputerCertificate(BaseModel, extra=Extra.allow):
-    commonName: Optional[str]
-    identity: Optional[bool]
-    expirationDate: Optional[datetime]
-    username: Optional[str]
-    lifecycleStatus: Optional[LifecycleStatus]
-    certificateStatus: Optional[CertificateStatus]
-    subjectName: Optional[str]
-    serialNumber: Optional[str]
-    sha1Fingerprint: Optional[str]
-    issuedDate: Optional[str]
+class ComputerCertificate(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    commonName: Optional[str] = None
+    identity: Optional[bool] = None
+    expirationDate: Optional[datetime] = None
+    username: Optional[str] = None
+    lifecycleStatus: Optional[LifecycleStatus] = None
+    certificateStatus: Optional[CertificateStatus] = None
+    subjectName: Optional[str] = None
+    serialNumber: Optional[str] = None
+    sha1Fingerprint: Optional[str] = None
+    issuedDate: Optional[str] = None
 
 
 # Computer Attachment Model
 
 
-class ComputerAttachment(BaseModel, extra=Extra.allow):
-    id: Optional[str]
-    name: Optional[str]
-    fileType: Optional[str]
-    sizeBytes: Optional[int]
+class ComputerAttachment(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    name: Optional[str] = None
+    fileType: Optional[str] = None
+    sizeBytes: Optional[int] = None
 
 
 # Computer Plugin Model
 
 
-class ComputerPlugin(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    version: Optional[str]
-    path: Optional[str]
+class ComputerPlugin(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    version: Optional[str] = None
+    path: Optional[str] = None
 
 
 # Computer Package Receipt Model
 
 
-class ComputerPackageReceipts(BaseModel, extra=Extra.allow):
-    installedByJamfPro: Optional[List[str]]
-    installedByInstallerSwu: Optional[List[str]]
-    cached: Optional[List[str]]
+class ComputerPackageReceipts(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    installedByJamfPro: Optional[List[str]] = None
+    installedByInstallerSwu: Optional[List[str]] = None
+    cached: Optional[List[str]] = None
 
 
 # Computer Font Model
 
 
-class ComputerFont(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    version: Optional[str]
-    path: Optional[str]
+class ComputerFont(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    version: Optional[str] = None
+    path: Optional[str] = None
 
 
 # Computer Security Models
@@ -404,18 +452,20 @@ class ExternalBootLevel(str, Enum):
     UNKNOWN: str = "UNKNOWN"
 
 
-class ComputerSecurity(BaseModel, extra=Extra.allow):
-    sipStatus: Optional[SipStatus]
-    gatekeeperStatus: Optional[GatekeeperStatus]
-    xprotectVersion: Optional[str]
-    autoLoginDisabled: Optional[bool]
-    remoteDesktopEnabled: Optional[bool]
-    activationLockEnabled: Optional[bool]
-    recoveryLockEnabled: Optional[bool]
-    firewallEnabled: Optional[bool]
-    secureBootLevel: Optional[SecureBootLevel]
-    externalBootLevel: Optional[ExternalBootLevel]
-    bootstrapTokenAllowed: Optional[bool]
+class ComputerSecurity(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    sipStatus: Optional[SipStatus] = None
+    gatekeeperStatus: Optional[GatekeeperStatus] = None
+    xprotectVersion: Optional[str] = None
+    autoLoginDisabled: Optional[bool] = None
+    remoteDesktopEnabled: Optional[bool] = None
+    activationLockEnabled: Optional[bool] = None
+    recoveryLockEnabled: Optional[bool] = None
+    firewallEnabled: Optional[bool] = None
+    secureBootLevel: Optional[SecureBootLevel] = None
+    externalBootLevel: Optional[ExternalBootLevel] = None
+    bootstrapTokenAllowed: Optional[bool] = None
 
 
 # Computer Operating System Models
@@ -429,110 +479,136 @@ class FileVault2Status(str, Enum):
     ALL_ENCRYPTED: str = "ALL_ENCRYPTED"
 
 
-class ComputerOperatingSystem(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    version: Optional[str]
-    build: Optional[str]
-    activeDirectoryStatus: Optional[str]
-    fileVault2Status: Optional[FileVault2Status]
-    softwareUpdateDeviceId: Optional[str]
-    extensionAttributes: Optional[List[ComputerExtensionAttribute]]
+class ComputerOperatingSystem(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    version: Optional[str] = None
+    build: Optional[str] = None
+    activeDirectoryStatus: Optional[str] = None
+    fileVault2Status: Optional[FileVault2Status] = None
+    softwareUpdateDeviceId: Optional[str] = None
+    extensionAttributes: Optional[List[ComputerExtensionAttribute]] = None
 
 
 # Computer Licensed Software Model
 
 
-class ComputerLicensedSoftware(BaseModel, extra=Extra.allow):
-    id: Optional[str]
-    name: Optional[str]
+class ComputerLicensedSoftware(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    name: Optional[str] = None
 
 
 # Computer iBeacon Model
 
 
-class ComputeriBeacon(BaseModel, extra=Extra.allow):
-    name: Optional[str]
+class ComputeriBeacon(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
 
 
 # Computer Software Update Model
 
 
-class ComputerSoftwareUpdate(BaseModel, extra=Extra.allow):
-    name: Optional[str]
-    version: Optional[str]
-    packageName: Optional[str]
+class ComputerSoftwareUpdate(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    version: Optional[str] = None
+    packageName: Optional[str] = None
 
 
 # Computer Content Caching Models
 
 
-class ComputerContentCachingParentAlert(BaseModel, extra=Extra.allow):
-    contentCachingParentAlertId: Optional[str]
-    addresses: Optional[List[str]]
-    className: Optional[str]
-    postDate: Optional[datetime]
+class ComputerContentCachingParentAlert(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    contentCachingParentAlertId: Optional[str] = None
+    addresses: Optional[List[str]] = None
+    className: Optional[str] = None
+    postDate: Optional[datetime] = None
 
 
-class ComputerContentCachingParentCapabilities(BaseModel, extra=Extra.allow):
-    contentCachingParentCapabilitiesId: Optional[str]
-    imports: Optional[bool]
-    namespaces: Optional[bool]
-    personalContent: Optional[bool]
-    queryParameters: Optional[bool]
-    sharedContent: Optional[bool]
-    prioritization: Optional[bool]
+class ComputerContentCachingParentCapabilities(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    contentCachingParentCapabilitiesId: Optional[str] = None
+    imports: Optional[bool] = None
+    namespaces: Optional[bool] = None
+    personalContent: Optional[bool] = None
+    queryParameters: Optional[bool] = None
+    sharedContent: Optional[bool] = None
+    prioritization: Optional[bool] = None
 
 
-class ComputerContentCachingParentLocalNetwork(BaseModel, extra=Extra.allow):
-    contentCachingParentLocalNetworkId: Optional[str]
-    speed: Optional[int]
-    wired: Optional[bool]
+class ComputerContentCachingParentLocalNetwork(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    contentCachingParentLocalNetworkId: Optional[str] = None
+    speed: Optional[int] = None
+    wired: Optional[bool] = None
 
 
-class ComputerContentCachingParentDetails(BaseModel, extra=Extra.allow):
-    contentCachingParentDetailsId: Optional[str]
-    acPower: Optional[bool]
-    cacheSizeBytes: Optional[int]
-    capabilities: Optional[ComputerContentCachingParentCapabilities]
-    portable: Optional[bool]
-    localNetwork: Optional[List[ComputerContentCachingParentLocalNetwork]]
+class ComputerContentCachingParentDetails(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    contentCachingParentDetailsId: Optional[str] = None
+    acPower: Optional[bool] = None
+    cacheSizeBytes: Optional[int] = None
+    capabilities: Optional[ComputerContentCachingParentCapabilities] = None
+    portable: Optional[bool] = None
+    localNetwork: Optional[List[ComputerContentCachingParentLocalNetwork]] = None
 
 
-class ComputerContentCachingParent(BaseModel, extra=Extra.allow):
-    contentCachingParentId: Optional[str]
-    address: Optional[str]
-    alerts: Optional[ComputerContentCachingParentAlert]
-    details: Optional[ComputerContentCachingParentDetails]
-    guid: Optional[str]
-    healthy: Optional[bool]
-    port: Optional[int]
-    version: Optional[str]
+class ComputerContentCachingParent(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    contentCachingParentId: Optional[str] = None
+    address: Optional[str] = None
+    alerts: Optional[ComputerContentCachingParentAlert] = None
+    details: Optional[ComputerContentCachingParentDetails] = None
+    guid: Optional[str] = None
+    healthy: Optional[bool] = None
+    port: Optional[int] = None
+    version: Optional[str] = None
 
 
-class ComputerContentCachingAlert(BaseModel, extra=Extra.allow):
-    cacheBytesLimit: Optional[int]
-    className: Optional[str]
-    pathPreventingAccess: Optional[str]
-    postDate: Optional[datetime]
-    reservedVolumeBytes: Optional[int]
-    resource: Optional[str]
+class ComputerContentCachingAlert(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    cacheBytesLimit: Optional[int] = None
+    className: Optional[str] = None
+    pathPreventingAccess: Optional[str] = None
+    postDate: Optional[datetime] = None
+    reservedVolumeBytes: Optional[int] = None
+    resource: Optional[str] = None
 
 
-class ComputerContentCachingCacheDetail(BaseModel, extra=Extra.allow):
-    computerContentCachingCacheDetailsId: Optional[str]
-    categoryName: Optional[str]
-    diskSpaceBytesUsed: Optional[int]
+class ComputerContentCachingCacheDetail(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    computerContentCachingCacheDetailsId: Optional[str] = None
+    categoryName: Optional[str] = None
+    diskSpaceBytesUsed: Optional[int] = None
 
 
-class ComputerContentCachingDataMigrationErrorUserInfo(BaseModel, extra=Extra.allow):
-    key: Optional[str]
-    value: Optional[str]
+class ComputerContentCachingDataMigrationErrorUserInfo(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    key: Optional[str] = None
+    value: Optional[str] = None
 
 
-class ComputerContentCachingDataMigrationError(BaseModel, extra=Extra.allow):
-    code: Optional[int]
-    domain: Optional[str]
-    userInfo: Optional[List[ComputerContentCachingDataMigrationErrorUserInfo]]
+class ComputerContentCachingDataMigrationError(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    code: Optional[int] = None
+    domain: Optional[str] = None
+    userInfo: Optional[List[ComputerContentCachingDataMigrationErrorUserInfo]] = None
 
 
 class ComputerContentCachingRegistrationStatus(str, Enum):
@@ -547,86 +623,92 @@ class ComputerContentCachingTetheratorStatus(str, Enum):
     CONTENT_CACHING_ENABLED: str = "CONTENT_CACHING_ENABLED"
 
 
-class ComputerContentCaching(BaseModel, extra=Extra.allow):
-    computerContentCachingInformationId: Optional[str]
-    parents: Optional[List[ComputerContentCachingParent]]
-    alerts: Optional[List[ComputerContentCachingAlert]]
-    activated: Optional[bool]
-    active: Optional[bool]
-    actualCacheBytesUsed: Optional[int]
-    cacheDetails: Optional[List[ComputerContentCachingCacheDetail]]
-    cacheBytesFree: Optional[int]
-    cacheBytesLimit: Optional[int]
-    cacheStatus: Optional[str]
-    cacheBytesUsed: Optional[int]
-    dataMigrationCompleted: Optional[bool]
-    dataMigrationProgressPercentage: Optional[int]
-    dataMigrationError: Optional[ComputerContentCachingDataMigrationError]
-    maxCachePressureLast1HourPercentage: Optional[int]
-    personalCacheBytesFree: Optional[int]
-    personalCacheBytesLimit: Optional[int]
-    personalCacheBytesUsed: Optional[int]
-    port: Optional[int]
-    publicAddress: Optional[str]
-    registrationError: Optional[str]
-    registrationResponseCode: Optional[int]
-    registrationStarted: Optional[datetime]
-    registrationStatus: Optional[ComputerContentCachingRegistrationStatus]
-    restrictedMedia: Optional[bool]
-    serverGuid: Optional[str]
-    startupStatus: Optional[str]
-    tetheratorStatus: Optional[ComputerContentCachingTetheratorStatus]
-    totalBytesAreSince: Optional[datetime]
-    totalBytesDropped: Optional[int]
-    totalBytesImported: Optional[int]
-    totalBytesReturnedToChildren: Optional[int]
-    totalBytesReturnedToClients: Optional[int]
-    totalBytesReturnedToPeers: Optional[int]
-    totalBytesStoredFromOrigin: Optional[int]
-    totalBytesStoredFromParents: Optional[int]
-    totalBytesStoredFromPeers: Optional[int]
+class ComputerContentCaching(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    computerContentCachingInformationId: Optional[str] = None
+    parents: Optional[List[ComputerContentCachingParent]] = None
+    alerts: Optional[List[ComputerContentCachingAlert]] = None
+    activated: Optional[bool] = None
+    active: Optional[bool] = None
+    actualCacheBytesUsed: Optional[int] = None
+    cacheDetails: Optional[List[ComputerContentCachingCacheDetail]] = None
+    cacheBytesFree: Optional[int] = None
+    cacheBytesLimit: Optional[int] = None
+    cacheStatus: Optional[str] = None
+    cacheBytesUsed: Optional[int] = None
+    dataMigrationCompleted: Optional[bool] = None
+    dataMigrationProgressPercentage: Optional[int] = None
+    dataMigrationError: Optional[ComputerContentCachingDataMigrationError] = None
+    maxCachePressureLast1HourPercentage: Optional[int] = None
+    personalCacheBytesFree: Optional[int] = None
+    personalCacheBytesLimit: Optional[int] = None
+    personalCacheBytesUsed: Optional[int] = None
+    port: Optional[int] = None
+    publicAddress: Optional[str] = None
+    registrationError: Optional[str] = None
+    registrationResponseCode: Optional[int] = None
+    registrationStarted: Optional[datetime] = None
+    registrationStatus: Optional[ComputerContentCachingRegistrationStatus] = None
+    restrictedMedia: Optional[bool] = None
+    serverGuid: Optional[str] = None
+    startupStatus: Optional[str] = None
+    tetheratorStatus: Optional[ComputerContentCachingTetheratorStatus] = None
+    totalBytesAreSince: Optional[datetime] = None
+    totalBytesDropped: Optional[int] = None
+    totalBytesImported: Optional[int] = None
+    totalBytesReturnedToChildren: Optional[int] = None
+    totalBytesReturnedToClients: Optional[int] = None
+    totalBytesReturnedToPeers: Optional[int] = None
+    totalBytesStoredFromOrigin: Optional[int] = None
+    totalBytesStoredFromParents: Optional[int] = None
+    totalBytesStoredFromPeers: Optional[int] = None
 
 
 # Computer Group Membership Model
 
 
-class ComputerGroupMembership(BaseModel, extra=Extra.allow):
-    groupId: Optional[str]
-    groupName: Optional[str]
-    smartGroup: Optional[bool]
+class ComputerGroupMembership(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    groupId: Optional[str] = None
+    groupName: Optional[str] = None
+    smartGroup: Optional[bool] = None
 
 
 # Computer Inventory Model
 
 
-class Computer(BaseModel, extra=Extra.allow):
+class Computer(BaseModel):
     """Represents a full computer inventory record."""
 
-    id: Optional[str]
-    udid: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    udid: Optional[str] = None
     general: Optional[ComputerGeneral] = Field(default_factory=ComputerGeneral)
-    diskEncryption: Optional[ComputerDiskEncryption]
-    purchasing: Optional[ComputerPurchase]
-    applications: Optional[List[ComputerApplication]]
-    storage: Optional[ComputerStorage]
+    diskEncryption: Optional[ComputerDiskEncryption] = None
+    purchasing: Optional[ComputerPurchase] = None
+    applications: Optional[List[ComputerApplication]] = None
+    storage: Optional[ComputerStorage] = None
     userAndLocation: Optional[ComputerUserAndLocation] = Field(
         default_factory=ComputerUserAndLocation
     )
-    configurationProfiles: Optional[List[ComputerConfigurationProfile]]
-    printers: Optional[List[ComputerPrinter]]
-    services: Optional[List[ComputerService]]
-    hardware: Optional[ComputerHardware]
-    localUserAccounts: Optional[List[ComputerLocalUserAccount]]
-    certificates: Optional[List[ComputerCertificate]]
-    attachments: Optional[List[ComputerAttachment]]
-    plugins: Optional[List[ComputerPlugin]]
-    packageReceipts: Optional[ComputerPackageReceipts]
-    fonts: Optional[List[ComputerFont]]
-    security: Optional[ComputerSecurity]
-    operatingSystem: Optional[ComputerOperatingSystem]
-    licensedSoftware: Optional[List[ComputerLicensedSoftware]]
-    ibeacons: Optional[List[ComputeriBeacon]]
-    softwareUpdates: Optional[List[ComputerSoftwareUpdate]]
-    extensionAttributes: Optional[List[ComputerExtensionAttribute]]
-    contentCaching: Optional[ComputerContentCaching]
-    groupMemberships: Optional[List[ComputerGroupMembership]]
+    configurationProfiles: Optional[List[ComputerConfigurationProfile]] = None
+    printers: Optional[List[ComputerPrinter]] = None
+    services: Optional[List[ComputerService]] = None
+    hardware: Optional[ComputerHardware] = None
+    localUserAccounts: Optional[List[ComputerLocalUserAccount]] = None
+    certificates: Optional[List[ComputerCertificate]] = None
+    attachments: Optional[List[ComputerAttachment]] = None
+    plugins: Optional[List[ComputerPlugin]] = None
+    packageReceipts: Optional[ComputerPackageReceipts] = None
+    fonts: Optional[List[ComputerFont]] = None
+    security: Optional[ComputerSecurity] = None
+    operatingSystem: Optional[ComputerOperatingSystem] = None
+    licensedSoftware: Optional[List[ComputerLicensedSoftware]] = None
+    ibeacons: Optional[List[ComputeriBeacon]] = None
+    softwareUpdates: Optional[List[ComputerSoftwareUpdate]] = None
+    extensionAttributes: Optional[List[ComputerExtensionAttribute]] = None
+    contentCaching: Optional[ComputerContentCaching] = None
+    groupMemberships: Optional[List[ComputerGroupMembership]] = None
