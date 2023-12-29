@@ -97,9 +97,7 @@ class ClassicComputerGeneral(BaseModel):
     remote_management: Optional[ClassicComputerGeneralRemoteManagement] = None
     supervised: Optional[bool] = None
     mdm_capable: Optional[bool] = None
-    mdm_capable_users: Optional[
-        Union[dict, ClassicComputerGeneralMdmCapableUsers]
-    ] = None
+    mdm_capable_users: Optional[Union[dict, ClassicComputerGeneralMdmCapableUsers]] = None
     management_status: Optional[ClassicComputerGeneralManagementStatus] = None
     report_date: Optional[str] = None
     report_date_epoch: Optional[int] = None
@@ -447,12 +445,8 @@ class ClassicComputer(ClassicApiModel):
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
     _xml_write_fields = {"general", "location", "extension_attributes"}
 
-    general: Optional[ClassicComputerGeneral] = Field(
-        default_factory=ClassicComputerGeneral
-    )
-    location: Optional[ClassicDeviceLocation] = Field(
-        default_factory=ClassicDeviceLocation
-    )
+    general: Optional[ClassicComputerGeneral] = Field(default_factory=ClassicComputerGeneral)
+    location: Optional[ClassicDeviceLocation] = Field(default_factory=ClassicDeviceLocation)
     purchasing: Optional[ClassicDevicePurchasing] = None
     # Peripherals are a deprecated feature of Jamf Pro
     peripherals: Optional[Any] = None

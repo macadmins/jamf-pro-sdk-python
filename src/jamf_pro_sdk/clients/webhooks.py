@@ -55,7 +55,7 @@ class WebhooksClient:
             yield generator.build()
 
     def send_webhook(self, webhook: webhooks.WebhookModel) -> requests.Response:
-        """Send a single webhook in a HTTP POST request to the configured URL.
+        """Send a single webhook in an HTTP POST request to the configured URL.
 
         :param webhook: The webhook object that will be serialized to JSON.
         :type webhook: ~webhooks.WebhookModel
@@ -64,7 +64,7 @@ class WebhooksClient:
         :rtype: requests.Response
         """
         response = self.session.post(
-            self.url, headers={"Content-Type": "application/json"}, data=webhook.json()
+            self.url, headers={"Content-Type": "application/json"}, data=webhook.model_dump_json()
         )
         return response
 
@@ -141,24 +141,24 @@ def _load_webhook_generators():
         if not inspect.isclass(cls) or not issubclass(cls, webhooks.WebhookModel):
             continue
 
-        attrs = {"__set_as_default_factory_for_type__": True, "__faker__": Faker()}
+        attrs: dict = {"__set_as_default_factory_for_type__": True, "__faker__": Faker()}
 
         if issubclass(cls, webhooks.WebhookData):
             attrs["eventTimestamp"] = Use(epoch)
 
         elif issubclass(cls, webhooks.WebhookModel):
-            if "macAddress" in cls.__fields__:
+            if "macAddress" in cls.model_fields:
                 attrs["macAddress"] = attrs["__faker__"].mac_address
-            if "alternateMacAddress" in cls.__fields__:
+            if "alternateMacAddress" in cls.model_fields:
                 attrs["alternateMacAddress"] = attrs["__faker__"].mac_address
-            if "wifiMacAddress" in cls.__fields__:
+            if "wifiMacAddress" in cls.model_fields:
                 attrs["wifiMacAddress"] = attrs["__faker__"].mac_address
-            if "bluetoothMacAddress" in cls.__fields__:
+            if "bluetoothMacAddress" in cls.model_fields:
                 attrs["bluetoothMacAddress"] = attrs["__faker__"].mac_address
 
-            if "udid" in cls.__fields__:
+            if "udid" in cls.model_fields:
                 attrs["udid"] = Use(udid)
-            if "serialNumber" in cls.__fields__:
+            if "serialNumber" in cls.model_fields:
                 attrs["serialNumber"] = Use(serial_number)
 
             # TODO: Fields that are specific to iOS/iPadOS devices
@@ -167,13 +167,13 @@ def _load_webhook_generators():
             # if "imei" in cls.__fields__:
             #     kwargs["imei"] = Use(imei)
 
-            if "realName" in cls.__fields__:
+            if "realName" in cls.model_fields:
                 attrs["realName"] = attrs["__faker__"].name
-            if "username" in cls.__fields__:
+            if "username" in cls.model_fields:
                 attrs["username"] = attrs["__faker__"].user_name
-            if "emailAddress" in cls.__fields__:
+            if "emailAddress" in cls.model_fields:
                 attrs["emailAddress"] = attrs["__faker__"].ascii_safe_email
-            if "phone" in cls.__fields__:
+            if "phone" in cls.model_fields:
                 attrs["phone"] = attrs["__faker__"].phone_number
 
         w = get_webhook_generator(cls, **attrs)

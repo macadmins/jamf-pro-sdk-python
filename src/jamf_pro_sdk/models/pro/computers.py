@@ -132,9 +132,7 @@ class ComputerDiskEncryption(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     bootPartitionEncryptionDetails: Optional[ComputerPartitionEncryption] = None
-    individualRecoveryKeyValidityStatus: Optional[
-        IndividualRecoveryKeyValidityStatus
-    ] = None
+    individualRecoveryKeyValidityStatus: Optional[IndividualRecoveryKeyValidityStatus] = None
     institutionalRecoveryKeyPresent: Optional[bool] = None
     diskEncryptionConfigurationName: Optional[str] = None
     fileVault2EnabledUserNames: Optional[List[str]] = None

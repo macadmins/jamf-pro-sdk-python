@@ -52,9 +52,7 @@ def remove_fields(data: Any, values_to_remove: Iterable = None):
 class ClassicApiModel(BaseModel):
     """The base model used for Classic API models."""
 
-    model_config = ConfigDict(
-        extra="allow", json_encoders={datetime: convert_datetime_to_jamf_iso}
-    )
+    model_config = ConfigDict(extra="allow", json_encoders={datetime: convert_datetime_to_jamf_iso})
 
     _xml_root_name: str
     _xml_array_item_names: Dict[str, str]
