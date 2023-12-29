@@ -108,26 +108,27 @@ minversion = "6.0"
 addopts = [
     "--durations=5",
     "--color=yes",
-    "--cov-report=html:htmlcov",
+    "--cov=src",
+    "--cov-report=html:coverage/htmlcov",
     "--cov-report=term-missing",
 #    "--cov-fail-under=90",
 ]
 testpaths = [ "./tests" ]
 
 
-[tool.coverage.run]
-source = ["jamf_pro_sdk"]
-branch = true
-parallel = true
+#[tool.coverage.run]
+#source = ["src", "jamf_pro_sdk"]
+#branch = true
+#parallel = true
 
 
-[tool.coverage.report]
-show_missing = true
+#[tool.coverage.report]
+#show_missing = true
 # Uncomment the following line to fail to build when the coverage is too low
 # fail_under = 99
 
 #[tool.coverage.xml]
-#output = "private/coverage/coverage.xml"
-#
+#output = "coverage/coverage.xml"
+
 #[tool.coverage.html]
-#directory = "private/coverage/"
+#directory = "coverage/htmlcov"
