@@ -100,7 +100,7 @@ Network Segments
     :toctree: _autosummary
 
     ClassicNetworkSegment
-    ClassicNetworkSegmentsItem
+    ClassicNetworkSegmentItem
 
 Packages
 --------
