@@ -311,8 +311,8 @@ def test_computer_model_parsing():
 
 
 def test_computer_model_construct_from_dict():
-    computer = ClassicComputer(
-        **{"general": {"id": 123}, "location": {"username": "oscar"}}
+    computer = ClassicComputer.model_validate(
+        {"general": {"id": 123}, "location": {"username": "oscar"}}
     )
 
     assert computer.general is not None  # mypy
