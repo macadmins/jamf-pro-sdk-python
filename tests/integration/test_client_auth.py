@@ -1,5 +1,3 @@
-import pytest
-
 from jamf_pro_sdk.models.client import AccessToken
 
 

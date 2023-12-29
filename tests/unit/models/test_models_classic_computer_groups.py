@@ -79,13 +79,9 @@ def test_computer_group_model_parsing():
 
 
 def test_computer_model_json_output_matches_input():
-    computer = ClassicComputerGroup.model_validate(
-        COMPUTER_GROUP_JSON["computer_group"]
-    )
+    computer = ClassicComputerGroup.model_validate(COMPUTER_GROUP_JSON["computer_group"])
     serialized_output = json.loads(computer.model_dump_json(exclude_none=True))
 
-    diff = DeepDiff(
-        COMPUTER_GROUP_JSON["computer_group"], serialized_output, ignore_order=True
-    )
+    diff = DeepDiff(COMPUTER_GROUP_JSON["computer_group"], serialized_output, ignore_order=True)
 
     assert not diff

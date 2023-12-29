@@ -1,18 +1,20 @@
 import logging
+import os
 
 import pytest
 
 from jamf_pro_sdk import (
-    JamfProClient,
     BasicAuthProvider,
+    JamfProClient,
     SessionConfig,
     logger_quick_setup,
 )
 
-JAMF_PRO_HOST = "dummy.jamfcloud.com"
-JAMF_PRO_USERNAME = "demo"
-JAMF_PRO_PASS = "tryitout"
+JAMF_PRO_HOST = os.getenv("JAMF_PRO_HOST", "dummy.jamfcloud.com")
+JAMF_PRO_USERNAME = os.getenv("JAMF_PRO_USERNAME", "demo")
+JAMF_PRO_PASS = os.getenv("JAMF_PRO_PASS", "tryitout")
 
+# Run pytest with '-s' to view logging output
 logger_quick_setup(logging.DEBUG)
 
 
@@ -20,9 +22,7 @@ logger_quick_setup(logging.DEBUG)
 def jamf_client():
     client = JamfProClient(
         server=JAMF_PRO_HOST,
-        credentials=BasicAuthProvider(
-            username=JAMF_PRO_USERNAME, password=JAMF_PRO_PASS
-        ),
+        credentials=BasicAuthProvider(username=JAMF_PRO_USERNAME, password=JAMF_PRO_PASS),
         session_config=SessionConfig(timeout=30),
     )
 

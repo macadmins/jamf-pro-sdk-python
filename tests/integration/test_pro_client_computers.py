@@ -1,4 +1,4 @@
-from jamf_pro_sdk.clients.pro_api.pagination import FilterField, SortField
+# from jamf_pro_sdk.clients.pro_api.pagination import FilterField, SortField
 
 
 def test_integration_pro_computer_inventory_v1_default(jamf_client):
