@@ -25,7 +25,6 @@ from ..models.classic.packages import ClassicPackage, ClassicPackageItem
 if TYPE_CHECKING:
     import requests
 
-
 VALID_COMPUTER_SUBSETS = (
     "general",
     "location",

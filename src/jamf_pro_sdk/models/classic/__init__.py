@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any, Dict, Iterable, Optional, Set
 
 import dicttoxml
-from pydantic import Extra
+from pydantic import ConfigDict
 
 from .. import BaseModel
 
@@ -52,6 +52,10 @@ def remove_fields(data: Any, values_to_remove: Iterable = None):
 class ClassicApiModel(BaseModel):
     """The base model used for Classic API models."""
 
+    model_config = ConfigDict(
+        extra="allow", json_encoders={datetime: convert_datetime_to_jamf_iso}
+    )
+
     _xml_root_name: str
     _xml_array_item_names: Dict[str, str]
     _xml_write_fields: Optional[Set[str]] = None
@@ -69,7 +73,7 @@ class ClassicApiModel(BaseModel):
         :rtype: str
         """
         data = remove_fields(
-            self.dict(
+            self.model_dump(
                 include=self._xml_write_fields if exclude_read_only else None,
                 exclude_none=exclude_none,
             )
@@ -83,57 +87,54 @@ class ClassicApiModel(BaseModel):
             return_bytes=False,
         )
 
-    class Config:
-        extra = Extra.allow
-        json_encoders = {
-            # custom output conversion for datetime
-            datetime: convert_datetime_to_jamf_iso
-        }
-
 
 class ClassicDeviceLocation(BaseModel):
     """Device user assignment information."""
 
-    username: Optional[str]
-    realname: Optional[str]
-    real_name: Optional[str]
-    email_address: Optional[str]
-    position: Optional[str]
-    phone: Optional[str]
-    phone_number: Optional[str]
-    department: Optional[str]
-    building: Optional[str]
-    room: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    username: Optional[str] = None
+    realname: Optional[str] = None
+    real_name: Optional[str] = None
+    email_address: Optional[str] = None
+    position: Optional[str] = None
+    phone: Optional[str] = None
+    phone_number: Optional[str] = None
+    department: Optional[str] = None
+    building: Optional[str] = None
+    room: Optional[str] = None
 
 
 class ClassicDevicePurchasing(BaseModel):
     """Device purchase information (normally populated by GSX)."""
 
-    is_purchased: Optional[bool]
-    is_leased: Optional[bool]
-    po_number: Optional[str]
-    vendor: Optional[str]
-    applecare_id: Optional[str]
-    purchase_price: Optional[str]
-    purchasing_account: Optional[str]
-    po_date: Optional[str]
-    po_date_epoch: Optional[int]
-    po_date_utc: Optional[str]
-    warranty_expires: Optional[str]
-    warranty_expires_epoch: Optional[int]
-    warranty_expires_utc: Optional[str]
-    lease_expires: Optional[str]
-    lease_expires_epoch: Optional[int]
-    lease_expires_utc: Optional[str]
-    life_expectancy: Optional[int]
-    purchasing_contact: Optional[str]
-    os_applecare_id: Optional[str]
-    os_maintenance_expires: Optional[str]
-    attachments: Optional[list]  # Deprecated?
+    model_config = ConfigDict(extra="allow")
+
+    is_purchased: Optional[bool] = None
+    is_leased: Optional[bool] = None
+    po_number: Optional[str] = None
+    vendor: Optional[str] = None
+    applecare_id: Optional[str] = None
+    purchase_price: Optional[str] = None
+    purchasing_account: Optional[str] = None
+    po_date: Optional[str] = None
+    po_date_epoch: Optional[int] = None
+    po_date_utc: Optional[str] = None
+    warranty_expires: Optional[str] = None
+    warranty_expires_epoch: Optional[int] = None
+    warranty_expires_utc: Optional[str] = None
+    lease_expires: Optional[str] = None
+    lease_expires_epoch: Optional[int] = None
+    lease_expires_utc: Optional[str] = None
+    life_expectancy: Optional[int] = None
+    purchasing_contact: Optional[str] = None
+    os_applecare_id: Optional[str] = None
+    os_maintenance_expires: Optional[str] = None
+    attachments: Optional[list] = None  # Deprecated?
 
 
 class ClassicSite(BaseModel):
     """Site assignment information."""
 
-    id: Optional[int]
-    name: Optional[str]
+    id: Optional[int] = None
+    name: Optional[str] = None

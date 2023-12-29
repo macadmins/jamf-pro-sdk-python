@@ -1,10 +1,15 @@
 from datetime import datetime
 from typing import Any, List, Optional, Union
 
-from pydantic import Extra, Field
+from pydantic import ConfigDict, Field
 
 from .. import BaseModel
-from . import ClassicApiModel, ClassicDeviceLocation, ClassicDevicePurchasing, ClassicSite
+from . import (
+    ClassicApiModel,
+    ClassicDeviceLocation,
+    ClassicDevicePurchasing,
+    ClassicSite,
+)
 
 _XML_ARRAY_ITEM_NAMES = {
     # Computer
@@ -36,273 +41,309 @@ _XML_ARRAY_ITEM_NAMES = {
 # Computer.General Models
 
 
-class ClassicComputerGeneralRemoteManagement(BaseModel, extra=Extra.allow):
+class ClassicComputerGeneralRemoteManagement(BaseModel):
     """Computer nested model: computer.general.remote_management
 
     - :class:`str` management_password: This attribute is only used in POST/PUT operations
     - :class:`str` management_password_sha256: This attribute is read-only
     """
 
-    managed: Optional[bool]
-    management_username: Optional[str]
-    management_password: Optional[str]
-    management_password_sha256: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    managed: Optional[bool] = None
+    management_username: Optional[str] = None
+    management_password: Optional[str] = None
+    management_password_sha256: Optional[str] = None
 
 
-class ClassicComputerGeneralMdmCapableUsers(BaseModel, extra=Extra.allow):
+class ClassicComputerGeneralMdmCapableUsers(BaseModel):
     """Computer nested model: computer.general.mdm_capable_users"""
 
-    mdm_capable_user: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    mdm_capable_user: Optional[str] = None
 
 
-class ClassicComputerGeneralManagementStatus(BaseModel, extra=Extra.allow):
+class ClassicComputerGeneralManagementStatus(BaseModel):
     """Computer nested model: computer.general.management_status"""
 
-    enrolled_via_dep: Optional[bool]
-    user_approved_enrollment: Optional[bool]
-    user_approved_mdm: Optional[bool]
+    model_config = ConfigDict(extra="allow")
+
+    enrolled_via_dep: Optional[bool] = None
+    user_approved_enrollment: Optional[bool] = None
+    user_approved_mdm: Optional[bool] = None
 
 
-class ClassicComputerGeneral(BaseModel, extra=Extra.allow):
+class ClassicComputerGeneral(BaseModel):
     """Computer nested model: computer.general"""
 
-    id: Optional[int]
-    name: Optional[str]
-    mac_address: Optional[str]
-    network_adapter_type: Optional[str]
-    alt_mac_address: Optional[str]
-    alt_network_adapter_type: Optional[str]
-    ip_address: Optional[str]
-    last_reported_ip: Optional[str]
-    serial_number: Optional[str]
-    udid: Optional[str]
-    jamf_version: Optional[str]
-    platform: Optional[str]
-    barcode_1: Optional[str]
-    barcode_2: Optional[str]
-    asset_tag: Optional[str]
-    remote_management: Optional[ClassicComputerGeneralRemoteManagement]
-    supervised: Optional[bool]
-    mdm_capable: Optional[bool]
-    mdm_capable_users: Optional[Union[dict, ClassicComputerGeneralMdmCapableUsers]]
-    management_status: Optional[ClassicComputerGeneralManagementStatus]
-    report_date: Optional[str]
-    report_date_epoch: Optional[int]
-    report_date_utc: Union[Optional[datetime], Optional[str]]
-    last_contact_time: Optional[str]
-    last_contact_time_epoch: Optional[int]
-    last_contact_time_utc: Optional[str]
-    initial_entry_date: Optional[str]
-    initial_entry_date_epoch: Optional[int]
-    initial_entry_date_utc: Union[Optional[datetime], Optional[str]]
-    last_cloud_backup_date_epoch: Optional[int]
-    last_cloud_backup_date_utc: Union[Optional[datetime], Optional[str]]
-    last_enrolled_date_epoch: Optional[int]
-    last_enrolled_date_utc: Union[Optional[datetime], Optional[str]]
-    mdm_profile_expiration_epoch: Optional[int]
-    mdm_profile_expiration_utc: Union[Optional[datetime], Optional[str]]
-    distribution_point: Optional[str]
-    sus: Optional[str]
-    site: Optional[ClassicSite]
-    itunes_store_account_is_active: Optional[bool]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    mac_address: Optional[str] = None
+    network_adapter_type: Optional[str] = None
+    alt_mac_address: Optional[str] = None
+    alt_network_adapter_type: Optional[str] = None
+    ip_address: Optional[str] = None
+    last_reported_ip: Optional[str] = None
+    serial_number: Optional[str] = None
+    udid: Optional[str] = None
+    jamf_version: Optional[str] = None
+    platform: Optional[str] = None
+    barcode_1: Optional[str] = None
+    barcode_2: Optional[str] = None
+    asset_tag: Optional[str] = None
+    remote_management: Optional[ClassicComputerGeneralRemoteManagement] = None
+    supervised: Optional[bool] = None
+    mdm_capable: Optional[bool] = None
+    mdm_capable_users: Optional[
+        Union[dict, ClassicComputerGeneralMdmCapableUsers]
+    ] = None
+    management_status: Optional[ClassicComputerGeneralManagementStatus] = None
+    report_date: Optional[str] = None
+    report_date_epoch: Optional[int] = None
+    report_date_utc: Union[Optional[datetime], Optional[str]] = None
+    last_contact_time: Optional[str] = None
+    last_contact_time_epoch: Optional[int] = None
+    last_contact_time_utc: Optional[str] = None
+    initial_entry_date: Optional[str] = None
+    initial_entry_date_epoch: Optional[int] = None
+    initial_entry_date_utc: Union[Optional[datetime], Optional[str]] = None
+    last_cloud_backup_date_epoch: Optional[int] = None
+    last_cloud_backup_date_utc: Union[Optional[datetime], Optional[str]] = None
+    last_enrolled_date_epoch: Optional[int] = None
+    last_enrolled_date_utc: Union[Optional[datetime], Optional[str]] = None
+    mdm_profile_expiration_epoch: Optional[int] = None
+    mdm_profile_expiration_utc: Union[Optional[datetime], Optional[str]] = None
+    distribution_point: Optional[str] = None
+    sus: Optional[str] = None
+    site: Optional[ClassicSite] = None
+    itunes_store_account_is_active: Optional[bool] = None
 
 
 # Computer.Hardware Models
 
 
-class ClassicComputerHardwareStorageDevicePartition(BaseModel, extra=Extra.allow):
+class ClassicComputerHardwareStorageDevicePartition(BaseModel):
     """Computer nested model: computer.hardware.storage.partitions"""
 
-    name: Optional[str]
-    size: Optional[int]
-    type: Optional[str]
-    partition_capacity_mb: Optional[int]
-    percentage_full: Optional[int]
-    available_mb: Optional[int]
-    filevault_status: Optional[str]
-    filevault_percent: Optional[int]
-    filevault2_status: Optional[str]
-    filevault2_percent: Optional[int]
-    boot_drive_available_mb: Optional[int]
-    lvgUUID: Optional[str]
-    lvUUID: Optional[str]
-    pvUUID: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    size: Optional[int] = None
+    type: Optional[str] = None
+    partition_capacity_mb: Optional[int] = None
+    percentage_full: Optional[int] = None
+    available_mb: Optional[int] = None
+    filevault_status: Optional[str] = None
+    filevault_percent: Optional[int] = None
+    filevault2_status: Optional[str] = None
+    filevault2_percent: Optional[int] = None
+    boot_drive_available_mb: Optional[int] = None
+    lvgUUID: Optional[str] = None
+    lvUUID: Optional[str] = None
+    pvUUID: Optional[str] = None
 
 
-class ClassicComputerHardwareStorageDevice(BaseModel, extra=Extra.allow):
+class ClassicComputerHardwareStorageDevice(BaseModel):
     """Computer nested model: computer.hardware.storage"""
 
-    disk: Optional[str]
-    model: Optional[str]
-    revision: Optional[str]
-    serial_number: Optional[str]
-    size: Optional[int]
-    drive_capacity_mb: Optional[int]
-    connection_type: Optional[str]
-    smart_status: Optional[str]
-    partitions: Optional[List[ClassicComputerHardwareStorageDevicePartition]]
+    model_config = ConfigDict(extra="allow")
+
+    disk: Optional[str] = None
+    model: Optional[str] = None
+    revision: Optional[str] = None
+    serial_number: Optional[str] = None
+    size: Optional[int] = None
+    drive_capacity_mb: Optional[int] = None
+    connection_type: Optional[str] = None
+    smart_status: Optional[str] = None
+    partitions: Optional[List[ClassicComputerHardwareStorageDevicePartition]] = None
 
 
-class ClassicComputerHardwareMappedPrinter(BaseModel, extra=Extra.allow):
+class ClassicComputerHardwareMappedPrinter(BaseModel):
     """Computer nested model: computer.hardware.mapped_printers"""
 
-    name: Optional[str]
-    uri: Optional[str]
-    type: Optional[str]
-    location: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    uri: Optional[str] = None
+    type: Optional[str] = None
+    location: Optional[str] = None
 
 
 class ClassicComputerHardware(ClassicApiModel):
     """Computer nested model: computer.hardware"""
 
+    model_config = ConfigDict(extra="allow")
+
     _xml_root_name = "hardware"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
 
-    make: Optional[str]
-    model: Optional[str]
-    model_identifier: Optional[str]
-    os_name: Optional[str]
-    os_version: Optional[str]
-    os_build: Optional[str]
-    software_update_device_id: Optional[str]
-    active_directory_status: Optional[str]
-    service_pack: Optional[str]
-    processor_type: Optional[str]
-    is_apple_silicon: Optional[bool]
-    processor_architecture: Optional[str]
-    processor_speed: Optional[int]
-    processor_speed_mhz: Optional[int]
-    number_processors: Optional[int]
-    number_cores: Optional[int]
-    total_ram: Optional[int]
-    total_ram_mb: Optional[int]
-    boot_rom: Optional[str]
-    bus_speed: Optional[int]
-    bus_speed_mhz: Optional[int]
-    battery_capacity: Optional[int]
-    cache_size: Optional[int]
-    cache_size_kb: Optional[int]
-    available_ram_slots: Optional[int]
-    optical_drive: Optional[str]
-    nic_speed: Optional[str]
-    smc_version: Optional[str]
-    ble_capable: Optional[bool]
-    supports_ios_app_installs: Optional[bool]
-    sip_status: Optional[str]
-    gatekeeper_status: Optional[str]
-    xprotect_version: Optional[str]
-    institutional_recovery_key: Optional[str]
-    disk_encryption_configuration: Optional[str]
-    filevault2_users: Optional[List[str]]
-    storage: Optional[List[ClassicComputerHardwareStorageDevice]]
-    mapped_printers: Optional[List[ClassicComputerHardwareMappedPrinter]]
+    make: Optional[str] = None
+    model: Optional[str] = None
+    model_identifier: Optional[str] = None
+    os_name: Optional[str] = None
+    os_version: Optional[str] = None
+    os_build: Optional[str] = None
+    software_update_device_id: Optional[str] = None
+    active_directory_status: Optional[str] = None
+    service_pack: Optional[str] = None
+    processor_type: Optional[str] = None
+    is_apple_silicon: Optional[bool] = None
+    processor_architecture: Optional[str] = None
+    processor_speed: Optional[int] = None
+    processor_speed_mhz: Optional[int] = None
+    number_processors: Optional[int] = None
+    number_cores: Optional[int] = None
+    total_ram: Optional[int] = None
+    total_ram_mb: Optional[int] = None
+    boot_rom: Optional[str] = None
+    bus_speed: Optional[int] = None
+    bus_speed_mhz: Optional[int] = None
+    battery_capacity: Optional[int] = None
+    cache_size: Optional[int] = None
+    cache_size_kb: Optional[int] = None
+    available_ram_slots: Optional[int] = None
+    optical_drive: Optional[str] = None
+    nic_speed: Optional[str] = None
+    smc_version: Optional[str] = None
+    ble_capable: Optional[bool] = None
+    supports_ios_app_installs: Optional[bool] = None
+    sip_status: Optional[str] = None
+    gatekeeper_status: Optional[str] = None
+    xprotect_version: Optional[str] = None
+    institutional_recovery_key: Optional[str] = None
+    disk_encryption_configuration: Optional[str] = None
+    filevault2_users: Optional[List[str]] = None
+    storage: Optional[List[ClassicComputerHardwareStorageDevice]] = None
+    mapped_printers: Optional[List[ClassicComputerHardwareMappedPrinter]] = None
 
 
 # Computer.Certificate Models
 
 
-class ClassicComputerCertificate(BaseModel, extra=Extra.allow):
+class ClassicComputerCertificate(BaseModel):
     """Computer nested model: computer.certificates"""
 
-    common_name: Optional[str]
-    identity: Optional[bool]
-    expires_utc: Optional[str]
-    expires_epoch: Optional[int]
-    name: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    common_name: Optional[str] = None
+    identity: Optional[bool] = None
+    expires_utc: Optional[str] = None
+    expires_epoch: Optional[int] = None
+    name: Optional[str] = None
 
 
 # Computer.Security Models
 
 
-class ClassicComputerSecurity(BaseModel, extra=Extra.allow):
+class ClassicComputerSecurity(BaseModel):
     """Computer nested model: computer.security"""
 
-    activation_lock: Optional[bool]
-    recovery_lock_enabled: Optional[bool]
-    secure_boot_level: Optional[str]
-    external_boot_level: Optional[str]
-    firewall_enabled: Optional[bool]
+    model_config = ConfigDict(extra="allow")
+
+    activation_lock: Optional[bool] = None
+    recovery_lock_enabled: Optional[bool] = None
+    secure_boot_level: Optional[str] = None
+    external_boot_level: Optional[str] = None
+    firewall_enabled: Optional[bool] = None
 
 
 # Computer.Software Models
 
 
-class ClassicComputerSoftwareAvailableUpdate(BaseModel, extra=Extra.allow):
+class ClassicComputerSoftwareAvailableUpdate(BaseModel):
     """Computer nested model: computer.software.available_updates"""
 
-    name: Optional[str]
-    package_name: Optional[str]
-    version: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    package_name: Optional[str] = None
+    version: Optional[str] = None
 
 
-class ClassicComputerSoftwareItem(BaseModel, extra=Extra.allow):
+class ClassicComputerSoftwareItem(BaseModel):
     """Computer nested model: computer.software.applications, computer.software.fonts,
     computer.software.plugins
     """
 
-    name: Optional[str]
-    path: Optional[str]
-    version: Optional[str]
-    bundle_id: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    path: Optional[str] = None
+    version: Optional[str] = None
+    bundle_id: Optional[str] = None
 
 
-class ClassicComputerSoftware(BaseModel, extra=Extra.allow):  # Lots of assumptions in this object
+class ClassicComputerSoftware(BaseModel):  # Lots of assumptions in this object
     """Computer nested model: computer.software"""
 
-    unix_executables: Optional[List[str]]
-    licensed_software: Optional[List[str]]
-    installed_by_casper: Optional[List[str]]
-    installed_by_installer_swu: Optional[List[str]]
-    cached_by_casper: Optional[List[str]]
-    available_software_updates: Optional[List[str]]
-    available_updates: Union[Optional[List[ClassicComputerSoftwareAvailableUpdate]], Optional[dict]]
-    running_services: Optional[List[str]]
-    applications: Optional[List[ClassicComputerSoftwareItem]]
-    fonts: Optional[List[ClassicComputerSoftwareItem]]
-    plugins: Optional[List[ClassicComputerSoftwareItem]]
+    model_config = ConfigDict(extra="allow")
+
+    unix_executables: Optional[List[str]] = None
+    licensed_software: Optional[List[str]] = None
+    installed_by_casper: Optional[List[str]] = None
+    installed_by_installer_swu: Optional[List[str]] = None
+    cached_by_casper: Optional[List[str]] = None
+    available_software_updates: Optional[List[str]] = None
+    available_updates: Union[
+        Optional[List[ClassicComputerSoftwareAvailableUpdate]], Optional[dict]
+    ] = None
+    running_services: Optional[List[str]] = None
+    applications: Optional[List[ClassicComputerSoftwareItem]] = None
+    fonts: Optional[List[ClassicComputerSoftwareItem]] = None
+    plugins: Optional[List[ClassicComputerSoftwareItem]] = None
 
 
 # Computer.ExtensionAttributes Models
 
 
-class ClassicComputerExtensionAttribute(BaseModel, extra=Extra.allow):
+class ClassicComputerExtensionAttribute(BaseModel):
     """Computer nested model: computer.extension_attributes"""
 
-    id: Optional[int]
-    name: Optional[str]
-    type: Optional[str]
-    multi_value: Optional[bool]
-    value: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    type: Optional[str] = None
+    multi_value: Optional[bool] = None
+    value: Optional[str] = None
 
 
 # Computer GroupsAccounts Models
 
 
-class ClassicComputerGroupsAccountsLocalAccount(BaseModel, extra=Extra.allow):
+class ClassicComputerGroupsAccountsLocalAccount(BaseModel):
     """Computer nested model: computer.groups_accounts.local_accounts"""
 
-    name: Optional[str]
-    realname: Optional[str]
-    uid: Optional[str]
-    home: Optional[str]
-    home_size: Optional[str]
-    home_size_mb: Optional[int]
-    administrator: Optional[bool]
-    filevault_enabled: Optional[bool]
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
+    realname: Optional[str] = None
+    uid: Optional[str] = None
+    home: Optional[str] = None
+    home_size: Optional[str] = None
+    home_size_mb: Optional[int] = None
+    administrator: Optional[bool] = None
+    filevault_enabled: Optional[bool] = None
 
 
-class ClassicComputerGroupsAccountsUserInventoriesUser(BaseModel, extra=Extra.allow):
+class ClassicComputerGroupsAccountsUserInventoriesUser(BaseModel):
     """Computer nested model: computer.groups_accounts.user_inventories.user"""
 
-    username: Optional[str]
-    password_history_depth: Optional[str]
-    password_min_length: Optional[str]
-    password_max_age: Optional[str]
-    password_min_complex_characters: Optional[str]
-    password_require_alphanumeric: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    username: Optional[str] = None
+    password_history_depth: Optional[str] = None
+    password_min_length: Optional[str] = None
+    password_max_age: Optional[str] = None
+    password_min_complex_characters: Optional[str] = None
+    password_require_alphanumeric: Optional[str] = None
 
 
-class ClassicComputerGroupsAccountsUserInventories(BaseModel, extra=Extra.allow):
+class ClassicComputerGroupsAccountsUserInventories(BaseModel):
     """Computer nested model: computer.groups_accounts.user_inventories
 
     There is a bug with this API resource!
@@ -328,37 +369,43 @@ class ClassicComputerGroupsAccountsUserInventories(BaseModel, extra=Extra.allow)
     TODO: Accurate data can only be obtained using an XML response
     """
 
-    disable_automatic_login: Optional[bool]
+    model_config = ConfigDict(extra="allow")
+
+    disable_automatic_login: Optional[bool] = None
     user: Union[
         Optional[ClassicComputerGroupsAccountsUserInventoriesUser],
         Optional[List[ClassicComputerGroupsAccountsUserInventoriesUser]],
-    ]
+    ] = None
 
 
-class ClassicComputerGroupsAccounts(BaseModel, extra=Extra.allow):
+class ClassicComputerGroupsAccounts(BaseModel):
     """Computer nested model: computer.groups_accounts"""
 
-    computer_group_memberships: Optional[List[str]]
-    local_accounts: Optional[List[ClassicComputerGroupsAccountsLocalAccount]]
-    user_inventories: Optional[ClassicComputerGroupsAccountsUserInventories]
+    model_config = ConfigDict(extra="allow")
+
+    computer_group_memberships: Optional[List[str]] = None
+    local_accounts: Optional[List[ClassicComputerGroupsAccountsLocalAccount]] = None
+    user_inventories: Optional[ClassicComputerGroupsAccountsUserInventories] = None
 
 
 # Computer.ConfigurationProfiles Models
 
 
-class ClassicComputerConfigurationProfile(BaseModel, extra=Extra.allow):
+class ClassicComputerConfigurationProfile(BaseModel):
     """Computer nested model: computer.configuration_profiles"""
 
-    id: Optional[int]
-    name: Optional[str]
-    uuid: Optional[str]
-    is_removable: Optional[bool]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    uuid: Optional[str] = None
+    is_removable: Optional[bool] = None
 
 
 # Computer Models
 
 
-class ClassicComputersItem(BaseModel, extra=Extra.allow):
+class ClassicComputersItem(BaseModel):
     """Represents a computer record returned by the
     :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.list_computers` operation.
 
@@ -366,18 +413,20 @@ class ClassicComputersItem(BaseModel, extra=Extra.allow):
     populated.
     """
 
+    model_config = ConfigDict(extra="allow")
+
     id: int
     name: str
-    managed: Optional[bool]
-    username: Optional[str]
-    model: Optional[str]
-    department: Optional[str]
-    building: Optional[str]
-    mac_address: Optional[str]
-    udid: Optional[str]
-    serial_number: Optional[str]
-    report_date_utc: Union[Optional[datetime], Optional[str]]
-    report_date_epoch: Optional[int]
+    managed: Optional[bool] = None
+    username: Optional[str] = None
+    model: Optional[str] = None
+    department: Optional[str] = None
+    building: Optional[str] = None
+    mac_address: Optional[str] = None
+    udid: Optional[str] = None
+    serial_number: Optional[str] = None
+    report_date_utc: Union[Optional[datetime], Optional[str]] = None
+    report_date_epoch: Optional[int] = None
 
 
 class ClassicComputer(ClassicApiModel):
@@ -390,23 +439,29 @@ class ClassicComputer(ClassicApiModel):
     operation.
     """
 
+    model_config = ConfigDict(extra="allow")
+
     _xml_root_name = "computer"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
     _xml_write_fields = {"general", "location", "extension_attributes"}
 
-    general: Optional[ClassicComputerGeneral] = Field(default_factory=ClassicComputerGeneral)
-    location: Optional[ClassicDeviceLocation] = Field(default_factory=ClassicDeviceLocation)
-    purchasing: Optional[ClassicDevicePurchasing]
+    general: Optional[ClassicComputerGeneral] = Field(
+        default_factory=ClassicComputerGeneral
+    )
+    location: Optional[ClassicDeviceLocation] = Field(
+        default_factory=ClassicDeviceLocation
+    )
+    purchasing: Optional[ClassicDevicePurchasing] = None
     # Peripherals are a deprecated feature of Jamf Pro
-    peripherals: Optional[Any]
-    hardware: Optional[ClassicComputerHardware]
-    certificates: Optional[List[ClassicComputerCertificate]]
-    security: Optional[ClassicComputerSecurity]
-    software: Optional[ClassicComputerSoftware]
+    peripherals: Optional[Any] = None
+    hardware: Optional[ClassicComputerHardware] = None
+    certificates: Optional[List[ClassicComputerCertificate]] = None
+    security: Optional[ClassicComputerSecurity] = None
+    software: Optional[ClassicComputerSoftware] = None
     extension_attributes: Optional[List[ClassicComputerExtensionAttribute]] = Field(
         default_factory=list
     )
-    groups_accounts: Optional[ClassicComputerGroupsAccounts]
+    groups_accounts: Optional[ClassicComputerGroupsAccounts] = None
     # iPhones in Computer inventory is a deprecated feature of Jamf Pro
-    iphones: Optional[Any]
-    configuration_profiles: Optional[List[ClassicComputerConfigurationProfile]]
+    iphones: Optional[Any] = None
+    configuration_profiles: Optional[List[ClassicComputerConfigurationProfile]] = None
