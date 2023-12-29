@@ -296,7 +296,7 @@ def test_computer_model_parsing():
     assert "Group 2" in computer.groups_accounts.computer_group_memberships
 
     assert computer.groups_accounts.local_accounts is not None  # mypy
-    assert computer.groups_accounts.local_accounts[0].uid is "502"
+    assert computer.groups_accounts.local_accounts[0].uid == "502"
     assert computer.groups_accounts.local_accounts[0].administrator is True
 
     assert computer.groups_accounts.user_inventories is not None  # mypy
