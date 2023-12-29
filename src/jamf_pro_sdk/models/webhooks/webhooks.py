@@ -1,11 +1,11 @@
 from ipaddress import IPv4Address
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict
 
 
-class WebhookModel(BaseModel, extra=Extra.allow):
-    pass
+class WebhookModel(BaseModel):
+    model_config = ConfigDict(extra="allow")
 
 
 class WebhookData(WebhookModel):
