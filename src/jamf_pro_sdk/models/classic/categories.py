@@ -15,8 +15,8 @@ class ClassicCategoriesItem(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    id: Optional[int]
-    name: Optional[str]
+    id: Optional[int] = None
+    name: Optional[str] = None
 
 
 class ClassicCategory(ClassicApiModel):
@@ -35,6 +35,6 @@ class ClassicCategory(ClassicApiModel):
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
     _xml_write_fields = {"name", "priority"}
 
-    id: Optional[int]
-    name: Optional[str]
-    priority: Optional[int]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    priority: Optional[int] = None
