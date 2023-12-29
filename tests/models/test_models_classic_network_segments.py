@@ -19,7 +19,9 @@ NETWORK_SEGMENT_JSON = {
 
 def test_network_segment_model_parsings():
     """Verify select attributes across the NetworkSegment model."""
-    network_segment = ClassicNetworkSegment(**NETWORK_SEGMENT_JSON["network_segment"])
+    network_segment = ClassicNetworkSegment.model_validate(
+        NETWORK_SEGMENT_JSON["network_segment"]
+    )
 
     assert network_segment is not None  # mypy
     assert network_segment.name == "Test Network"
@@ -36,9 +38,13 @@ def test_network_segment_model_parsings():
 
 
 def test_network_segment_model_json_output_matches_input():
-    network_segment = ClassicNetworkSegment(**NETWORK_SEGMENT_JSON["network_segment"])
-    serialized_output = json.loads(network_segment.json(exclude_none=True))
+    network_segment = ClassicNetworkSegment.model_validate(
+        NETWORK_SEGMENT_JSON["network_segment"]
+    )
+    serialized_output = json.loads(network_segment.model_dump_json(exclude_none=True))
 
-    diff = DeepDiff(NETWORK_SEGMENT_JSON["network_segment"], serialized_output, ignore_order=True)
+    diff = DeepDiff(
+        NETWORK_SEGMENT_JSON["network_segment"], serialized_output, ignore_order=True
+    )
 
     assert not diff
