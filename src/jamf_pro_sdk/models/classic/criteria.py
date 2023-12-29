@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict
 
 
 class ClassicCriterionAndOr(str, Enum):
@@ -38,8 +38,10 @@ class ClassicCriterionSearchType(str, Enum):
     less_than_or_equal: str = "less than or equal"
 
 
-class ClassicCriterion(BaseModel, extra=Extra.allow):
+class ClassicCriterion(BaseModel):
     """Classic API criterion. Used by Smart Groups and Advanced Searches."""
+
+    model_config = ConfigDict(extra="allow")
 
     name: str
     priority: int
