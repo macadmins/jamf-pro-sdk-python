@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, List, Literal, Optional, Union
 from uuid import UUID
 
-from pydantic import BaseModel, Extra, Field, constr
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from .api_options import get_mdm_commands_v2_allowed_command_types
 
@@ -70,6 +70,9 @@ class EraseDeviceCommandReturnToService(BaseModel):
     wifiProfileData: str
 
 
+EraseDeviceCommandPin = Annotated[str, StringConstraints(min_length=6, max_length=6)]
+
+
 class EraseDeviceCommand(BaseModel):
     """MDM command to remotely wipe a device. Optionally, set the ``returnToService`` property to
     automatically connect to a wireless network at Setup Assistant.
@@ -93,11 +96,11 @@ class EraseDeviceCommand(BaseModel):
     """
 
     commandType: Literal["ERASE_DEVICE"] = "ERASE_DEVICE"
-    preserveDataPlan: Optional[bool]
-    disallowProximitySetup: Optional[bool]
-    pin: Optional[constr(min_length=6, max_length=6)]
-    obliterationBehavior: Optional[EraseDeviceCommandObliterationBehavior]
-    returnToService: Optional[EraseDeviceCommandReturnToService]
+    preserveDataPlan: Optional[bool] = None
+    disallowProximitySetup: Optional[bool] = None
+    pin: Optional[EraseDeviceCommandPin] = None
+    obliterationBehavior: Optional[EraseDeviceCommandObliterationBehavior] = None
+    returnToService: Optional[EraseDeviceCommandReturnToService] = None
 
 
 # Log Out User
@@ -192,8 +195,10 @@ class ShutDownDeviceCommand(BaseModel):
 # Custom Command
 
 
-class CustomCommand(BaseModel, extra=Extra.allow):
+class CustomCommand(BaseModel):
     """A free form model for new commands not yet supported by the SDK."""
+
+    model_config = ConfigDict(extra="allow")
 
     commandType: str
 
@@ -226,15 +231,19 @@ class SendMdmCommand(BaseModel):
 # MDM Command Responses
 
 
-class SendMdmCommandResponse(BaseModel, extra=Extra.allow):
+class SendMdmCommandResponse(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: str
     href: str
 
 
-class RenewMdmProfileResponse(BaseModel, extra=Extra.allow):
+class RenewMdmProfileResponse(BaseModel):
     """This response model flattens the normal API JSON response from a nested
     ``udidsNotProcessed.uuids`` array to just ``udidsNotProcessed``.
     """
+
+    model_config = ConfigDict(extra="allow")
 
     udidsNotProcessed: Optional[List[UUID]]
 
@@ -250,7 +259,9 @@ class MdmCommandStatusClientTypes(str, Enum):
     MOBILE_DEVICE_USER = "MOBILE_DEVICE_USER"
 
 
-class MdmCommandStatusClient(BaseModel, extra=Extra.allow):
+class MdmCommandStatusClient(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     managementId: UUID
     clientType: MdmCommandStatusClientTypes
 
@@ -268,11 +279,13 @@ MdmCommandStatusTypes = Enum(
 )
 
 
-class MdmCommandStatus(BaseModel, extra=Extra.allow):
+class MdmCommandStatus(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     uuid: UUID
     client: MdmCommandStatusClient
     commandState: MdmCommandStatusStates
     commandType: MdmCommandStatusTypes
     dateSent: datetime
     dateCompleted: datetime
-    profileId: Optional[int]
+    profileId: Optional[int] = None
