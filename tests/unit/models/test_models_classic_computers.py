@@ -7,7 +7,7 @@ from src.jamf_pro_sdk.models.classic.computers import (
     ClassicComputerGeneralRemoteManagement,
     ClassicComputerGroupsAccountsUserInventoriesUser,
 )
-from tests import utils
+from tests.unit import utils
 
 COMPUTER_JSON = {
     "computer": {
