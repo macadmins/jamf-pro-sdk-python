@@ -266,6 +266,7 @@ def test_computer_model_parsing():
 
     assert computer.hardware is not None  # mypy
     assert computer.hardware.model == "MacBook Pro (14-inch, 2021)"
+    assert computer.hardware.model_identifier == "MacBookPro18,3"
 
     assert computer.hardware.filevault2_users is not None  # mypy
     assert computer.hardware.filevault2_users[0] == "admin"

@@ -176,7 +176,9 @@ class ClassicComputerHardwareMappedPrinter(BaseModel):
 class ClassicComputerHardware(ClassicApiModel):
     """Computer nested model: computer.hardware"""
 
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="allow", protected_namespaces=())
+    # The 'model_identifier' attribute conflicts with Pydantic's protect 'model_' namespace
+    # Overriding 'protected_namespaces' for hardware suppresses the warning
 
     _xml_root_name = "hardware"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
