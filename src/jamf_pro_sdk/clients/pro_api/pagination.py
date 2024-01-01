@@ -228,7 +228,7 @@ class Paginator:
             page=page,
             page_count=len(response["results"]),
             total_count=response["totalCount"],
-            results=[self.return_model.parse_obj(i) for i in response["results"]]
+            results=[self.return_model.model_validate(i) for i in response["results"]]
             if self.return_model
             else response["results"],
         )
@@ -249,7 +249,7 @@ class Paginator:
                 [
                     {"page": i}
                     for i in range(
-                        self.start_page,
+                        self.start_page + 1,
                         math.ceil((total_count - results_count) / self.page_size) + 1,
                     )
                 ],

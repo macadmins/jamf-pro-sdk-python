@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import Extra
+from pydantic import ConfigDict
 
 from .. import BaseModel
 from . import ClassicApiModel
@@ -8,21 +8,25 @@ from . import ClassicApiModel
 _XML_ARRAY_ITEM_NAMES = {}
 
 
-class ClassicNetworkSegmentItem(BaseModel, extra=Extra.allow):
+class ClassicNetworkSegmentItem(BaseModel):
     """Represents a network_segment record returned by the
     :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.list_network_segments` operation.
     """
 
-    id: Optional[int]
-    name: Optional[str]
-    starting_address: Optional[str]
-    ending_address: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    starting_address: Optional[str] = None
+    ending_address: Optional[str] = None
 
 
 class ClassicNetworkSegment(ClassicApiModel):
     """Represents a network_segment record returned by the
     :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.get_network_segment_by_id` operation.
     """
+
+    model_config = ConfigDict(extra="allow")
 
     _xml_root_name = "network_segment"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
@@ -40,15 +44,15 @@ class ClassicNetworkSegment(ClassicApiModel):
         "override_departments",
     }
 
-    id: Optional[int]
-    name: Optional[str]
-    starting_address: Optional[str]
-    ending_address: Optional[str]
-    distribution_server: Optional[str]
-    distribution_point: Optional[str]
-    url: Optional[str]
-    swu_server: Optional[str]
-    building: Optional[str]
-    department: Optional[str]
-    override_buildings: Optional[bool]
-    override_departments: Optional[bool]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    starting_address: Optional[str] = None
+    ending_address: Optional[str] = None
+    distribution_server: Optional[str] = None
+    distribution_point: Optional[str] = None
+    url: Optional[str] = None
+    swu_server: Optional[str] = None
+    building: Optional[str] = None
+    department: Optional[str] = None
+    override_buildings: Optional[bool] = None
+    override_departments: Optional[bool] = None

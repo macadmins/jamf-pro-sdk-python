@@ -83,7 +83,7 @@ class AccessToken(BaseModel):
     type: str = ""
     token: str = ""
     expires: datetime = EPOCH_DATETIME
-    scope: Optional[List[str]]
+    scope: Optional[List[str]] = None
 
     def __str__(self):
         return self.token

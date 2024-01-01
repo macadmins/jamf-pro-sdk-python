@@ -5,6 +5,7 @@
 .ruff_cache/
 .venv/
 build/
+coverage/
 dist/
 docs/contributors/_autosummary/
 docs/reference/_autosummary/

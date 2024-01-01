@@ -8,7 +8,7 @@ CATEGORY_JSON = {"category": {"id": 1, "name": "Test Category", "priority": 1}}
 
 def test_category_model_parsings():
     """Verify select attributes across the ComputerGroup model."""
-    category = ClassicCategory(**CATEGORY_JSON["category"])
+    category = ClassicCategory.model_validate(CATEGORY_JSON["category"])
 
     assert category is not None  # mypy
     assert category.name == "Test Category"
@@ -17,8 +17,8 @@ def test_category_model_parsings():
 
 
 def test_category_model_json_output_matches_input():
-    category = ClassicCategory(**CATEGORY_JSON["category"])
-    serialized_output = json.loads(category.json(exclude_none=True))
+    category = ClassicCategory.model_validate(CATEGORY_JSON["category"])
+    serialized_output = json.loads(category.model_dump_json(exclude_none=True))
 
     diff = DeepDiff(CATEGORY_JSON["category"], serialized_output, ignore_order=True)
 

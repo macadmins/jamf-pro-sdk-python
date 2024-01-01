@@ -2,7 +2,7 @@ SHELL := /bin/bash
 .PHONY: docs
 
 install:
-	python3 -m pip install --editable '.[dev]'
+	python3 -m pip install --upgrade --editable '.[dev]'
 
 uninstall:
 	python3 -m pip uninstall -y -r <(python3 -m pip freeze)
@@ -11,7 +11,10 @@ clean:
 	rm -rf build/ dist/ src/*.egg-info **/__pycache__ .coverage .pytest_cache/ .ruff_cache/
 
 test:
-	pytest
+	pytest tests/unit
+
+test-all:
+	pytest tests
 
 lint:
 	black --check src tests

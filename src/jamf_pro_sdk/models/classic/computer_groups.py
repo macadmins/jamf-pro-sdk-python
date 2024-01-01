@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import Extra
+from pydantic import ConfigDict
 
 from .. import BaseModel
 from . import ClassicApiModel, ClassicSite
@@ -24,16 +24,18 @@ _XML_ARRAY_ITEM_NAMES = {
 #     is_smart: bool
 
 
-class ClassicComputerGroupMember(BaseModel, extra=Extra.allow):
+class ClassicComputerGroupMember(BaseModel):
     """ComputerGroup nested model: computer_group.computers,
     computer_group.computer_additions, computer_group.computer_deletions
     """
 
-    id: Optional[int]
-    name: Optional[str]
-    mac_address: Optional[str]
-    alt_mac_address: Optional[str]
-    serial_number: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    mac_address: Optional[str] = None
+    alt_mac_address: Optional[str] = None
+    serial_number: Optional[str] = None
 
 
 class ClassicComputerGroup(ClassicApiModel):
@@ -52,16 +54,18 @@ class ClassicComputerGroup(ClassicApiModel):
     operation.
     """
 
+    model_config = ConfigDict(extra="allow")
+
     _xml_root_name = "computer_group"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
     _xml_write_fields = {"name", "is_smart", "site", "criteria"}
 
-    id: Optional[int]
-    name: Optional[str]
-    is_smart: Optional[bool]
-    site: Optional[ClassicSite]
-    criteria: Optional[List[ClassicCriterion]]
-    computers: Optional[List[ClassicComputerGroupMember]]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    is_smart: Optional[bool] = None
+    site: Optional[ClassicSite] = None
+    criteria: Optional[List[ClassicCriterion]] = None
+    computers: Optional[List[ClassicComputerGroupMember]] = None
 
 
 class ClassicComputerGroupMembershipUpdate(ClassicApiModel):
@@ -73,5 +77,5 @@ class ClassicComputerGroupMembershipUpdate(ClassicApiModel):
     _xml_root_name = "computer_group"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
 
-    computer_additions: Optional[List[ClassicComputerGroupMember]]
-    computer_deletions: Optional[List[ClassicComputerGroupMember]]
+    computer_additions: Optional[List[ClassicComputerGroupMember]] = None
+    computer_deletions: Optional[List[ClassicComputerGroupMember]] = None

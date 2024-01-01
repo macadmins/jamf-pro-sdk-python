@@ -8,13 +8,12 @@ from urllib.parse import urlunparse
 import certifi
 import requests
 import requests.adapters
-from pydantic import BaseModel, parse_obj_as
+from pydantic import BaseModel
 from requests.utils import cookiejar_from_dict
 
 from ..clients.classic_api import ClassicApi
 from ..clients.jcds2 import JCDS2
 from ..clients.pro_api import ProApi
-from ..models import BaseModel
 from ..models.classic import ClassicApiModel
 from ..models.client import SessionConfig
 from .auth import CredentialsProvider
@@ -242,8 +241,10 @@ class JamfProClient:
             pro_req["headers"]["Content-Type"] = "application/json"
             if isinstance(data, dict):
                 pro_req["json"] = data
+            elif isinstance(data, BaseModel):
+                pro_req["data"] = data.model_dump_json(exclude_none=True)
             else:
-                pro_req["data"] = data.json(exclude_none=True)
+                raise ValueError("'data' must be one of 'dict' or 'BaseModel'")
 
         with self.session.request(**pro_req) as pro_resp:
             logger.info("ProAPIRequest %s %s", method.upper(), resource_path)
@@ -323,7 +324,7 @@ class JamfProClient:
                         if hasattr(return_model, "_xml_root_name")
                         else response.json()
                     )
-                    yield parse_obj_as(return_model, response_data)
+                    yield return_model.model_validate(response_data)
                 else:
                     yield response
             except Exception as err:

@@ -1,10 +1,12 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict
 
 
-class NewFile(BaseModel, extra=Extra.allow):
+class NewFile(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     accessKeyID: str
     secretAccessKey: str
     sessionToken: str
@@ -15,7 +17,9 @@ class NewFile(BaseModel, extra=Extra.allow):
     uuid: UUID
 
 
-class File(BaseModel, extra=Extra.allow):
+class File(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     region: str
     fileName: str
     length: int
@@ -23,5 +27,7 @@ class File(BaseModel, extra=Extra.allow):
     sha3: str
 
 
-class DownloadUrl(BaseModel, extra=Extra.allow):
+class DownloadUrl(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     uri: str

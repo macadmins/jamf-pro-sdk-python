@@ -2,12 +2,12 @@
 name = "jamf-pro-sdk"
 dynamic = ["readme", "version"]
 description = "Jamf Pro SDK for Python"
-keywords = ["jamf", "jamf pro", "jss", "jps"]
+keywords = ["jamf", "pro", "jss", "jps"]
 license = {text = "MIT"}
 requires-python = ">=3.9, <4"
 dependencies = [
     "requests>=2.28.1,<3",
-    "pydantic>=1.10.4,<2",
+    "pydantic>=2,<3",
     "dicttoxml>=1.7.16,<2",
     "defusedxml"
 ]
@@ -43,7 +43,7 @@ dev = [
     "boto3>=1.26.45,<2",
     "keyring>=23.13.1",
     "polyfactory>=2.1.1,<3",
-    "black",
+    "black[d]",
     "ruff",
     "coverage[toml]",
     "pytest >= 6",
@@ -108,26 +108,27 @@ minversion = "6.0"
 addopts = [
     "--durations=5",
     "--color=yes",
-    "--cov-report=html:htmlcov",
+    "--cov=src",
+    "--cov-report=html:coverage/htmlcov",
     "--cov-report=term-missing",
 #    "--cov-fail-under=90",
 ]
 testpaths = [ "./tests" ]
 
 
-[tool.coverage.run]
-source = ["jamf_pro_sdk"]
-branch = true
-parallel = true
+#[tool.coverage.run]
+#source = ["src", "jamf_pro_sdk"]
+#branch = true
+#parallel = true
 
 
-[tool.coverage.report]
-show_missing = true
+#[tool.coverage.report]
+#show_missing = true
 # Uncomment the following line to fail to build when the coverage is too low
 # fail_under = 99
 
 #[tool.coverage.xml]
-#output = "private/coverage/coverage.xml"
-#
+#output = "coverage/coverage.xml"
+
 #[tool.coverage.html]
-#directory = "private/coverage/"
+#directory = "coverage/htmlcov"

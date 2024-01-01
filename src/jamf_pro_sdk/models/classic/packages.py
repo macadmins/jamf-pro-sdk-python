@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from pydantic import Extra
+from pydantic import ConfigDict
 
 from .. import BaseModel
 from . import ClassicApiModel
@@ -8,13 +8,15 @@ from . import ClassicApiModel
 _XML_ARRAY_ITEM_NAMES = {}
 
 
-class ClassicPackageItem(BaseModel, extra=Extra.allow):
+class ClassicPackageItem(BaseModel):
     """Represents a package record returned by the
     :meth:`~jamf_pro_sdk.clients.classic_api.ClassicApi.list_packages` operation.
     """
 
-    id: Optional[int]
-    name: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
 
 
 class ClassicPackage(ClassicApiModel):
@@ -27,6 +29,8 @@ class ClassicPackage(ClassicApiModel):
     behavior export the model using :meth:`~jamf_pro_sdk.models.classic.ClassicApiModel.xml` before
     pasting to the API operation.
     """
+
+    model_config = ConfigDict(extra="allow")
 
     _xml_root_name = "package"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
@@ -42,23 +46,23 @@ class ClassicPackage(ClassicApiModel):
         "install_if_reported_available",
     }
 
-    id: Optional[int]
-    name: Optional[str]
-    category: Optional[str]
-    filename: Optional[str]
-    info: Optional[str]
-    notes: Optional[str]
-    priority: Optional[int]
-    reboot_required: Optional[bool]
-    fill_user_template: Optional[bool]
-    fill_existing_users: Optional[bool]
-    allow_uninstalled: Optional[bool]
-    os_requirements: Optional[str]
-    required_processor: Optional[str]
-    hash_type: Optional[str]
-    hash_value: Optional[str]
-    switch_with_package: Optional[str]
-    install_if_reported_available: Optional[bool]
-    reinstall_option: Optional[str]
-    triggering_files: Optional[Union[dict, str]]
-    send_notification: Optional[bool]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    category: Optional[str] = None
+    filename: Optional[str] = None
+    info: Optional[str] = None
+    notes: Optional[str] = None
+    priority: Optional[int] = None
+    reboot_required: Optional[bool] = None
+    fill_user_template: Optional[bool] = None
+    fill_existing_users: Optional[bool] = None
+    allow_uninstalled: Optional[bool] = None
+    os_requirements: Optional[str] = None
+    required_processor: Optional[str] = None
+    hash_type: Optional[str] = None
+    hash_value: Optional[str] = None
+    switch_with_package: Optional[str] = None
+    install_if_reported_available: Optional[bool] = None
+    reinstall_option: Optional[str] = None
+    triggering_files: Optional[Union[dict, str]] = None
+    send_notification: Optional[bool] = None

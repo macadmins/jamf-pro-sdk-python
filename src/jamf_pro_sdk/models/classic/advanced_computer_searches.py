@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import Extra
+from pydantic import ConfigDict
 
 from .. import BaseModel
 from . import ClassicApiModel, ClassicSite
@@ -13,7 +13,7 @@ _XML_ARRAY_ITEM_NAMES = {
 }
 
 
-class ClassicAdvancedComputerSearchDisplayField(BaseModel, extra=Extra.allow):
+class ClassicAdvancedComputerSearchDisplayField(BaseModel):
     """ClassicAdvancedComputerSearch nested model: advanced_computer_search.display_fields.
 
     Display fields are additional data that are returned with the results of an advanced search.
@@ -21,19 +21,23 @@ class ClassicAdvancedComputerSearchDisplayField(BaseModel, extra=Extra.allow):
     Jamf Pro UI for the supported names.
     """
 
-    name: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    name: Optional[str] = None
 
 
-class ClassicAdvancedComputerSearchResult(BaseModel, extra=Extra.allow):
+class ClassicAdvancedComputerSearchResult(BaseModel):
     """ClassicAdvancedComputerSearch nested model: advanced_computer_search.computers.
 
     In addition to the ``id``, ``name``, and ``udid`` fields, any defined display fields will also
     appear with their values from the inventory record.
     """
 
-    id: Optional[int]
-    name: Optional[str]
-    udid: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
+    udid: Optional[str] = None
 
 
 class ClassicAdvancedComputerSearchesItem(ClassicApiModel):
@@ -42,8 +46,10 @@ class ClassicAdvancedComputerSearchesItem(ClassicApiModel):
     operation.
     """
 
-    id: Optional[int]
-    name: Optional[str]
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[int] = None
+    name: Optional[str] = None
 
 
 class ClassicAdvancedComputerSearch(ClassicApiModel):
@@ -58,13 +64,15 @@ class ClassicAdvancedComputerSearch(ClassicApiModel):
     operation.
     """
 
+    model_config = ConfigDict(extra="allow")
+
     _xml_root_name = "advanced_computer_search"
     _xml_array_item_names = _XML_ARRAY_ITEM_NAMES
     _xml_write_fields = {"name", "site", "criteria", "display_fields"}
 
-    id: Optional[int]
-    name: Optional[str]
-    site: Optional[ClassicSite]
-    criteria: Optional[List[ClassicCriterion]]
-    display_fields: Optional[List[ClassicAdvancedComputerSearchDisplayField]]
-    computers: Optional[List[ClassicAdvancedComputerSearchResult]]
+    id: Optional[int] = None
+    name: Optional[str] = None
+    site: Optional[ClassicSite] = None
+    criteria: Optional[List[ClassicCriterion]] = None
+    display_fields: Optional[List[ClassicAdvancedComputerSearchDisplayField]] = None
+    computers: Optional[List[ClassicAdvancedComputerSearchResult]] = None

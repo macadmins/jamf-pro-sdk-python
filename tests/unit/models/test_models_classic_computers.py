@@ -7,7 +7,8 @@ from src.jamf_pro_sdk.models.classic.computers import (
     ClassicComputerGeneralRemoteManagement,
     ClassicComputerGroupsAccountsUserInventoriesUser,
 )
-from tests import utils
+
+from tests.unit import utils
 
 COMPUTER_JSON = {
     "computer": {
@@ -250,7 +251,7 @@ COMPUTER_JSON = {
 
 def test_computer_model_parsing():
     """Verify select attributes across the Computer model."""
-    computer = ClassicComputer(**COMPUTER_JSON["computer"])
+    computer = ClassicComputer.model_validate(COMPUTER_JSON["computer"])
 
     assert computer.general is not None  # mypy
     assert computer.general.id == 123
@@ -266,6 +267,7 @@ def test_computer_model_parsing():
 
     assert computer.hardware is not None  # mypy
     assert computer.hardware.model == "MacBook Pro (14-inch, 2021)"
+    assert computer.hardware.model_identifier == "MacBookPro18,3"
 
     assert computer.hardware.filevault2_users is not None  # mypy
     assert computer.hardware.filevault2_users[0] == "admin"
@@ -294,7 +296,7 @@ def test_computer_model_parsing():
     assert "Group 2" in computer.groups_accounts.computer_group_memberships
 
     assert computer.groups_accounts.local_accounts is not None  # mypy
-    assert computer.groups_accounts.local_accounts[0].uid is "502"
+    assert computer.groups_accounts.local_accounts[0].uid == "502"
     assert computer.groups_accounts.local_accounts[0].administrator is True
 
     assert computer.groups_accounts.user_inventories is not None  # mypy
@@ -311,7 +313,9 @@ def test_computer_model_parsing():
 
 
 def test_computer_model_construct_from_dict():
-    computer = ClassicComputer(**{"general": {"id": 123}, "location": {"username": "oscar"}})
+    computer = ClassicComputer.model_validate(
+        {"general": {"id": 123}, "location": {"username": "oscar"}}
+    )
 
     assert computer.general is not None  # mypy
     assert computer.general.id == 123
@@ -319,7 +323,7 @@ def test_computer_model_construct_from_dict():
     assert computer.location is not None  # mypy
     assert computer.location.username == "oscar"
 
-    computer_dict = computer.dict(exclude_none=True)
+    computer_dict = computer.model_dump(exclude_none=True)
 
     assert computer_dict["general"]["id"] == 123
     assert computer_dict["location"]["username"] == "oscar"
@@ -342,15 +346,15 @@ def test_computer_model_construct_attrs():
     assert computer.extension_attributes[0].id == 1
     assert computer.extension_attributes[0].value == "foo"
 
-    computer_dict = computer.dict(exclude_none=True)
+    computer_dict = computer.model_dump(exclude_none=True)
 
     assert computer_dict["general"]["id"] == 123
     assert computer_dict["extension_attributes"][0] == {"id": 1, "value": "foo"}
 
 
 def test_computer_model_json_output_matches_input():
-    computer = ClassicComputer(**COMPUTER_JSON["computer"])
-    serialized_output = json.loads(computer.json(exclude_none=True))
+    computer = ClassicComputer.model_validate(COMPUTER_JSON["computer"])
+    serialized_output = json.loads(computer.model_dump_json(exclude_none=True))
 
     diff = DeepDiff(COMPUTER_JSON["computer"], serialized_output, ignore_order=True)
 
