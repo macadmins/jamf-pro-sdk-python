@@ -7,6 +7,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5a1] - 2024-01-04
+
+### Added
+
+- Classic API `update_category_by_id()`
+- Classic API `delete_category_by_id()`
+- Classic API `create_category()`
+
+### Changed
+
+- Pydantic V2 Update
+
+### Fixed
+
+- Pagination bug with Pro API paginator.
+
+### PRs Included
+
+- [#26](https://github.com/macadmins/jamf-pro-sdk-python/pull/26)
+- [#36](https://github.com/macadmins/jamf-pro-sdk-python/pull/36)
+
 ## [0.4a1] - 2023-10-25
 
 ### Added
