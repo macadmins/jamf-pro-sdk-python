@@ -20,6 +20,7 @@ from ...models.pro.mdm import (
     SetRecoveryLockCommand,
     ShutDownDeviceCommand,
 )
+from ...models.pro.mobile_devices import MobileDevice
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -259,6 +260,7 @@ class ProApi:
         self,
         filter_expression: FilterExpression,
         start_page: int = 0,
+        end_page: int = None,
         page_size: int = 100,
         sort_expression: SortExpression = None,
         return_generator: bool = False,
@@ -277,6 +279,10 @@ class ProApi:
 
         :param start_page: (optional) The page to begin returning results from. See
             :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param end_page: (optional) The page to end returning results at. See :class:`Paginator` for
+            more information.
         :type start_page: int
 
         :param page_size: (optional) The number of results to include in each requested page. See
@@ -319,6 +325,96 @@ class ProApi:
             resource_path="v2/mdm/commands",
             return_model=MdmCommandStatus,
             start_page=start_page,
+            end_page=end_page,
+            page_size=page_size,
+            sort_expression=sort_expression,
+            filter_expression=filter_expression,
+        )
+
+        return paginator(return_generator=return_generator)
+
+    def get_mobile_device_inventory_v2(
+        self,
+        sections: List[str] = None,
+        start_page: int = 0,
+        end_page: int = None,
+        page_size: int = 100,
+        sort_expression: SortExpression = None,
+        filter_expression: FilterExpression = None,
+        return_generator: bool = False,
+    ) -> Union[List[MobileDevice], Iterator[Page]]:
+        """Returns a list of mobile device (iOS and tvOS) inventory records.
+
+        :param sections: (optional) Select which sections of the computer's details to return. If
+            not specific the request will default to ``GENERAL``. If ``ALL`` is passed then all
+            sections will be returned.
+
+            Allowed sections:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mobile_device_inventory_v2_allowed_sections
+
+        :type sections: List[str]
+
+        :param start_page: (optional) The page to begin returning results from. See
+            :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param end_page: (optional) The page to end returning results at. See :class:`Paginator` for
+            more information.
+        :type start_page: int
+
+        :param page_size: (optional) The number of results to include in each requested page. See
+            :class:`Paginator` for more information.
+        :type page_size: int
+
+        :param sort_expression: (optional) The sort fields to apply to the request. See the
+            documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mobile_device_inventory_v2_allowed_sort_fields
+
+        :type sort_expression: SortExpression
+
+        :param filter_expression: (optional) The filter expression to apply to the request. See the
+            documentation for :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_mobile_device_inventory_v2_allowed_filter_fields
+
+        :type filter_expression: FilterExpression
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. By
+            default, the results for all pages will be returned in a single response.
+        :type return_generator: bool
+
+        :return: List of computers OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.mobile_devices.MobileDevice] | Iterator[Page]
+
+        """
+        if not sections:
+            sections = ["GENERAL"]
+        elif "ALL" in sections:
+            sections = get_mobile_device_inventory_v2_allowed_sections[1:]
+
+        if not all([i in get_mobile_device_inventory_v2_allowed_sections for i in sections]):
+            raise ValueError(
+                f"Values for 'sections' must be one of: {', '.join(get_mobile_device_inventory_v2_allowed_sections)}"
+            )
+
+        if sort_expression:
+            sort_expression.validate(get_mobile_device_inventory_v2_allowed_sort_fields)
+
+        if filter_expression:
+            filter_expression.validate(get_mobile_device_inventory_v2_allowed_filter_fields)
+
+        paginator = Paginator(
+            api_client=self,
+            resource_path="v1/mobile-devices/detail",
+            return_model=MobileDevice,
+            start_page=start_page,
+            end_page=end_page,
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
