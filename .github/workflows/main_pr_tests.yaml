@@ -52,3 +52,7 @@ jobs:
 
       - name: Run Integration Tests
         run: make test-all
+        env:
+          JAMF_PRO_HOST: ${{ vars.JAMF_PRO_HOST }}
+          JAMF_PRO_CLIENT_ID: ${{ vars.JAMF_PRO_CLIENT_ID }}
+          JAMF_PRO_CLIENT_SECRET: ${{ vars.JAMF_PRO_CLIENT_SECRET }}
