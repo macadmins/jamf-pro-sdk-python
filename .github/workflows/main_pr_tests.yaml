@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  automated-tests:
+  setup-env:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,8 +28,20 @@ jobs:
       - name: Install
         run: make install
 
+  automated-tests:
+    needs: setup-env
+    runs-on: ubuntu-latest
+    steps:
       - name: Lint Checker
         run: make lint
 
       - name: Tests
         run: make test
+
+  exp-integration-tests:
+    needs: setup-env
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Integration Tests
+        run: make test-all
