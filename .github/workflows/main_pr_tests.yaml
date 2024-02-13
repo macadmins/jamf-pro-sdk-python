@@ -28,10 +28,6 @@ jobs:
       - name: Install
         run: make install
 
-  automated-tests:
-    needs: setup-env
-    runs-on: ubuntu-latest
-    steps:
       - name: Lint Checker
         run: make lint
 
@@ -39,9 +35,17 @@ jobs:
         run: make test
 
   exp-integration-tests:
-    needs: setup-env
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
       - name: Run Integration Tests
         run: make test-all
