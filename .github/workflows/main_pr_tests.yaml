@@ -47,5 +47,8 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
 
+      - name: Install
+        run: make install
+
       - name: Run Integration Tests
         run: make test-all
