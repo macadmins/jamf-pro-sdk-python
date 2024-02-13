@@ -8,6 +8,8 @@ from .. import BaseModel
 
 
 class MobileDeviceType(str, Enum):
+    """Not in use: the value of this attribute can be an undocumented state."""
+
     iOS: str = "iOS"
     tvOS: str = "tvOS"
 
@@ -151,7 +153,7 @@ class MobileDeviceGeneral(BaseModel):
     ipAddress: Optional[str] = None
     managed: Optional[bool] = None
     supervised: Optional[bool] = None
-    deviceOwnershipType = Optional[MobileDeviceOwnershipType]
+    deviceOwnershipType: Optional[MobileDeviceOwnershipType] = None
     enrollmentMethodPrestage: Optional[MobileDeviceEnrollmentMethodPrestage] = None
     enrollmentSessionTokenValid: Optional[bool] = None
     lastEnrolledDate: Optional[datetime] = None
@@ -287,7 +289,7 @@ class MobileDevice(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     mobileDeviceId: Optional[str] = None
-    deviceType: Optional[MobileDeviceType] = None
+    deviceType: Optional[str] = None
     hardware: Optional[MobileDeviceHardware] = None
     userAndLocation: Optional[MobileDeviceUserAndLocation] = None
     purchasing: Optional[MobileDevicePurchasing] = None
@@ -302,4 +304,4 @@ class MobileDevice(BaseModel):
     network: Optional[MobileDeviceNetwork] = None
     serviceSubscriptions: Optional[List[MobileDeviceServiceSubscription]] = None
     provisioningProfiles: Optional[List[ProvisioningProfile]] = None
-    sharedUsers: Optional[List[SharedUser]]
+    sharedUsers: Optional[List[SharedUser]] = None

@@ -4,15 +4,16 @@ import os
 import pytest
 
 from jamf_pro_sdk import (
-    BasicAuthProvider,
     JamfProClient,
     SessionConfig,
     logger_quick_setup,
 )
+from jamf_pro_sdk.clients.auth import ApiClientCredentialsProvider
 
-JAMF_PRO_HOST = os.getenv("JAMF_PRO_HOST", "dummy.jamfcloud.com")
-JAMF_PRO_USERNAME = os.getenv("JAMF_PRO_USERNAME", "demo")
-JAMF_PRO_PASS = os.getenv("JAMF_PRO_PASS", "tryitout")
+# https://developer.jamf.com/developer-guide/docs/populating-dummy-data
+JAMF_PRO_HOST = os.getenv("JAMF_PRO_HOST")
+JAMF_PRO_CLIENT_ID = os.getenv("JAMF_PRO_CLIENT_ID")
+JAMF_PRO_CLIENT_SECRET = os.getenv("JAMF_PRO_CLIENT_SECRET")
 
 # Run pytest with '-s' to view logging output
 logger_quick_setup(logging.DEBUG)
@@ -22,7 +23,9 @@ logger_quick_setup(logging.DEBUG)
 def jamf_client():
     client = JamfProClient(
         server=JAMF_PRO_HOST,
-        credentials=BasicAuthProvider(username=JAMF_PRO_USERNAME, password=JAMF_PRO_PASS),
+        credentials=ApiClientCredentialsProvider(
+            client_id=JAMF_PRO_CLIENT_ID, client_secret=JAMF_PRO_CLIENT_SECRET
+        ),
         session_config=SessionConfig(timeout=30),
     )
 

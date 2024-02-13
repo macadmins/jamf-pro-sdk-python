@@ -411,7 +411,7 @@ class ProApi:
 
         paginator = Paginator(
             api_client=self,
-            resource_path="v1/mobile-devices/detail",
+            resource_path="v2/mobile-devices/detail",
             return_model=MobileDevice,
             start_page=start_page,
             end_page=end_page,
