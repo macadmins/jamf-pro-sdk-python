@@ -228,9 +228,11 @@ class Paginator:
             page=page,
             page_count=len(response["results"]),
             total_count=response["totalCount"],
-            results=[self.return_model.model_validate(i) for i in response["results"]]
-            if self.return_model
-            else response["results"],
+            results=(
+                [self.return_model.model_validate(i) for i in response["results"]]
+                if self.return_model
+                else response["results"]
+            ),
         )
 
     def _request(self) -> Iterator[Page]:
