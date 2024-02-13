@@ -224,7 +224,7 @@ get_mdm_commands_v2_allowed_command_types = [
     "UNKNOWN",
 ]
 
-get_mobile_device_inventory_v1_allowed_sections = [
+get_mobile_device_inventory_v2_allowed_sections = [
     "GENERAL",
     "HARDWARE",
     "USER_AND_LOCATION",
@@ -242,7 +242,7 @@ get_mobile_device_inventory_v1_allowed_sections = [
     "EXTENSION_ATTRIBUTES",
 ]
 
-get_mobile_device_inventory_v1_allowed_sort_fields = [
+get_mobile_device_inventory_v2_allowed_sort_fields = [
     "airPlayPassword",
     "appAnalyticsEnabled",
     "assetTag",
@@ -343,7 +343,7 @@ get_mobile_device_inventory_v1_allowed_sort_fields = [
     "roaming",
 ]
 
-get_mobile_device_inventory_v1_allowed_filter_fields = [
+get_mobile_device_inventory_v2_allowed_filter_fields = [
     "airPlayPassword",
     "appAnalyticsEnabled",
     "assetTag",
