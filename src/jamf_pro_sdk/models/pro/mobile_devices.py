@@ -117,6 +117,8 @@ class MobileDeviceProfile(BaseModel):
 
 
 class MobileDeviceUserProfile(MobileDeviceProfile):
+    """Extends :class:`~jamf_pro_sdk.models.pro.mobile_devices.MobileDeviceProfile`."""
+
     model_config = ConfigDict(extra="allow")
 
     username: Optional[str] = None

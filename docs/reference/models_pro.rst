@@ -84,6 +84,33 @@ MDM Commands
     MdmCommandStatusStates
     MdmCommandStatusTypes
 
+Mobile Devices
+--------------
+
+.. currentmodule:: jamf_pro_sdk.models.pro.mobile_devices
+
+.. autosummary::
+    :toctree: _autosummary
+
+    MobileDevice
+    MobileDeviceHardware
+    MobileDeviceUserAndLocation
+    MobileDevicePurchasing
+    MobileDeviceApplication
+    MobileDeviceCertificate
+    MobileDeviceProfile
+    MobileDeviceUserProfile
+    MobileDeviceExtensionAttribute
+    MobileDeviceGeneral
+    MobileDeviceOwnershipType
+    MobileDeviceEnrollmentMethodPrestage
+    MobileDeviceSecurity
+    MobileDeviceEbook
+    MobileDeviceNetwork
+    MobileDeviceServiceSubscription
+    ProvisioningProfile
+    SharedUser
+
 Pagination
 ----------
 
