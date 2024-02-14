@@ -84,6 +84,13 @@ line-length = 100
 [tool.ruff]
 line-length = 100
 target-version = "py39"
+src = [
+    "src",
+    "tests"
+]
+
+
+[tool.ruff.lint]
 select = [
     "E101",
     "F401",
@@ -93,14 +100,7 @@ select = [
     "N802",
     "N806"
 ]
-src = [
-    "src",
-    "tests"
-]
-
-
-[tool.ruff.per-file-ignores]
-"__init__.py" = ["F401"]
+per-file-ignores = {"__init__.py" = ["F401"]}
 
 
 [tool.pytest.ini_options]
