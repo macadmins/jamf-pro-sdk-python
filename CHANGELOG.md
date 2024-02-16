@@ -7,6 +7,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6a1] - 2024-02-13
+
+### Added
+
+- Pro API `get_mobile_device_inventory_v2()`
+
+### Changed
+
+- Added `end_page` argument to `get_mdm_commands_v2()`
+
+### PRs Included
+
+[#39](https://github.com/macadmins/jamf-pro-sdk-python/pull/39)
+
 ## [0.5a2] - 2024-01-09
 
 ### Fixed
