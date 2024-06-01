@@ -33,6 +33,7 @@ class ClassicCriterionSearchType(str, Enum):
     current: str = "current"
     not_current: str = "not current"
     greater_than: str = "greater than"
+    more_than: str = "more than"
     less_than: str = "less than"
     greater_than_or_equal: str = "greater than or equal"
     less_than_or_equal: str = "less than or equal"
