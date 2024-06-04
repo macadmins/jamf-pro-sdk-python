@@ -32,6 +32,8 @@ class ClassicCriterionSearchType(str, Enum):
     less_than_x_days_ago: str = "less than x days ago"
     current: str = "current"
     not_current: str = "not current"
+    member_of: str = "member of"
+    not_member_of: str = "not member of"
     greater_than: str = "greater than"
     more_than: str = "more than"
     less_than: str = "less than"
