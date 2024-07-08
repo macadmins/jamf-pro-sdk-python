@@ -418,6 +418,7 @@ class ProApi:
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
+            extra_params={"section": ",".join(sections)},
         )
 
         return paginator(return_generator=return_generator)
