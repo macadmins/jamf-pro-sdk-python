@@ -44,7 +44,7 @@ class ClassicCriterionSearchType(str, Enum):
 class ClassicCriterion(BaseModel):
     """Classic API criterion. Used by Smart Groups and Advanced Searches."""
 
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="allow", use_enum_values=True)
 
     name: str
     priority: int
