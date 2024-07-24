@@ -17,11 +17,11 @@ test-all:
 	pytest tests
 
 lint:
-	black --check src tests
+	ruff format --check src tests
 	ruff check src tests
 
 format:
-	black src tests # You can have it any color you want...
+	ruff format src tests
 	ruff check --select I001 --fix src tests # Only fixes import order
 
 build:

@@ -29,7 +29,7 @@ Before writing code and opening a pull request to add to the project, please ope
 Code contributors are required to uphold project standards:
 
 * Consistency with existing SDK interfaces.
-* All code conforms to formatting and styling (``black`` and ``ruff`` are used in this project, and are enforced at pull request).
+* All code conforms to formatting and styling (``ruff`` is used in this project and is enforced at pull request).
 * All changes are documented in the users guides, references, and docstrings.
 * Code changes are covered by additional tests (future: this project will not have a full test suite until it comes out of alpha).
 * Backwards compatibility is not broken by the contributions (with the exception of the alpha period where breaking changes may be allowed on a case-by-case basis).
@@ -61,7 +61,7 @@ There are two additional ``make`` commands for maintaining your local environmen
 Code Quality
 ^^^^^^^^^^^^
 
-The ``black`` and ``ruff`` tools will enforce formatting standards for the codebase. The settings for these tools are defined in `pyproject.toml <https://github.com/macadmins/jamf-pro-sdk-python/blob/main/pyproject.toml>`_.
+The ``ruff`` tool will enforce formatting standards for the codebase. The settings are defined in `pyproject.toml <https://github.com/macadmins/jamf-pro-sdk-python/blob/main/pyproject.toml>`_.
 
 * ``make lint`` will check if your code is compliant with the formatting and linting rules without making changes.
 * ``make format`` will edit your code to comply with the formatting and linting rules.
