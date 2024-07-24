@@ -7,6 +7,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6a2] - 2024-07-24
+
+### Changed
+
+- Fixed missing criteria options for Classic API advanced searches and groups.
+- Fixed sections not being passed when calling `get_mobile_device_inventory_v2()`.
+- Fix malformed XML when generating computer group data from a model.
+- Removed `black` from dev tools.
+
+### PRs Included
+
+- [#42](https://github.com/macadmins/jamf-pro-sdk-python/pull/42)
+- [#45](https://github.com/macadmins/jamf-pro-sdk-python/pull/45)
+- [#48](https://github.com/macadmins/jamf-pro-sdk-python/pull/48)
+- [#49](https://github.com/macadmins/jamf-pro-sdk-python/pull/49)
+- [#50](https://github.com/macadmins/jamf-pro-sdk-python/pull/50)
+
 ## [0.6a1] - 2024-02-13
 
 ### Added
@@ -19,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### PRs Included
 
-[#39](https://github.com/macadmins/jamf-pro-sdk-python/pull/39)
+- [#39](https://github.com/macadmins/jamf-pro-sdk-python/pull/39)
 
 ## [0.5a2] - 2024-01-09
 
