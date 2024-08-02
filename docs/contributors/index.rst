@@ -47,9 +47,9 @@ It is recommended you use a Python virtual environment for local development (se
 
 With your virtual environment active run the following from the SDK repository's directory:
 
-.. code-block:: shell
+.. code-block:: console
 
-    (.vent) % make install
+    (.venv) % make install
 
 This will install the package in editable mode with all dev and optional dependencies.
 

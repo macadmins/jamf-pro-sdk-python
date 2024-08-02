@@ -37,6 +37,11 @@ Import the Jamf Pro client from the SDK:
 
 Create a client object passing in your Jamf Pro server name and a username and password:
 
+.. note::
+
+    When passing your Jamf Pro server name, do not include the scheme (``https://``) as the SDK handles this automatically for you.
+
+
     >>> client = JamfProClient(
     ...     server="jamf.my.org",
     ...     credentials=BasicAuthProvider("oscar", "j@mf1234!")
