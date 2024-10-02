@@ -106,6 +106,26 @@ get_computer_inventory_v1_allowed_filter_fields = [
     "purchasing.warrantyDate",
 ]
 
+get_packages_v1_allowed_sort_fields = [
+    "id",
+    "packageName",
+    "fileName",
+    "categoryId",
+    "info",
+    "notes",
+    "manifestFileName",
+]
+
+get_packages_v1_allowed_filter_fields = [
+    "id",
+    "packageName",
+    "fileName",
+    "categoryId",
+    "info",
+    "notes",
+    "manifestFileName",
+]
+
 get_mdm_commands_v2_allowed_sort_fields = [
     "uuid",
     "clientManagementId",
