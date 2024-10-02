@@ -45,6 +45,16 @@ Computers
     ComputerContentCaching
     ComputerGroupMembership
 
+Packages
+--------
+
+.. currentmodule:: jamf_pro_sdk.models.pro.packages
+
+.. autosummary::
+    :toctree: _autosummary
+
+    Package
+
 JCDS2
 -----
 
