@@ -72,6 +72,10 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 
+[tool.setuptools.package-data]
+"jamf_pro_sdk" = ["py.typed"]
+
+
 [tool.setuptools.dynamic]
 version = {attr = "jamf_pro_sdk.__about__.__version__"}
 readme = {file = ["README.md"], content-type = "text/markdown"}
