@@ -2,7 +2,7 @@ import concurrent.futures
 import logging
 import tempfile
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Type, Union
+from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Type, Union, BinaryIO
 from urllib.parse import urlunparse
 
 import certifi
@@ -195,6 +195,7 @@ class JamfProClient:
         resource_path: str,
         query_params: Optional[Dict[str, str]] = None,
         data: Optional[Union[dict, BaseModel]] = None,
+        files: Optional[dict[str, tuple[str, BinaryIO, str]]] = None,
         override_headers: Dict[str, str] = None,
     ) -> requests.Response:
         """Perform a request to the Pro API.
@@ -213,6 +214,10 @@ class JamfProClient:
         :param data: If the request is a ``POST``, ``PUT``, or ``PATCH``, the dictionary
             or ``BaseModel`` that is being sent.
         :type data: dict | BaseModel
+
+        :param files: If the request is a ``POST``, a dictionary with a single ``files`` key,
+            and a tuple containing the filename, file-like object to upload, and mime type.
+        :type files: Optional[dict[str, tuple[str, BinaryIO, str]]]
 
         :param override_headers: A dictionary of key-value pairs that will be set as
             headers for the request. You cannot override the ``Authorization`` or
@@ -245,6 +250,9 @@ class JamfProClient:
                 pro_req["data"] = data.model_dump_json(exclude_none=True)
             else:
                 raise ValueError("'data' must be one of 'dict' or 'BaseModel'")
+
+        if files and (method.lower() == "post"):
+            pro_req["files"] = files
 
         with self.session.request(**pro_req) as pro_resp:
             logger.info("ProAPIRequest %s %s", method.upper(), resource_path)
