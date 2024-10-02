@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Iterator, List, Union
+from typing import TYPE_CHECKING, Optional, Callable, Iterator, List, Union, Literal, overload
 from uuid import UUID
 
 from ...models.pro.api_options import *  # noqa: F403
 from ...models.pro.computers import Computer
+from ...models.pro.packages import Package
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
 from ...models.pro.mdm import (
     CustomCommand,
@@ -122,6 +123,97 @@ class ProApi:
             api_client=self,
             resource_path="v1/computers-inventory",
             return_model=Computer,
+            start_page=start_page,
+            end_page=end_page,
+            page_size=page_size,
+            sort_expression=sort_expression,
+            filter_expression=filter_expression,
+            extra_params={"section": ",".join(sections)},
+        )
+
+        return paginator(return_generator=return_generator)
+
+    @overload
+    def get_packages_v1(
+        self,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[Package]: ...
+
+    @overload
+    def get_packages_v1(
+        self,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
+    def get_packages_v1(
+        self,
+        start_page: int = 0,
+        end_page: Optional[int] = None,
+        page_size: int = 100,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
+        return_generator: bool = False,
+    ) -> Union[List[Package], Iterator[Page]]:
+        """Returns a list of package records.
+
+        :param start_page: (optional) The page to begin returning results from. See
+            :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param end_page: (optional) The page to end returning results at. See :class:`Paginator` for
+            more information.
+        :type start_page: int
+
+        :param page_size: (optional) The number of results to include in each requested page. See
+            :class:`Paginator` for more information.
+        :type page_size: int
+
+        :param sort_expression: (optional) The sort fields to apply to the request. See the
+            documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_sort_fields
+
+        :type sort_expression: SortExpression
+
+        :param filter_expression: (optional) The filter expression to apply to the request. See the
+            documentation for :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_filter_fields
+
+        :type filter_expression: FilterExpression
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. By
+            default, the results for all pages will be returned in a single response.
+        :type return_generator: bool
+
+        :return: List of computers OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.computer.Computer] | Iterator[Page]
+
+        """
+        if sort_expression:
+            sort_expression.validate(get_packages_v1_allowed_sort_fields)
+
+        if filter_expression:
+            filter_expression.validate(get_packages_v1_allowed_filter_fields)
+
+        paginator = Paginator(
+            api_client=self,
+            resource_path="v1/packages",
+            return_model=Package,
             start_page=start_page,
             end_page=end_page,
             page_size=page_size,
