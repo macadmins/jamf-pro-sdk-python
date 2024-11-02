@@ -207,7 +207,7 @@ class CustomCommand(BaseModel):
 
 
 class SendMdmCommandClientData(BaseModel):
-    managementId: UUID
+    managementId: Union[str, UUID]
 
 
 BuiltInCommands = Annotated[

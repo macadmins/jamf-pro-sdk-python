@@ -3,7 +3,19 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable, Iterator, List, Union, Literal, overload
 from uuid import UUID
 
-from ...models.pro.api_options import *  # noqa: F403
+from ...models.pro.api_options import (
+    get_computer_inventory_v1_allowed_sections,
+    get_computer_inventory_v1_allowed_sort_fields,
+    get_computer_inventory_v1_allowed_filter_fields,
+    get_packages_v1_allowed_sort_fields,
+    get_packages_v1_allowed_filter_fields,
+    get_mdm_commands_v2_allowed_command_types,
+    get_mdm_commands_v2_allowed_sort_fields,
+    get_mdm_commands_v2_allowed_filter_fields,
+    get_mobile_device_inventory_v2_allowed_sections,
+    get_mobile_device_inventory_v2_allowed_sort_fields,
+    get_mobile_device_inventory_v2_allowed_filter_fields,
+)
 from ...models.pro.computers import Computer
 from ...models.pro.packages import Package
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
@@ -43,14 +55,38 @@ class ProApi:
 
     # Computer Inventory APIs
 
+    @overload
     def get_computer_inventory_v1(
         self,
-        sections: List[str] = None,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[Computer]: ...
+
+    @overload
+    def get_computer_inventory_v1(
+        self,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
+    def get_computer_inventory_v1(
+        self,
+        sections: Optional[List[str]] = None,
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
-        filter_expression: FilterExpression = None,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
         return_generator: bool = False,
     ) -> Union[List[Computer], Iterator[Page]]:
         """Returns a list of computer inventory records.
@@ -219,7 +255,6 @@ class ProApi:
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
-            extra_params={"section": ",".join(sections)},
         )
 
         return paginator(return_generator=return_generator)
@@ -352,9 +387,9 @@ class ProApi:
         self,
         filter_expression: FilterExpression,
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
+        sort_expression: Optional[SortExpression] = None,
         return_generator: bool = False,
     ) -> Union[List[MdmCommandStatus], Iterator[Page]]:
         """Returns a list of MDM commands.
@@ -427,12 +462,12 @@ class ProApi:
 
     def get_mobile_device_inventory_v2(
         self,
-        sections: List[str] = None,
+        sections: Optional[List[str]] = None,
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
-        filter_expression: FilterExpression = None,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
         return_generator: bool = False,
     ) -> Union[List[MobileDevice], Iterator[Page]]:
         """Returns a list of mobile device (iOS and tvOS) inventory records.

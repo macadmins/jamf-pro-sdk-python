@@ -10,14 +10,14 @@ from .. import BaseModel
 class MobileDeviceType(str, Enum):
     """Not in use: the value of this attribute can be an undocumented state."""
 
-    iOS: str = "iOS"
-    tvOS: str = "tvOS"
+    iOS = "iOS"
+    tvOS = "tvOS"
 
 
 class MobileDeviceExtensionAttributeType(str, Enum):
-    STRING: str = "STRING"
-    INTEGER: str = "INTEGER"
-    DATE: str = "DATE"
+    STRING = "STRING"
+    INTEGER = "INTEGER"
+    DATE = "DATE"
 
 
 class MobileDeviceExtensionAttribute(BaseModel):
@@ -125,11 +125,11 @@ class MobileDeviceUserProfile(MobileDeviceProfile):
 
 
 class MobileDeviceOwnershipType(str, Enum):
-    Institutional: str = "Institutional"
-    PersonalDeviceProfile: str = "PersonalDeviceProfile"
-    UserEnrollment: str = "UserEnrollment"
-    AccountDrivenUserEnrollment: str = "AccountDrivenUserEnrollment"
-    AccountDrivenDeviceEnrollment: str = "AccountDrivenDeviceEnrollment"
+    Institutional = "Institutional"
+    PersonalDeviceProfile = "PersonalDeviceProfile"
+    UserEnrollment = "UserEnrollment"
+    AccountDrivenUserEnrollment = "AccountDrivenUserEnrollment"
+    AccountDrivenDeviceEnrollment = "AccountDrivenDeviceEnrollment"
 
 
 class MobileDeviceEnrollmentMethodPrestage(BaseModel):

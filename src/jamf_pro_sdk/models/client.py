@@ -12,8 +12,8 @@ EPOCH_DATETIME = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 
 class Schemes(str, Enum):
-    http: str = "http"
-    https: str = "https"
+    http = "http"
+    https = "https"
 
 
 class SessionConfig(BaseModel):
@@ -51,15 +51,15 @@ class SessionConfig(BaseModel):
     :type scheme: str
     """
 
-    timeout: Union[int, None] = None
+    timeout: Optional[int] = None
     max_retries: int = 0
     max_concurrency: int = 5
     return_exceptions: bool = True
     user_agent: str = DEFAULT_USER_AGENT
     verify: bool = True
-    cookie: Union[str, Path] = None
-    ca_cert_bundle: Union[str, Path] = None
-    scheme: Schemes = "https"
+    cookie: Optional[Union[str, Path]] = None
+    ca_cert_bundle: Optional[Union[str, Path]] = None
+    scheme: Schemes = Schemes.https
 
 
 class AccessToken(BaseModel):
