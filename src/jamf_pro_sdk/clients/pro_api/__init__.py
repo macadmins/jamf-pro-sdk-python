@@ -1,23 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Callable, Iterator, List, Union, Literal, overload
+from typing import TYPE_CHECKING, Callable, Iterator, List, Literal, Optional, Union, overload
 from uuid import UUID
 
 from ...models.pro.api_options import (
+    get_computer_inventory_v1_allowed_filter_fields,
     get_computer_inventory_v1_allowed_sections,
     get_computer_inventory_v1_allowed_sort_fields,
-    get_computer_inventory_v1_allowed_filter_fields,
-    get_packages_v1_allowed_sort_fields,
-    get_packages_v1_allowed_filter_fields,
     get_mdm_commands_v2_allowed_command_types,
-    get_mdm_commands_v2_allowed_sort_fields,
     get_mdm_commands_v2_allowed_filter_fields,
+    get_mdm_commands_v2_allowed_sort_fields,
+    get_mobile_device_inventory_v2_allowed_filter_fields,
     get_mobile_device_inventory_v2_allowed_sections,
     get_mobile_device_inventory_v2_allowed_sort_fields,
-    get_mobile_device_inventory_v2_allowed_filter_fields,
+    get_packages_v1_allowed_filter_fields,
+    get_packages_v1_allowed_sort_fields,
 )
 from ...models.pro.computers import Computer
-from ...models.pro.packages import Package
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
 from ...models.pro.mdm import (
     CustomCommand,
@@ -34,6 +33,7 @@ from ...models.pro.mdm import (
     ShutDownDeviceCommand,
 )
 from ...models.pro.mobile_devices import MobileDevice
+from ...models.pro.packages import Package
 from .pagination import Paginator
 
 if TYPE_CHECKING:

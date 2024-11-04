@@ -9,7 +9,6 @@ from .clients.auth import (
 from .helpers import logger_quick_setup
 from .models.client import SessionConfig
 
-
 __all__ = [
     "__title__",
     "__version__",

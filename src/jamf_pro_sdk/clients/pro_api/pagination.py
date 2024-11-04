@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, Iterable, Iterator, List, Type, Optional, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Iterator, List, Optional, Type, Union
 
 from pydantic import BaseModel
 

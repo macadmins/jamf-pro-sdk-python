@@ -2,7 +2,7 @@ import concurrent.futures
 import logging
 import tempfile
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Type, Union, BinaryIO
+from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, Optional, Type, Union
 from urllib.parse import urlunparse
 
 import certifi
