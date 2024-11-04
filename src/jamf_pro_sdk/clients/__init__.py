@@ -27,7 +27,7 @@ class JamfProClient:
         server: str,
         credentials: CredentialsProvider,
         port: int = 443,
-        session_config: SessionConfig = None,
+        session_config: Optional[SessionConfig] = None,
     ):
         """The base client class for interacting with the Jamf Pro APIs.
 
@@ -138,7 +138,7 @@ class JamfProClient:
         method: str,
         resource_path: str,
         data: Optional[Union[str, ClassicApiModel]] = None,
-        override_headers: dict = None,
+        override_headers: Optional[dict] = None,
     ) -> requests.Response:
         """Perform a request to the Classic API.
 
@@ -196,7 +196,7 @@ class JamfProClient:
         query_params: Optional[Dict[str, str]] = None,
         data: Optional[Union[dict, BaseModel]] = None,
         files: Optional[dict[str, tuple[str, BinaryIO, str]]] = None,
-        override_headers: Dict[str, str] = None,
+        override_headers: Optional[Dict[str, str]] = None,
     ) -> requests.Response:
         """Perform a request to the Pro API.
 
@@ -269,7 +269,7 @@ class JamfProClient:
         handler: Callable,
         arguments: Iterable[Any],
         return_model: Optional[Type[BaseModel]] = None,
-        max_concurrency: int = None,
+        max_concurrency: Optional[int] = None,
         return_exceptions: Optional[bool] = None,
     ) -> Iterator[Union[Any, Exception]]:
         """An interface for performing concurrent API operations.
