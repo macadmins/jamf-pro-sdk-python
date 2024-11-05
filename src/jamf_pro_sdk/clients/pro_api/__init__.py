@@ -169,6 +169,8 @@ class ProApi:
 
         return paginator(return_generator=return_generator)
 
+    # Package APIs
+
     @overload
     def get_packages_v1(
         self,
@@ -219,7 +221,7 @@ class ProApi:
 
             Allowed sort fields:
 
-            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_sort_fields
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_packages_v1_allowed_sort_fields
 
         :type sort_expression: SortExpression
 
@@ -228,7 +230,7 @@ class ProApi:
 
             Allowed filter fields:
 
-            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_computer_inventory_v1_allowed_filter_fields
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_packages_v1_allowed_filter_fields
 
         :type filter_expression: FilterExpression
 
@@ -236,8 +238,8 @@ class ProApi:
             default, the results for all pages will be returned in a single response.
         :type return_generator: bool
 
-        :return: List of computers OR a paginator generator.
-        :rtype: List[~jamf_pro_sdk.models.pro.computer.Computer] | Iterator[Page]
+        :return: List of packages OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.packages.package] | Iterator[Page]
 
         """
         if sort_expression:
@@ -383,6 +385,28 @@ class ProApi:
         resp = self.api_request(method="post", resource_path="preview/mdm/commands", data=data)
         return [SendMdmCommandResponse(**i) for i in resp.json()]
 
+    @overload
+    def get_mdm_commands_v2(
+        self,
+        filter_expression: FilterExpression,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[MdmCommandStatus]: ...
+
+    @overload
+    def get_mdm_commands_v2(
+        self,
+        filter_expression: FilterExpression,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
     def get_mdm_commands_v2(
         self,
         filter_expression: FilterExpression,
@@ -429,7 +453,7 @@ class ProApi:
             the results for all pages will be returned in a single response.
         :type return_generator: bool
 
-        :return: List of computers OR a paginator generator.
+        :return: List of MDM commands OR a paginator generator.
         :rtype: List[~jamf_pro_sdk.models.pro.mdm.MdmCommand] | Iterator[Page]
         """
 
@@ -459,6 +483,32 @@ class ProApi:
         )
 
         return paginator(return_generator=return_generator)
+
+    # Mobile Device Inventory APIs
+
+    @overload
+    def get_mobile_device_inventory_v2(
+        self,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[MobileDevice]: ...
+
+    @overload
+    def get_mobile_device_inventory_v2(
+        self,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
 
     def get_mobile_device_inventory_v2(
         self,
