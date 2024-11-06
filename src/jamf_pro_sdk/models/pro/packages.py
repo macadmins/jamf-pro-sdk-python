@@ -1,6 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import ConfigDict
+
+from .. import BaseModel
 
 
 class Package(BaseModel):
