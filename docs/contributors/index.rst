@@ -96,8 +96,8 @@ Any Jamf Pro API added to the clients must have the following elements code comp
 
 * The API method has been added to the appropriate client, has a complete docstring, and has an interface in-line with other methods of that client.
 * The API must have matching and complete Pydantic models.
-* Provide ``@overload`` interfaces for API methods with dynamic return types (e.g. ``Union[List[Computer], Iterator[Page]]``) which be determined from the value of an argument.
-* If the value of an argument or variable can be ``None``, inform the type checker by wrapping its type with ``Optional[]``.
+* Provide ``@overload`` interfaces for API methods with dynamic return types (e.g. ``Union[list[Computer], Iterator[Page]]``) which be determined from the value of an argument.
+* If the value of a variable, method argument, or return parameter can be ``None``, inform the type checker by wrapping its type with ``Optional[]``, e.g. ``description: Optional[str] = None``
 * Unless your code is covered by another automated test you will need to add tests to ensure coverage.
 
 The SDK references in the documentation automatically include all public method on the clients and no documentation changes may be required as a part of the contribution.
