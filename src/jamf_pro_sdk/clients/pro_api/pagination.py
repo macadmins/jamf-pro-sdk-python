@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, Iterable, Iterator, List, Type, Union
+from typing import TYPE_CHECKING, Dict, Iterable, Iterator, List, Optional, Type, Union
 
 from pydantic import BaseModel
 
@@ -54,7 +54,7 @@ class FilterField:
     def _return_expression(self, operator: str, value: Union[bool, int, str]) -> FilterExpression:
         return FilterExpression(
             filter_expression=f"{self.name}{operator}{value}",
-            fields=[FilterEntry(name=self.name, op=operator, value=value)],
+            fields=[FilterEntry(name=self.name, op=operator, value=str(value))],
         )
 
     def eq(self, value: Union[bool, int, str]) -> FilterExpression:
@@ -146,13 +146,13 @@ class Paginator:
         self,
         api_client: ProApi,
         resource_path: str,
-        return_model: Type[BaseModel] = None,
+        return_model: Type[BaseModel],
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
-        filter_expression: FilterExpression = None,
-        extra_params: Dict[str, str] = None,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
+        extra_params: Optional[Dict[str, str]] = None,
     ):
         """A paginator for the Jamf Pro API. A paginator automatically iterates over an API if
         multiple unreturned pages are detected in the response. Paginated requests are performed
@@ -212,7 +212,7 @@ class Paginator:
         self.extra_params = extra_params
 
     def _paginated_request(self, page: int) -> Page:
-        query_params = {"page": page, "page-size": self.page_size}
+        query_params: dict = {"page": page, "page-size": self.page_size}
         if self.sort_expression:
             query_params["sort"] = str(self.sort_expression)
         if self.filter_expression:

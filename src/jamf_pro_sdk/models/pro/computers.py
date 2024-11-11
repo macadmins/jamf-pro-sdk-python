@@ -11,16 +11,16 @@ from . import V1Site
 
 
 class ComputerExtensionAttributeDataType(str, Enum):
-    STRING: str = "STRING"
-    INTEGER: str = "INTEGER"
-    DATE_TIME: str = "DATE_TIME"
+    STRING = "STRING"
+    INTEGER = "INTEGER"
+    DATE_TIME = "DATE_TIME"
 
 
-class ComputerExtensionAttributeInputType(Enum):
-    TEXT: str = "TEXT"
-    POPUP: str = "POPUP"
-    SCRIPT: str = "SCRIPT"
-    LDAP: str = "LDAP"
+class ComputerExtensionAttributeInputType(str, Enum):
+    TEXT = "TEXT"
+    POPUP = "POPUP"
+    SCRIPT = "SCRIPT"
+    LDAP = "LDAP"
 
 
 class ComputerExtensionAttribute(BaseModel):
@@ -100,24 +100,24 @@ class ComputerGeneral(BaseModel):
 
 
 class ComputerPartitionFileVault2State(str, Enum):
-    UNKNOWN: str = "UNKNOWN"
-    UNENCRYPTED: str = "UNENCRYPTED"
-    INELIGIBLE: str = "INELIGIBLE"
-    DECRYPTED: str = "DECRYPTED"
-    DECRYPTING: str = "DECRYPTING"
-    ENCRYPTED: str = "ENCRYPTED"
-    ENCRYPTING: str = "ENCRYPTING"
-    RESTART_NEEDED: str = "RESTART_NEEDED"
-    OPTIMIZING: str = "OPTIMIZING"
-    DECRYPTING_PAUSED: str = "DECRYPTING_PAUSED"
-    ENCRYPTING_PAUSED: str = "ENCRYPTING_PAUSED"
+    UNKNOWN = "UNKNOWN"
+    UNENCRYPTED = "UNENCRYPTED"
+    INELIGIBLE = "INELIGIBLE"
+    DECRYPTED = "DECRYPTED"
+    DECRYPTING = "DECRYPTING"
+    ENCRYPTED = "ENCRYPTED"
+    ENCRYPTING = "ENCRYPTING"
+    RESTART_NEEDED = "RESTART_NEEDED"
+    OPTIMIZING = "OPTIMIZING"
+    DECRYPTING_PAUSED = "DECRYPTING_PAUSED"
+    ENCRYPTING_PAUSED = "ENCRYPTING_PAUSED"
 
 
 class IndividualRecoveryKeyValidityStatus(str, Enum):
-    VALID: str = "VALID"
-    INVALID: str = "INVALID"
-    UNKNOWN: str = "UNKNOWN"
-    NOT_APPLICABLE: str = "NOT_APPLICABLE"
+    VALID = "VALID"
+    INVALID = "INVALID"
+    UNKNOWN = "UNKNOWN"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
 
 
 class ComputerPartitionEncryption(BaseModel):
@@ -180,9 +180,9 @@ class ComputerApplication(BaseModel):
 
 
 class PartitionType(str, Enum):
-    BOOT: str = "BOOT"
-    RECOVERY: str = "RECOVERY"
-    OTHER: str = "OTHER"
+    BOOT = "BOOT"
+    RECOVERY = "RECOVERY"
+    OTHER = "OTHER"
 
 
 class ComputerPartition(BaseModel):
@@ -309,16 +309,16 @@ class ComputerHardware(BaseModel):
 
 
 class UserAccountType(str, Enum):
-    LOCAL: str = "LOCAL"
-    MOBILE: str = "MOBILE"
-    UNKNOWN: str = "UNKNOWN"
+    LOCAL = "LOCAL"
+    MOBILE = "MOBILE"
+    UNKNOWN = "UNKNOWN"
 
 
 class AzureActiveDirectoryId(str, Enum):
-    ACTIVATED: str = "ACTIVATED"
-    DEACTIVATED: str = "DEACTIVATED"
-    UNRESPONSIVE: str = "UNRESPONSIVE"
-    UNKNOWN: str = "UNKNOWN"
+    ACTIVATED = "ACTIVATED"
+    DEACTIVATED = "DEACTIVATED"
+    UNRESPONSIVE = "UNRESPONSIVE"
+    UNKNOWN = "UNKNOWN"
 
 
 class ComputerLocalUserAccount(BaseModel):
@@ -346,16 +346,16 @@ class ComputerLocalUserAccount(BaseModel):
 
 
 class LifecycleStatus(str, Enum):
-    ACTIVE: str = "ACTIVE"
-    INACTIVE: str = "INACTIVE"
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
 
 
 class CertificateStatus(str, Enum):
-    EXPIRING: str = "EXPIRING"
-    EXPIRED: str = "EXPIRED"
-    REVOKED: str = "REVOKED"
-    PENDING_REVOKE: str = "PENDING_REVOKE"
-    ISSUED: str = "ISSUED"
+    EXPIRING = "EXPIRING"
+    EXPIRED = "EXPIRED"
+    REVOKED = "REVOKED"
+    PENDING_REVOKE = "PENDING_REVOKE"
+    ISSUED = "ISSUED"
 
 
 class ComputerCertificate(BaseModel):
@@ -422,32 +422,32 @@ class ComputerFont(BaseModel):
 
 
 class SipStatus(str, Enum):
-    NOT_COLLECTED: str = "NOT_COLLECTED"
-    NOT_AVAILABLE: str = "NOT_AVAILABLE"
-    DISABLED: str = "DISABLED"
-    ENABLED: str = "ENABLED"
+    NOT_COLLECTED = "NOT_COLLECTED"
+    NOT_AVAILABLE = "NOT_AVAILABLE"
+    DISABLED = "DISABLED"
+    ENABLED = "ENABLED"
 
 
 class GatekeeperStatus(str, Enum):
-    NOT_COLLECTED: str = "NOT_COLLECTED"
-    DISABLED: str = "DISABLED"
-    APP_STORE_AND_IDENTIFIED_DEVELOPERS: str = "APP_STORE_AND_IDENTIFIED_DEVELOPERS"
-    APP_STORE: str = "APP_STORE"
+    NOT_COLLECTED = "NOT_COLLECTED"
+    DISABLED = "DISABLED"
+    APP_STORE_AND_IDENTIFIED_DEVELOPERS = "APP_STORE_AND_IDENTIFIED_DEVELOPERS"
+    APP_STORE = "APP_STORE"
 
 
 class SecureBootLevel(str, Enum):
-    NO_SECURITY: str = "NO_SECURITY"
-    MEDIUM_SECURITY: str = "MEDIUM_SECURITY"
-    FULL_SECURITY: str = "FULL_SECURITY"
-    NOT_SUPPORTED: str = "NOT_SUPPORTED"
-    UNKNOWN: str = "UNKNOWN"
+    NO_SECURITY = "NO_SECURITY"
+    MEDIUM_SECURITY = "MEDIUM_SECURITY"
+    FULL_SECURITY = "FULL_SECURITY"
+    NOT_SUPPORTED = "NOT_SUPPORTED"
+    UNKNOWN = "UNKNOWN"
 
 
 class ExternalBootLevel(str, Enum):
-    ALLOW_BOOTING_FROM_EXTERNAL_MEDIA: str = "ALLOW_BOOTING_FROM_EXTERNAL_MEDIA"
-    DISALLOW_BOOTING_FROM_EXTERNAL_MEDIA: str = "DISALLOW_BOOTING_FROM_EXTERNAL_MEDIA"
-    NOT_SUPPORTED: str = "NOT_SUPPORTED"
-    UNKNOWN: str = "UNKNOWN"
+    ALLOW_BOOTING_FROM_EXTERNAL_MEDIA = "ALLOW_BOOTING_FROM_EXTERNAL_MEDIA"
+    DISALLOW_BOOTING_FROM_EXTERNAL_MEDIA = "DISALLOW_BOOTING_FROM_EXTERNAL_MEDIA"
+    NOT_SUPPORTED = "NOT_SUPPORTED"
+    UNKNOWN = "UNKNOWN"
 
 
 class ComputerSecurity(BaseModel):
@@ -470,11 +470,11 @@ class ComputerSecurity(BaseModel):
 
 
 class FileVault2Status(str, Enum):
-    NOT_APPLICABLE: str = "NOT_APPLICABLE"
-    NOT_ENCRYPTED: str = "NOT_ENCRYPTED"
-    BOOT_ENCRYPTED: str = "BOOT_ENCRYPTED"
-    SOME_ENCRYPTED: str = "SOME_ENCRYPTED"
-    ALL_ENCRYPTED: str = "ALL_ENCRYPTED"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+    NOT_ENCRYPTED = "NOT_ENCRYPTED"
+    BOOT_ENCRYPTED = "BOOT_ENCRYPTED"
+    SOME_ENCRYPTED = "SOME_ENCRYPTED"
+    ALL_ENCRYPTED = "ALL_ENCRYPTED"
 
 
 class ComputerOperatingSystem(BaseModel):
@@ -610,15 +610,15 @@ class ComputerContentCachingDataMigrationError(BaseModel):
 
 
 class ComputerContentCachingRegistrationStatus(str, Enum):
-    CONTENT_CACHING_FAILED: str = "CONTENT_CACHING_FAILED"
-    CONTENT_CACHING_PENDING: str = "CONTENT_CACHING_PENDING"
-    CONTENT_CACHING_SUCCEEDED: str = "CONTENT_CACHING_SUCCEEDED"
+    CONTENT_CACHING_FAILED = "CONTENT_CACHING_FAILED"
+    CONTENT_CACHING_PENDING = "CONTENT_CACHING_PENDING"
+    CONTENT_CACHING_SUCCEEDED = "CONTENT_CACHING_SUCCEEDED"
 
 
 class ComputerContentCachingTetheratorStatus(str, Enum):
-    CONTENT_CACHING_UNKNOWN: str = "CONTENT_CACHING_UNKNOWN"
-    CONTENT_CACHING_DISABLED: str = "CONTENT_CACHING_DISABLED"
-    CONTENT_CACHING_ENABLED: str = "CONTENT_CACHING_ENABLED"
+    CONTENT_CACHING_UNKNOWN = "CONTENT_CACHING_UNKNOWN"
+    CONTENT_CACHING_DISABLED = "CONTENT_CACHING_DISABLED"
+    CONTENT_CACHING_ENABLED = "CONTENT_CACHING_ENABLED"
 
 
 class ComputerContentCaching(BaseModel):

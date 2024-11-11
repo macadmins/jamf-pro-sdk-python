@@ -5,7 +5,7 @@ from pydantic import ConfigDict
 from .. import BaseModel
 from . import ClassicApiModel
 
-_XML_ARRAY_ITEM_NAMES = {}
+_XML_ARRAY_ITEM_NAMES: dict = {}
 
 
 class ClassicPackageItem(BaseModel):

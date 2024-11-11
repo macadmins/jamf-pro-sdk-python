@@ -1,9 +1,21 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Iterator, List, Union
+from typing import TYPE_CHECKING, Callable, Iterator, List, Literal, Optional, Union, overload
 from uuid import UUID
 
-from ...models.pro.api_options import *  # noqa: F403
+from ...models.pro.api_options import (
+    get_computer_inventory_v1_allowed_filter_fields,
+    get_computer_inventory_v1_allowed_sections,
+    get_computer_inventory_v1_allowed_sort_fields,
+    get_mdm_commands_v2_allowed_command_types,
+    get_mdm_commands_v2_allowed_filter_fields,
+    get_mdm_commands_v2_allowed_sort_fields,
+    get_mobile_device_inventory_v2_allowed_filter_fields,
+    get_mobile_device_inventory_v2_allowed_sections,
+    get_mobile_device_inventory_v2_allowed_sort_fields,
+    get_packages_v1_allowed_filter_fields,
+    get_packages_v1_allowed_sort_fields,
+)
 from ...models.pro.computers import Computer
 from ...models.pro.jcds2 import DownloadUrl, File, NewFile
 from ...models.pro.mdm import (
@@ -21,6 +33,7 @@ from ...models.pro.mdm import (
     ShutDownDeviceCommand,
 )
 from ...models.pro.mobile_devices import MobileDevice
+from ...models.pro.packages import Package
 from .pagination import Paginator
 
 if TYPE_CHECKING:
@@ -42,14 +55,38 @@ class ProApi:
 
     # Computer Inventory APIs
 
+    @overload
     def get_computer_inventory_v1(
         self,
-        sections: List[str] = None,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[Computer]: ...
+
+    @overload
+    def get_computer_inventory_v1(
+        self,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
+    def get_computer_inventory_v1(
+        self,
+        sections: Optional[List[str]] = None,
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
-        filter_expression: FilterExpression = None,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
         return_generator: bool = False,
     ) -> Union[List[Computer], Iterator[Page]]:
         """Returns a list of computer inventory records.
@@ -128,6 +165,98 @@ class ProApi:
             sort_expression=sort_expression,
             filter_expression=filter_expression,
             extra_params={"section": ",".join(sections)},
+        )
+
+        return paginator(return_generator=return_generator)
+
+    # Package APIs
+
+    @overload
+    def get_packages_v1(
+        self,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[Package]: ...
+
+    @overload
+    def get_packages_v1(
+        self,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
+    def get_packages_v1(
+        self,
+        start_page: int = 0,
+        end_page: Optional[int] = None,
+        page_size: int = 100,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
+        return_generator: bool = False,
+    ) -> Union[List[Package], Iterator[Page]]:
+        """Returns a list of package records.
+
+        :param start_page: (optional) The page to begin returning results from. See
+            :class:`Paginator` for more information.
+        :type start_page: int
+
+        :param end_page: (optional) The page to end returning results at. See :class:`Paginator` for
+            more information.
+        :type start_page: int
+
+        :param page_size: (optional) The number of results to include in each requested page. See
+            :class:`Paginator` for more information.
+        :type page_size: int
+
+        :param sort_expression: (optional) The sort fields to apply to the request. See the
+            documentation for :ref:`Pro API Sorting` for more information.
+
+            Allowed sort fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_packages_v1_allowed_sort_fields
+
+        :type sort_expression: SortExpression
+
+        :param filter_expression: (optional) The filter expression to apply to the request. See the
+            documentation for :ref:`Pro API Filtering` for more information.
+
+            Allowed filter fields:
+
+            .. autoapioptions:: jamf_pro_sdk.models.pro.api_options.get_packages_v1_allowed_filter_fields
+
+        :type filter_expression: FilterExpression
+
+        :param return_generator: If ``True`` a generator is returned to iterate over pages. By
+            default, the results for all pages will be returned in a single response.
+        :type return_generator: bool
+
+        :return: List of packages OR a paginator generator.
+        :rtype: List[~jamf_pro_sdk.models.pro.packages.package] | Iterator[Page]
+
+        """
+        if sort_expression:
+            sort_expression.validate(get_packages_v1_allowed_sort_fields)
+
+        if filter_expression:
+            filter_expression.validate(get_packages_v1_allowed_filter_fields)
+
+        paginator = Paginator(
+            api_client=self,
+            resource_path="v1/packages",
+            return_model=Package,
+            start_page=start_page,
+            end_page=end_page,
+            page_size=page_size,
+            sort_expression=sort_expression,
+            filter_expression=filter_expression,
         )
 
         return paginator(return_generator=return_generator)
@@ -256,13 +385,35 @@ class ProApi:
         resp = self.api_request(method="post", resource_path="preview/mdm/commands", data=data)
         return [SendMdmCommandResponse(**i) for i in resp.json()]
 
+    @overload
+    def get_mdm_commands_v2(
+        self,
+        filter_expression: FilterExpression,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[MdmCommandStatus]: ...
+
+    @overload
+    def get_mdm_commands_v2(
+        self,
+        filter_expression: FilterExpression,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
     def get_mdm_commands_v2(
         self,
         filter_expression: FilterExpression,
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
+        sort_expression: Optional[SortExpression] = None,
         return_generator: bool = False,
     ) -> Union[List[MdmCommandStatus], Iterator[Page]]:
         """Returns a list of MDM commands.
@@ -302,7 +453,7 @@ class ProApi:
             the results for all pages will be returned in a single response.
         :type return_generator: bool
 
-        :return: List of computers OR a paginator generator.
+        :return: List of MDM commands OR a paginator generator.
         :rtype: List[~jamf_pro_sdk.models.pro.mdm.MdmCommand] | Iterator[Page]
         """
 
@@ -333,14 +484,40 @@ class ProApi:
 
         return paginator(return_generator=return_generator)
 
+    # Mobile Device Inventory APIs
+
+    @overload
     def get_mobile_device_inventory_v2(
         self,
-        sections: List[str] = None,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[False] = False,
+    ) -> List[MobileDevice]: ...
+
+    @overload
+    def get_mobile_device_inventory_v2(
+        self,
+        sections: Optional[List[str]] = ...,
+        start_page: int = ...,
+        end_page: Optional[int] = ...,
+        page_size: int = ...,
+        sort_expression: Optional[SortExpression] = ...,
+        filter_expression: Optional[FilterExpression] = ...,
+        return_generator: Literal[True] = True,
+    ) -> Iterator[Page]: ...
+
+    def get_mobile_device_inventory_v2(
+        self,
+        sections: Optional[List[str]] = None,
         start_page: int = 0,
-        end_page: int = None,
+        end_page: Optional[int] = None,
         page_size: int = 100,
-        sort_expression: SortExpression = None,
-        filter_expression: FilterExpression = None,
+        sort_expression: Optional[SortExpression] = None,
+        filter_expression: Optional[FilterExpression] = None,
         return_generator: bool = False,
     ) -> Union[List[MobileDevice], Iterator[Page]]:
         """Returns a list of mobile device (iOS and tvOS) inventory records.
