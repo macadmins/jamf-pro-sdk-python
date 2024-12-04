@@ -7,6 +7,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7a1] - 2024-12-03
+
+Special shoutout to [macserv](https://github.com/macserv) for this contribution to the project!
+
+### Added
+
+- Pro API `get_packages_v1()`
+
+### Changed
+
+- Overload interfaces for Pro API methods that have multiple return types (this will now be a standard going forward).
+- Added `files` argument for `pro_api_request()` to pass through to `requests` for `POST` requests.
+
+### Fixed
+
+- Various Python typing enhancements.
+
+### PRs Included
+
+- [#54](https://github.com/macadmins/jamf-pro-sdk-python/pull/54)
+
 ## [0.6a2] - 2024-07-24
 
 ### Changed
