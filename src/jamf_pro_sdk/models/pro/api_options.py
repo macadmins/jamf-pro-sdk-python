@@ -329,7 +329,7 @@ get_mobile_device_inventory_v2_allowed_sort_fields = [
     "username",
     "appleCareId",
     "leaseExpirationDate",
-    "ifeExpectancyYears",
+    "lifeExpectancyYears",
     "poDate",
     "poNumber",
     "purchasePrice",
