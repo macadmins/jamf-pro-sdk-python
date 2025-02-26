@@ -27,28 +27,27 @@ get_computer_inventory_v1_allowed_sections = [
 ]
 
 get_computer_inventory_v1_allowed_sort_fields = [
-    "general.name",
-    "udid",
-    "id",
-    "general.assetTag",
+    "general.assetTag,",
     "general.jamfBinaryVersion",
+    "general.lastCloudBackupDate,",
     "general.lastContactTime",
     "general.lastEnrolledDate",
-    "general.lastCloudBackupDate",
-    "general.reportDate",
-    "general.remoteManagement.managementUsername",
     "general.mdmCertificateExpiration",
+    "general.name",
     "general.platform",
+    "general.reportDate,",
     "hardware.make",
     "hardware.model",
+    "id",
     "operatingSystem.build",
-    "operatingSystem.supplementalBuildVersion",
-    "operatingSystem.rapidSecurityResponse",
     "operatingSystem.name",
-    "operatingSystem.version",
-    "userAndLocation.realname",
+    "operatingSystem.rapidSecurityResponse",
+    "operatingSystem.supplementalBuildVersion",
+    "operatingSystem.version,",
     "purchasing.lifeExpectancy",
     "purchasing.warrantyDate",
+    "udid",
+    "userAndLocation.realname",
 ]
 
 get_computer_inventory_v1_allowed_filter_fields = [
