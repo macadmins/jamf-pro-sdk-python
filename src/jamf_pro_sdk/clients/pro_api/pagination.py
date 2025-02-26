@@ -152,6 +152,7 @@ class Paginator:
         page_size: int = 100,
         sort_expression: Optional[SortExpression] = None,
         filter_expression: Optional[FilterExpression] = None,
+        skip_expression_validation: Optional[bool] = False,
         extra_params: Optional[Dict[str, str]] = None,
     ):
         """A paginator for the Jamf Pro API. A paginator automatically iterates over an API if
@@ -196,6 +197,10 @@ class Paginator:
             documentation for :ref:`Pro API Filtering` for more information.
         :type filter_expression: FilterExpression
 
+        :param skip_expression_validation: (optional) If ``True`` sort and filter field values validation is skipped.
+            Intended to be used in situations where a newer API version is ahead of the SDK release.
+        :type skip_expression_validation: bool
+
         :param extra_params: (optional) A dictionary of key-value pairs that will be added to the
             query string parameters of the requests.
         :type extra_params: Dict[str, str]
@@ -209,6 +214,7 @@ class Paginator:
         self.page_size = page_size
         self.sort_expression = sort_expression
         self.filter_expression = filter_expression
+        self.skip_expression_validation = skip_expression_validation
         self.extra_params = extra_params
 
     def _paginated_request(self, page: int) -> Page:
