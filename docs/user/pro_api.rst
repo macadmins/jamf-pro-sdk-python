@@ -165,7 +165,7 @@ The SDK provides MDM commands in the form of models that are passed to the :meth
     >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
     >>> from jamf_pro_sdk.models.pro.mdm import LogOutUserCommand
     >>> client = JamfProClient("dummy.jamfcloud.com", BasicAuthProvider("demo", "tryitout"))
-    >>> response client.pro_api.send_mdm_command_preview(
+    >>> response = client.pro_api.send_mdm_command_preview(
     ...     management_ids=["4eecc1fb-f52d-48c5-9560-c246b23601d3"],
     ...     command=LogOutUserCommand()
     ... )
