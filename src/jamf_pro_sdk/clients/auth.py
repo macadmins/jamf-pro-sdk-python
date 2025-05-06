@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from getpass import getpass
 from threading import Lock
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type
 
 try:
     import boto3
@@ -60,7 +60,7 @@ class CredentialsProvider:
         """This internal method requests a new Jamf Pro access token.
 
         Custom credentials providers should override this method. Refer to the ``ApiClientProvider``
-        and ``BasicAuthProvider`` classes for example implementations.
+        and ``UserCredentialsProvider`` classes for example implementations.
 
         This method must always return an :class:`~jamf_pro_sdk.models.client.AccessToken` object.
 
@@ -104,7 +104,7 @@ class CredentialsProvider:
         seconds it will be returned. If the cached token's remaining time is greater than 5 seconds
         but less than 60 seconds the token will be refreshed using the ``keep-alive`` API.
 
-        For OAuth tokens, if the cached token's remaining tims is greater than or equal to 3 seconds
+        For OAuth tokens, if the cached token's remaining time is greater than or equal to 3 seconds
         it will be returned.
 
         If the above conditions are not met a new token will be requested.
@@ -190,9 +190,9 @@ class ApiClientCredentialsProvider(CredentialsProvider):
             )
 
 
-class BasicAuthProvider(CredentialsProvider):
+class UserCredentialsProvider(CredentialsProvider):
     def __init__(self, username: str, password: str):
-        """A basic auth credentials provider that uses a username and password for obtaining access
+        """Credentials provider that uses a username and password for obtaining access
         tokens.
 
         :param username: The Jamf Pro API username.
@@ -227,95 +227,135 @@ class BasicAuthProvider(CredentialsProvider):
             return AccessToken(type="user", **resp.json())
 
 
-class PromptForCredentials(BasicAuthProvider):
-    def __init__(self, username: Optional[str] = None):
-        """A basic auth credentials provider for command-line uses cases. The user will be prompted
-        for their username (if not provided) and password.
+def prompt_for_credentials(provider_type: Type[CredentialsProvider]) -> CredentialsProvider:
+    """Prompts the user for credentials based on the given provider type.
 
-        :param username: The Jamf Pro API username.
-        :type username: Optional[str]
-        """
-        if username is None:
-            username = input("Jamf Pro Username: ")
+    Supports both user credentials (username/password) and API client credentials
+    (client_id/client_secret), prompting interactively as needed.
+
+    :param provider_type: The credentials provider class to instantiate.
+    :type provider_type: Type[CredentialsProvider]
+    :return: The ``CredentialsProvider`` object.
+    :rtype: CredentialsProvider
+    """
+    if issubclass(provider_type, UserCredentialsProvider):
+        username = input("Jamf Pro Username: ")
         password = getpass("Jamf Pro Password: ")
-        super().__init__(username, password)
+        return provider_type(username, password)
+    elif issubclass(provider_type, ApiClientCredentialsProvider):
+        client_id = input("API Client ID: ")
+        client_secret = getpass("API Client Secret: ")
+        return provider_type(client_id, client_secret)
+    else:
+        raise TypeError(f"Unsupported credentials provider: {provider_type}")
 
 
-class LoadFromAwsSecretsManager(BasicAuthProvider):
-    def __init__(self, secret_id: str, version_id: str = None, version_stage: str = None):
-        """A basic auth credentials provider for AWS Secrets Manager.
-        Requires an IAM role with the ``secretsmanager:GetSecretValue`` permission. May also require
-        ``kms:Decrypt`` if the secret is encrypted with a customer managed key.
+def load_from_aws_secrets_manager(
+    provider_type: Type[CredentialsProvider],
+    secret_id: str,
+    version_id: str = None,
+    version_stage: str = None,
+) -> CredentialsProvider:
+    """A basic auth credentials provider for AWS Secrets Manager.
+    Requires an IAM role with the ``secretsmanager:GetSecretValue`` permission. May also require
+    ``kms:Decrypt`` if the secret is encrypted with a customer managed key.
 
-        The ``SecretString`` is expected to be JSON string in this format:
+    The ``SecretString`` is expected to be JSON string in this format:
 
-        .. code-block:: json
+    .. code-block:: json
 
-            {
-                "username": "oscar",
-                "password": "*****"
-            }
+        // For UserCredentialsProvider:
+        {
+            "username": "oscar",
+            "password": "*****"
+        }
 
-        .. important::
+        // For ApiClientCredentialsProvider:
+        {
+            "client_id": "abc123",
+            "client_secret": "xyz456"
+        }
 
-            This credentials provider requires the ``aws`` extra dependency.
+    .. important::
 
-        :param secret_id: The ARN or name of the secret.
-        :type secret_id: str
+        This credentials provider requires the ``aws`` extra dependency.
 
-        :param version_id: The unique identifier of this version of the secret. If not
-            provided the latest version of the secret will be returned.
-        :type version_id: str
+    :param provider_type: The credentials provider class to instantiate using the loaded secret.
+    :type provider_type: Type[CredentialsProvider]
 
-        :param version_stage: The staging label of the version of the secret to retrieve.
-        :type version_stage: str
-        """
-        if not BOTO3_IS_INSTALLED:
-            raise ImportError("The 'aws' extra dependency is required.")
+    :param secret_id: The ARN or name of the secret.
+    :type secret_id: str
 
-        secrets_client = boto3.client("secretsmanager")
+    :param version_id: The unique identifier of this version of the secret. If not
+        provided the latest version of the secret will be returned.
+    :type version_id: str
 
-        kwargs = {"SecretId": secret_id}
+    :param version_stage: The staging label of the version of the secret to retrieve.
+    :type version_stage: str
 
-        if version_id:
-            kwargs["VersionId"] = version_id
+    :return: The ``CredentialsProvider`` object with necessary credentials.
+    :rtype: CredentialsProvider
+    """
+    if not BOTO3_IS_INSTALLED:
+        raise ImportError("The 'aws' extra dependency is required.")
 
-        if version_stage:
-            kwargs["VersionStage"] = version_stage
+    secrets_client = boto3.client("secretsmanager")
+    kwargs = {"SecretId": secret_id}
+    if version_id:
+        kwargs["VersionId"] = version_id
+    if version_stage:
+        kwargs["VersionStage"] = version_stage
 
-        secret_value = secrets_client.get_secret_value(**kwargs)
-
-        credentials = json.loads(secret_value["SecretString"])
-        username = credentials["username"]
-        password = credentials["password"]
-
-        super().__init__(username, password)
+    secret_value = secrets_client.get_secret_value(**kwargs)
+    credentials = json.loads(secret_value["SecretString"])
+    return provider_type(**credentials)
 
 
-class LoadFromKeychain(BasicAuthProvider):
-    def __init__(self, server: str, username: str):
-        """A credentials provider for the macOS login keychain. The API password is stored in a
-        keychain entry where the ``service_name`` is the server.
+def load_from_keychain(
+    provider_type: Type[CredentialsProvider], server: str
+) -> CredentialsProvider:
+    """Load credentials from the macOS login keychain and return an instance of the
+    specified credentials provider.
 
-        .. important::
+    The Jamf Pro API password or client credentials are stored in the keychain with
+    the ``service_name`` set to the Jamf Pro server name.
 
-            This credentials provider requires the ``macOS`` extra dependency.
+    Supports:
+        - ``UserCredentialsProvider``: retrieves password using provided username
+        - ``ApiClientCredentialsProvider``: retrieves Client ID and Client Secret using usernames of
+            "CLIENT_ID" and "CLIENT_SECRET"
 
-        :param server: The Jamf Pro server name.
-        :type server: str
+    .. important::
 
-        :param username: The Jamf Pro API username.
-        :type username: str
-        """
-        if not KEYRING_IS_INSTALLED:
-            raise ImportError("The 'macOS' extra dependency is required.")
+        This credentials provider requires the ``macOS`` extra dependency.
 
-        username = username
+    :param provider_type: The credentials provider class to instantiate
+    :type provider_type: Type[CredentialsProvider]
+
+    :param server: The Jamf Pro server name.
+    :type server: str
+
+    :return: An instantiated credentials provider using the keychain values.
+    :rtype: CredentialsProvider
+    """
+    if not KEYRING_IS_INSTALLED:
+        raise ImportError("The 'macOS' extra dependency is required.")
+
+    if issubclass(provider_type, UserCredentialsProvider):
+        username = input("Jamf Pro Username: ")
         password = keyring.get_password(service_name=server, username=username)
-
         if password is None:
             raise CredentialsError(
                 f"Password not found for server {server} and username {username}"
             )
-
-        super().__init__(username, password)
+        return provider_type(username, password)
+    elif issubclass(provider_type, ApiClientCredentialsProvider):
+        client_id = keyring.get_password(service_name=server, username="CLIENT_ID")
+        client_secret = keyring.get_password(service_name=server, username="CLIENT_SECRET")
+        if not client_id or not client_secret:
+            raise CredentialsError(
+                f"API Credentials were not found for server {server}. Please verify they are in the correct format."
+            )
+        return provider_type(client_id, client_secret)
+    else:
+        raise TypeError(f"Unsupported credentials provider: {provider_type}")
