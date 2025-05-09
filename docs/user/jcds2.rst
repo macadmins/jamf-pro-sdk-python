@@ -58,8 +58,8 @@ The file upload operation performs multiple API requests in sequence.
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
-    >>> client = JamfProClient("dummy.jamfcloud.com", BasicAuthProvider("demo", "tryitout"))
+    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
+    >>> client = JamfProClient("dummy.jamfcloud.com", UserCredentialsProvider("demo", "tryitout"))
     >>> client.jcds2.upload_file(file_path="/path/to/my.pkg")
     >>>
 
@@ -70,8 +70,8 @@ File downloads will retrieve the download URL to the requested JCDS file and the
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
-    >>> client = JamfProClient("dummy.jamfcloud.com", BasicAuthProvider("demo", "tryitout"))
+    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
+    >>> client = JamfProClient("dummy.jamfcloud.com", UserCredentialsProvider("demo", "tryitout"))
     >>> client.jcds2.download_file(file_name="/path/to/my.pkg", download_path="/path/to/downloads/")
     >>>
 

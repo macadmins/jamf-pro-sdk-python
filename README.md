@@ -3,11 +3,11 @@
 A client library for the Jamf Pro APIs and webhooks.
 
 ```python
-from jamf_pro_sdk import JamfProClient, BasicAuthProvider
+from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
 
 client = JamfProClient(
     server="dummy.jamfcloud.com",
-    credentials=BasicAuthProvider("username", "password")
+    credentials=UserCredentialsProvider("username", "password")
 )
 
 all_computers = client.pro_api.get_computer_inventory_v1()

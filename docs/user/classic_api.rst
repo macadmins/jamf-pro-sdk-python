@@ -114,10 +114,10 @@ Assume this client has been instantiated for the examples shown below.
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
+    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
     >>> client = JamfProClient(
     ...     server="jamf.my.org",
-    ...     credentials=BasicAuthProvider("oscar", "j@mf1234!")
+    ...     credentials=UserCredentialsProvider("oscar", "j@mf1234!")
     ... )
     >>>
 

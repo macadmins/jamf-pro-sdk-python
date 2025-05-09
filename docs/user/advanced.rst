@@ -8,6 +8,8 @@ A :class:`~jamf_pro_sdk.clients.auth.CredentialsProvider` is an interface for th
 
 The following example does not accept a username or password and retrieves a token from a DynamoDB table in an AWS account (it is assumed an external process is managing this table entry).
 
+.. code-block:: python
+
     >>> import boto3
     >>> from jamf_pro_sdk.clients.auth import CredentialsProvider
     >>> from jamf_pro_sdk.models.client import AccessToken
@@ -35,12 +37,16 @@ The SDK's clients provide curated methods to a large number of Jamf Pro APIs. No
 
 Here is the built-in method for getting a computer from the Classic API:
 
+.. code-block:: python
+
     >>> computer = client.classic_api.get_computer_by_id(1)
     >>> type(computer)
     <class 'jamf_pro_sdk.models.classic.computers.Computer'>
     >>>
 
 The same operation can be performed by using the :meth:`~jamf_pro_sdk.clients.JamfProClient.classic_api_request` method directly:
+
+.. code-block:: python
 
     >>> response = client.classic_api_request(method='get', resource_path='computers/id/1')
     >>> type(response)
@@ -59,12 +65,12 @@ Here is a code example using :meth:`~jamf_pro_sdk.clients.JamfProClient.concurre
 
 .. code-block:: python
 
-    from jamf_pro_sdk import JamfProClient, BasicAuthProvider
+    from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
 
     # The default concurrency setting is 10.
     client = JamfProClient(
         server="jamf.my.org",
-        credentials=BasicAuthProvider("oscar", "j@mf1234!")
+        credentials=UserCredentialsProvider("oscar", "j@mf1234!")
     )
 
     # Get a list of all computers, and then their IDs.

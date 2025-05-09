@@ -3,30 +3,43 @@
 Credentials Providers
 =====================
 
-API Client Providers
---------------------
+The Jamf Pro SDK has two primary types of credential providers: **API Client Credentials** and **User Credentials**.
 
-These credentials providers use Jamf Pro API clients for API authentication.
+API Client Credentials Provider
+-------------------------------
+
+Use Jamf Pro `API clients <https://developer.jamf.com/jamf-pro/docs/client-credentials>`_ for API authentication.
 
 .. autoclass:: jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider
     :members:
 
-Basic Auth Providers
---------------------
+User Credentials Provider
+-------------------------
 
-These credentials providers use a username and password for API authentication.
+User credential providers use a username and password for API authentication. 
 
-.. autoclass:: jamf_pro_sdk.clients.auth.BasicAuthProvider
+.. autoclass:: jamf_pro_sdk.clients.auth.UserCredentialsProvider
     :members:
 
-.. autoclass:: jamf_pro_sdk.clients.auth.PromptForCredentials
-    :members:
+Utilities for Credential Providers
+----------------------------------
 
-.. autoclass:: jamf_pro_sdk.clients.auth.LoadFromKeychain
-    :members:
+These functions return an instantiated credentials provider of the specified type.
 
-.. autoclass:: jamf_pro_sdk.clients.auth.LoadFromAwsSecretsManager
-    :members:
+Prompt for Credentials
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: jamf_pro_sdk.clients.auth.prompt_for_credentials
+
+Load from AWS Secrets Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: jamf_pro_sdk.clients.auth.load_from_aws_secrets_manager
+
+Load from Keychain
+^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: jamf_pro_sdk.clients.auth.load_from_keychain
 
 Access Token
 ------------
