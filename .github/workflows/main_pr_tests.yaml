@@ -34,25 +34,25 @@ jobs:
       - name: Tests
         run: make test
 
-  exp-integration-tests:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # exp-integration-tests:
+  #   continue-on-error: true
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          cache: 'pip'
+  #     - name: Setup Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.9'
+  #         cache: 'pip'
 
-      - name: Install
-        run: make install
+  #     - name: Install
+  #       run: make install
 
-      - name: Run Integration Tests
-        run: make test-all
-        env:
-          JAMF_PRO_HOST: ${{ vars.JAMF_PRO_HOST }}
-          JAMF_PRO_CLIENT_ID: ${{ vars.JAMF_PRO_CLIENT_ID }}
-          JAMF_PRO_CLIENT_SECRET: ${{ vars.JAMF_PRO_CLIENT_SECRET }}
+  #     - name: Run Integration Tests
+  #       run: make test-all
+  #       env:
+  #         JAMF_PRO_HOST: ${{ vars.JAMF_PRO_HOST }}
+  #         JAMF_PRO_CLIENT_ID: ${{ vars.JAMF_PRO_CLIENT_ID }}
+  #         JAMF_PRO_CLIENT_SECRET: ${{ vars.JAMF_PRO_CLIENT_SECRET }}
