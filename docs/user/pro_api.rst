@@ -22,8 +22,8 @@ The curated methods will return all results by default. Each operation that supp
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
-    >>> client = JamfProClient("dummy.jamfcloud.com", UserCredentialsProvider("demo", "tryitout"))
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider
+    >>> client = JamfProClient("dummy.jamfcloud.com", ApiClientCredentialsProvider("client_id", "client_secret"))
 
     >>> response = client.pro_api.get_computer_inventory_v1()
     >>> response
@@ -49,10 +49,10 @@ The paginator object itself will return the generator by default. This can be ov
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider
     >>> from jamf_pro_sdk.clients.pro_api.pagination import Paginator
     >>> from jamf_pro_sdk.models.pro.computers import Computer
-    >>> client = JamfProClient("dummy.jamfcloud.com", UserCredentialsProvider("demo", "tryitout"))
+    >>> client = JamfProClient("dummy.jamfcloud.com", ApiClientCredentialsProvider("client_id", "client_secret"))
 
     >>> paginator = Paginator(api_client=client.pro_api, resource_path="v1/computers-inventory", return_model=Computer)
     >>> paginator()
@@ -138,12 +138,12 @@ Here is an example of a paginated request using the SDK with the sorting and fil
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider
     >>> from jamf_pro_sdk.clients.pro_api.pagination import FilterField, SortField
 
     >>> client = JamfProClient(
     ...     server="dummy.jamfcloud.com",
-    ...     credentials=UserCredentialsProvider("demo", "tryitout")
+    ...     credentials=ApiClientCredentialsProvider("client_id", "client_secret")
     ... )
     >>>
 
@@ -162,9 +162,9 @@ The SDK provides MDM commands in the form of models that are passed to the :meth
 
 .. code-block:: python
 
-    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider
     >>> from jamf_pro_sdk.models.pro.mdm import LogOutUserCommand
-    >>> client = JamfProClient("dummy.jamfcloud.com", UserCredentialsProvider("demo", "tryitout"))
+    >>> client = JamfProClient("dummy.jamfcloud.com", ApiClientCredentialsProvider("client_id", "client_secret"))
     >>> response client.pro_api.send_mdm_command_preview(
     ...     management_ids=["4eecc1fb-f52d-48c5-9560-c246b23601d3"],
     ...     command=LogOutUserCommand()

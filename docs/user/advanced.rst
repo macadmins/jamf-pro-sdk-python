@@ -65,12 +65,12 @@ Here is a code example using :meth:`~jamf_pro_sdk.clients.JamfProClient.concurre
 
 .. code-block:: python
 
-    from jamf_pro_sdk import JamfProClient, UserCredentialsProvider
+    from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider
 
     # The default concurrency setting is 10.
     client = JamfProClient(
         server="jamf.my.org",
-        credentials=UserCredentialsProvider("oscar", "j@mf1234!")
+        credentials=ApiClientCredentialsProvider("client_id", "client_secret")
     )
 
     # Get a list of all computers, and then their IDs.
