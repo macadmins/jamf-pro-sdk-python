@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from getpass import getpass
 from threading import Lock
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type, overload
 
 try:
     import boto3
@@ -227,6 +227,18 @@ class UserCredentialsProvider(CredentialsProvider):
             return AccessToken(type="user", **resp.json())
 
 
+@overload
+def prompt_for_credentials(
+    provider_type: Type[UserCredentialsProvider],
+) -> UserCredentialsProvider: ...
+
+
+@overload
+def prompt_for_credentials(
+    provider_type: Type[ApiClientCredentialsProvider],
+) -> ApiClientCredentialsProvider: ...
+
+
 def prompt_for_credentials(provider_type: Type[CredentialsProvider]) -> CredentialsProvider:
     """Prompts the user for credentials based on the given provider type.
 
@@ -311,29 +323,57 @@ def load_from_aws_secrets_manager(
     return provider_type(**credentials)
 
 
+@overload
 def load_from_keychain(
-    provider_type: Type[CredentialsProvider], server: str
+    provider_type: Type[UserCredentialsProvider],
+    server: str,
+    *,
+    username: str,
+    client_id: None = None,
+) -> UserCredentialsProvider: ...
+
+
+@overload
+def load_from_keychain(
+    provider_type: Type[ApiClientCredentialsProvider],
+    server: str,
+    *,
+    client_id: str,
+    username: None = None,
+) -> ApiClientCredentialsProvider: ...
+
+
+def load_from_keychain(
+    provider_type: Type[CredentialsProvider],
+    server: str,
+    client_id: Optional[str] = None,
+    username: Optional[str] = None,
 ) -> CredentialsProvider:
     """Load credentials from the macOS login keychain and return an instance of the
     specified credentials provider.
+
+    .. important::
+
+        This credentials provider requires the ``macOS`` extra dependency.
 
     The Jamf Pro API password or client credentials are stored in the keychain with
     the ``service_name`` set to the Jamf Pro server name.
 
     Supports:
-        - ``UserCredentialsProvider``: retrieves password using provided username
-        - ``ApiClientCredentialsProvider``: retrieves Client ID and Client Secret using usernames of
-            "CLIENT_ID" and "CLIENT_SECRET"
-
-    .. important::
-
-        This credentials provider requires the ``macOS`` extra dependency.
+        - ``UserCredentialsProvider``: Retrieves a password using the provided ``username``.
+        - ``ApiClientCredentialsProvider``: Retrieves the API client secret using the provided ``client_id``.
 
     :param provider_type: The credentials provider class to instantiate
     :type provider_type: Type[CredentialsProvider]
 
     :param server: The Jamf Pro server name.
     :type server: str
+
+    :param client_id: The client ID used for ``ApiClientCredentialsProvider``. Required if ``provider_type`` is that provider.
+    :type client_id: Optional[str]
+
+    :param username: The username used for ``UserCredentialsProvider``. Required if ``provider_type`` is that provider.
+    :type username: Optional[str]
 
     :return: An instantiated credentials provider using the keychain values.
     :rtype: CredentialsProvider
@@ -347,20 +387,22 @@ def load_from_keychain(
         server = f"https://{server}"
 
     if issubclass(provider_type, UserCredentialsProvider):
-        username = input("Jamf Pro Username: ")
-        password = keyring.get_password(service_name=server, username=username)
-        if password is None:
-            raise CredentialsError(
-                f"Password not found for server {server} and username {username}"
+        if username is None:
+            raise ValueError(
+                "Username argument is required to create UserCredentialsProvider object."
             )
-        return provider_type(username, password)
+        identity = username
     elif issubclass(provider_type, ApiClientCredentialsProvider):
-        client_id = keyring.get_password(service_name=server, username="CLIENT_ID")
-        client_secret = keyring.get_password(service_name=server, username="CLIENT_SECRET")
-        if not client_id or not client_secret:
-            raise CredentialsError(
-                f"API Credentials were not found for server {server}. Please verify they are in the correct format."
+        if client_id is None:
+            raise ValueError(
+                "API Client ID is required to instantiate ApiClientCredentialsProvider."
             )
-        return provider_type(client_id, client_secret)
+        identity = client_id
     else:
         raise TypeError(f"Unsupported credentials provider: {provider_type}")
+
+    password = keyring.get_password(service_name=server, username=identity)
+    if password is None:
+        raise CredentialsError(f"Password not found for server {server} and username {identity}")
+
+    return provider_type(identity, password)
