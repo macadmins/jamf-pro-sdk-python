@@ -340,6 +340,11 @@ def load_from_keychain(
     """
     if not KEYRING_IS_INSTALLED:
         raise ImportError("The 'macOS' extra dependency is required.")
+    
+    if server.startswith("http://"):
+        server = "https://" + server[len("http://"):]
+    elif not server.startswith("https://"):
+        server = f"https://{server}"
 
     if issubclass(provider_type, UserCredentialsProvider):
         username = input("Jamf Pro Username: ")
