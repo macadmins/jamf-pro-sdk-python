@@ -48,6 +48,8 @@ Create a client object using an API Client ID and Client Secret - the **recommen
     ... )
     >>>
 
+.. _server_scheme:
+
 .. note::
 
     When passing your Jamf Pro server name, do not include the scheme (``https://``) as the SDK handles this automatically for you.
@@ -128,6 +130,8 @@ Loading from Keychain
     This utility requires the ``keyring`` extra dependency, which can be installed via ``% python3 -m pip install 'jamf-pro-sdk[macOS]'``. 
 
     When using :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`, the SDK expects the client ID and client secret to be stored using the format ``CLIENT_ID`` and ``CLIENT_SECRET`` respectively. For :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider`, you will be prompted for a username. 
+    
+    Additionally, the :ref:`server scheme <server_scheme>` does not need to be passed to the ``server`` argument, as the SDK handles this for you.
 
 .. code-block:: python
 
