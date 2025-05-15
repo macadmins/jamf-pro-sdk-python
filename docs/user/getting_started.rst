@@ -73,6 +73,11 @@ Credential Provider Utility Functions
 
 The SDK contains three helper functions that will *return* an instantiated credential provider of the specified type. When leveraging these functions, ensure you have the required extra dependencies installed. 
 
+When using ``load_from_keychain``, **you must provide the identity keyword argument** required by the specified provider:
+
+- ``username=`` for ``UserCredentialsProvider``
+- ``client_id=`` for ``ApiClientCredentialsProvider``
+
 Prompting for Credentials
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -93,7 +98,11 @@ Loading from AWS Secrets Manager
 
 .. important:: 
 
-    The ``aws`` dependency is required for this function and can be installed with ``% python3 -m pip install 'jamf-pro-sdk[aws]'``.
+    The ``aws`` dependency is required for this function and can be installed via:
+    
+    .. code-block:: console
+
+        % python3 -m pip install 'jamf-pro-sdk[aws]'
 
 The ``SecretString`` is expected to be a JSON string in the following format:
 
@@ -127,11 +136,38 @@ Loading from Keychain
 
 .. important::
 
-    This utility requires the ``keyring`` extra dependency, which can be installed via ``% python3 -m pip install 'jamf-pro-sdk[macOS]'``. 
-
-    When using :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`, the SDK expects the client ID and client secret to be stored using the format ``CLIENT_ID`` and ``CLIENT_SECRET`` respectively. For :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider`, you will be prompted for a username. 
+    This utility requires the ``keyring`` extra dependency, which can be installed via: 
     
-    Additionally, the :ref:`server scheme <server_scheme>` does not need to be passed to the ``server`` argument, as the SDK handles this for you.
+    .. code-block:: console
+
+        % python3 -m pip install 'jamf-pro-sdk[macOS]'
+
+When using :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`, the SDK expects:
+    
+- The API **client ID** to be stored in the keychain under your Jamf Pro server name (as the *service_name*) with the client ID as the *username*, and its associated secret as the *password*. 
+
+.. image:: ../_static/api-keychain.png
+    :alt: Example macOS Keychain entry for API credentials (client_id)
+    :align: center
+    :width: 400px
+
+When using :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider`, the SDK expects:
+
+- A **username** to be passed, and the password to be retrieved from the keychain under the same server name and username.
+
+.. image:: ../_static/user-keychain.png
+    :alt: Example keychain entry for User credentials
+    :align: center
+    :width: 400px 
+
+.. note::
+
+    The ``server`` argument should not include the :ref:`scheme <server_scheme>`. The SDK normalizes this internally.
+
+Use the appropriate keyword argument depending on the credential provider class:
+
+- Use ``client_id=`` when using :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`.
+- Use ``username=`` when using :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider`.
 
 .. code-block:: python
 
@@ -140,9 +176,27 @@ Loading from Keychain
     ...     server="jamf.my.org",
     ...     credentials=load_from_keychain(
     ...         provider_type=ApiClientCredentialsProvider,
-    ...         server="jamf.my.org"    
+    ...         server="jamf.my.org",
+    ...         client_id="<client_id_here>"  # Required keyword
     ...     )    
     ... )
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider, load_from_keychain
+    >>> client = JamfProClient(
+    ...     server="jamf.my.org",
+    ...     credentials=load_from_keychain(
+    ...         provider_type=UserCredentialsProvider,
+    ...         server="jamf.my.org",
+    ...         username="<username_here>"  # Required keyword
+    ...     )    
+    ... )
+
+.. tip::
+
+    You can manage entries using the **Keychain Access** app on macOS. See: `Apple's Keychain User Guide <https://support.apple.com/guide/keychain-access/welcome/mac>`_.
+
 
 Access Tokens
 -------------
