@@ -7,10 +7,10 @@ on:
     paths:
       - 'docs/**'
       - 'src/**'
-    workflow_dispatch:
-      inputs:
-        ref:
-          description: The branch, tag, or commit SHA1 to build the docs from.
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch, tag, or commit SHA1 to build the docs from.
 
 permissions:
   contents: read
