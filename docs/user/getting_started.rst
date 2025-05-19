@@ -31,36 +31,181 @@ When running ``pip freeze`` the SDK will appear with a filepath to the source in
 Create a Client
 ---------------
 
-Import the Jamf Pro client from the SDK:
+Create a client object using an API Client ID and Client Secret - the **recommended** method for authentication:
 
-    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider
+.. important::
 
-Create a client object passing in your Jamf Pro server name and a username and password:
+    **Breaking Change**: As of version ``0.8a1``, the SDK no longer uses ``BasicAuthProvider`` objects. Use :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider` as the new default.
+
+    `Basic authentication is now disabled by default  <https://developer.jamf.com/jamf-pro/docs/classic-api-authentication-changes#basic-authentication>`_ in Jamf Pro. To authenticate securely and ensure compatibility with future Jamf Pro versions, use an API Client for access tokens instead.
+
+.. code-block:: python
+    
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider
+    >>> client = JamfProClient(
+    ...     server="jamf.my.org",
+    ...     credentials=ApiClientCredentialsProvider("client_id", "client_secret")
+    ... )
+    >>>
+
+.. _server_scheme:
 
 .. note::
 
     When passing your Jamf Pro server name, do not include the scheme (``https://``) as the SDK handles this automatically for you.
 
-
-    >>> client = JamfProClient(
-    ...     server="jamf.my.org",
-    ...     credentials=BasicAuthProvider("oscar", "j@mf1234!")
-    ... )
-    >>>
-
-The ``BasicAuthProvider`` is a credentials provider. These objects are interfaces for authenticating for access tokens to the Jamf Pro APIs. Basic auth credentials providers use a username and password for authentication when requesting a new token.
-
-To use an API Client for authentication (`Jamf Pro 10.49+ <https://learn.jamf.com/bundle/jamf-pro-documentation-current/page/API_Roles_and_Clients.html>`_) use :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`.
+Choosing a Credential Provider
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There are a number of built-in :doc:`/reference/credentials` available. To learn how to implement your own visit :ref:`user/advanced:Custom Credentials Providers`.
 
+**We recommend using API Clients** for most cases. Basic authentication via username and password is now considered a legacy method and is **disabled by default** in Jamf Pro versions ≥ 10.49. 
+
+- Use :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider` for API Clients. 
+- Use :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider` if enabled in your Jamf environment. 
+
 .. important::
 
-    **Do not plaintext secrets (passwords, clients secrets, etc.) in scripts or the console.** The use of the base ``BasicAuthProvider`` class in this guide is for demonstration purposes.
+    **Do not use plaintext secrets (passwords, clients secrets, etc.) in scripts or the console.** The use of the base ``UserCredentialsProvider`` class in this guide is for demonstration purposes.
 
-On the first request made the client will retrieve and cache an access token. This token will be used for all requests up until it nears expiration. At that point the client will refresh the token. If the token has expired the client will basic auth for a new one.
+Credential Provider Utility Functions
+-------------------------------------
+
+The SDK contains three helper functions that will *return* an instantiated credential provider of the specified type. When leveraging these functions, ensure you have the required extra dependencies installed. 
+
+When using ``load_from_keychain``, **you must provide the identity keyword argument** required by the specified provider:
+
+- ``username=`` for ``UserCredentialsProvider``
+- ``client_id=`` for ``ApiClientCredentialsProvider``
+
+Prompting for Credentials
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider, prompt_for_credentials
+    >>> client = JamfProClient(
+    ...     server="jamf.my.org",
+    ...     credentials=prompt_for_credentials(
+    ...         provider_type=ApiClientCredentialsProvider
+    ...     )
+    ... )
+    API Client ID: 123456abcdef 
+    API Client Secret:   
+
+Loading from AWS Secrets Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. important:: 
+
+    The ``aws`` dependency is required for this function and can be installed via:
+    
+    .. code-block:: console
+
+        % python3 -m pip install 'jamf-pro-sdk[aws]'
+
+The ``SecretString`` is expected to be a JSON string in the following format:
+
+.. code-block:: json
+
+    // For UserCredentialsProvider:
+    {
+        "username": "oscar",
+        "password": "******"
+    }
+
+    // For ApiClientCredentialsProvider:
+    {
+        "client_id": "abc123",
+        "client_secret": "xyz456"
+    }
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider, load_from_aws_secrets_manager
+    >>> client = JamfProClient(
+    ...     server="jamf.my.org",
+    ...     credentials=load_from_aws_secrets_manager(
+    ...         provider_type=ApiClientCredentialsProvider,
+    ...         secret_id="arn:aws:secretsmanager:us-west-2:111122223333:secret:aes128-1a2b3c"    
+    ...     )
+    ... )   
+
+Loading from Keychain
+^^^^^^^^^^^^^^^^^^^^^
+
+.. important::
+
+    This utility requires the ``keyring`` extra dependency, which can be installed via: 
+    
+    .. code-block:: console
+
+        % python3 -m pip install 'jamf-pro-sdk[macOS]'
+
+When using :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`, the SDK expects:
+    
+- The API **client ID** to be stored in the keychain under your Jamf Pro server name (as the *service_name*) with the client ID as the *username*, and its associated secret as the *password*. 
+
+.. image:: ../_static/api-keychain.png
+    :alt: Example macOS Keychain entry for API credentials (client_id)
+    :align: center
+    :width: 400px
+
+When using :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider`, the SDK expects:
+
+- A **username** to be passed, and the password to be retrieved from the keychain under the same server name and username.
+
+.. image:: ../_static/user-keychain.png
+    :alt: Example keychain entry for User credentials
+    :align: center
+    :width: 400px 
+
+.. note::
+
+    The ``server`` argument should not include the :ref:`scheme <server_scheme>`. The SDK normalizes this internally.
+
+Use the appropriate keyword argument depending on the credential provider class:
+
+- Use ``client_id=`` when using :class:`~jamf_pro_sdk.clients.auth.ApiClientCredentialsProvider`.
+- Use ``username=`` when using :class:`~jamf_pro_sdk.clients.auth.UserCredentialsProvider`.
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider, load_from_keychain
+    >>> client = JamfProClient(
+    ...     server="jamf.my.org",
+    ...     credentials=load_from_keychain(
+    ...         provider_type=ApiClientCredentialsProvider,
+    ...         server="jamf.my.org",
+    ...         client_id="<client_id_here>"  # Required keyword
+    ...     )    
+    ... )
+
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, UserCredentialsProvider, load_from_keychain
+    >>> client = JamfProClient(
+    ...     server="jamf.my.org",
+    ...     credentials=load_from_keychain(
+    ...         provider_type=UserCredentialsProvider,
+    ...         server="jamf.my.org",
+    ...         username="<username_here>"  # Required keyword
+    ...     )    
+    ... )
+
+.. tip::
+
+    You can manage entries using the **Keychain Access** app on macOS. See: `Apple's Keychain User Guide <https://support.apple.com/guide/keychain-access/welcome/mac>`_.
+
+
+Access Tokens
+-------------
+
+On the first request made the client will retrieve and cache an access token. This token will be used for all requests up until it nears expiration. At that point the client will refresh the token. If the token has expired, the client will use the configured credentials provider to request a new one.
 
 You can retrieve the current token at any time:
+
+.. code-block:: python
 
     >>> access_token = client.get_access_token()
     >>> access_token
@@ -70,6 +215,8 @@ You can retrieve the current token at any time:
     >>>
 
 Both the Classic and Pro APIs are exposed through two interfaces:
+
+.. code-block:: python
 
     >>> client.classic_api
     <jamf_pro_sdk.clients.classic_api.ClassicApi object at 0x10503d240>
@@ -97,13 +244,17 @@ Some aspects of the Jamf Pro client can be configured at instantiation. These in
 
 The Jamf Pro client will create a default configuration if one is not provided.
 
-    >>> from jamf_pro_sdk import JamfProClient, BasicAuthProvider, SessionConfig
+.. code-block:: python
+
+    >>> from jamf_pro_sdk import JamfProClient, ApiClientCredentialsProvider, SessionConfig
     >>> config = SessionConfig()
     >>> config
     SessionConfig(timeout=None, max_retries=0, max_concurrency=5, verify=True, cookie=None, ca_cert_bundle=None, scheme='https')
     >>>
 
 Here are two examples on how to use a ``SessionConfig`` with the client to disable TLS verification and set a 30 second timeout:
+
+.. code-block:: python
 
     >>> config = SessionConfig()
     >>> config.verify = False
@@ -112,7 +263,7 @@ Here are two examples on how to use a ``SessionConfig`` with the client to disab
     SessionConfig(timeout=30, max_retries=0, max_concurrency=5, verify=False, cookie=None, ca_cert_bundle=None, scheme='https')
     >>> client = JamfProClient(
     ...     server="jamf.my.org",
-    ...     credentials=BasicAuthProvider("oscar", "j@mf1234!")
+    ...     credentials=ApiClientCredentialsProvider("client_id", "client_secret"),
     ...     session_config=config,
     ... )
     >>>
@@ -122,7 +273,7 @@ Here are two examples on how to use a ``SessionConfig`` with the client to disab
     SessionConfig(timeout=30, max_retries=0, max_concurrency=5, verify=False, cookie=None, ca_cert_bundle=None, scheme='https')
     >>> client = JamfProClient(
     ...     server="jamf.my.org",
-    ...     credentials=BasicAuthProvider("oscar", "j@mf1234!")
+    ...     credentials=ApiClientCredentialsProvider("client_id", "client_secret"),
     ...     session_config=config,
     ... )
     >>>
@@ -136,6 +287,8 @@ Logging
 
 You can quickly setup console logging using the provided :func:`~jamf_pro_sdk.helpers.logger_quick_setup` function.
 
+.. code-block:: python
+    
     >>> import logging
     >>> from jamf_pro_sdk.helpers import logger_quick_setup
     >>> logger_quick_setup(level=logging.DEBUG)
@@ -144,5 +297,7 @@ When set to ``DEBUG`` the stream handler and level will also be applied to ``url
 
 If you require different handlers or formatting you may configure the SDK's logger manually.
 
+.. code-block:: python
+    
     >>> import logging
     >>> sdk_logger = logging.getLogger("jamf_pro_sdk")

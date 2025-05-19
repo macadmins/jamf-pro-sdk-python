@@ -56,7 +56,7 @@ autodoc_pydantic_model_member_order = "bysource"
 pygments_style = "default"
 pygments_dark_style = "material"
 
-# html_static_path = ["_static"]
+html_static_path = ["_static"]
 
 html_theme = "furo"
 
