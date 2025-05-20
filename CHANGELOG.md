@@ -7,6 +7,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8a1] - 2025-05-19
+
+This version includes **breaking changes** for credential providers. `BasicAuthCredentialProvider` has been deprecated and removed.
+Please migrate to `ApiClientCredentialsProvider` if you haven't done so already. [Client credentials](https://developer.jamf.com/jamf-pro/docs/client-credentials) with API roles and clients is the recommended path forward.
+Where basic auth is still required with username/password use `UserCredentialsProvider`. 
+
+### Changed
+
+- Update sort and filter fields for device inventory endpoints.
+- Change default credential provider to `ApiClientCredentialsProvider` in docs.
+- Refactored `LoadFromAWSSecretsManager`, `PromptForCredentials` and `LoadFromKeychain` into helper functions instead of classes. Each function returns a `CredentialProvider` type that is specified or raises a `TypeError` if an invalid credential provider was passed.
+
+### Fixed
+
+- GitHub Actions workflows now pin action versions to commit hash. Docs publishing was broken due to outdated actions.
+
+### PRs Included
+
+- [#57](https://github.com/macadmins/jamf-pro-sdk-python/pull/57)
+- [#60](https://github.com/macadmins/jamf-pro-sdk-python/pull/60)
+- [#62](https://github.com/macadmins/jamf-pro-sdk-python/pull/62)
+
 ## [0.7a1] - 2024-12-03
 
 Special shoutout to [macserv](https://github.com/macserv) for this contribution to the project!
