@@ -394,6 +394,7 @@ get_mobile_device_inventory_v2_allowed_filter_fields = [
     "itunesStoreAccountActive",
     "mobileDeviceId",
     "languages",
+    "lastInventoryUpdateDate",
     "locales",
     "locationServicesForSelfServiceMobileEnabled",
     "lostModeEnabled",
