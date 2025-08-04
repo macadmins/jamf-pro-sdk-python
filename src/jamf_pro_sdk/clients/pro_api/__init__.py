@@ -64,6 +64,7 @@ class ProApi:
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
         filter_expression: Optional[FilterExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[False] = False,
     ) -> List[Computer]: ...
 
@@ -76,6 +77,7 @@ class ProApi:
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
         filter_expression: Optional[FilterExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[True] = True,
     ) -> Iterator[Page]: ...
 
@@ -87,6 +89,7 @@ class ProApi:
         page_size: int = 100,
         sort_expression: Optional[SortExpression] = None,
         filter_expression: Optional[FilterExpression] = None,
+        skip_expression_validation: Optional[bool] = False,
         return_generator: bool = False,
     ) -> Union[List[Computer], Iterator[Page]]:
         """Returns a list of computer inventory records.
@@ -131,6 +134,10 @@ class ProApi:
 
         :type filter_expression: FilterExpression
 
+        :param skip_expression_validation: (optional) If ``True`` sort and filter field values validation is skipped.
+            Intended to be used in situations where a newer API version is ahead of the SDK release.
+        :type skip_expression_validation: bool
+
         :param return_generator: If ``True`` a generator is returned to iterate over pages. By
             default, the results for all pages will be returned in a single response.
         :type return_generator: bool
@@ -149,10 +156,10 @@ class ProApi:
                 f"Values for 'sections' must be one of: {', '.join(get_computer_inventory_v1_allowed_sections)}"
             )
 
-        if sort_expression:
+        if sort_expression and not skip_expression_validation:
             sort_expression.validate(get_computer_inventory_v1_allowed_sort_fields)
 
-        if filter_expression:
+        if filter_expression and not skip_expression_validation:
             filter_expression.validate(get_computer_inventory_v1_allowed_filter_fields)
 
         paginator = Paginator(
@@ -164,6 +171,7 @@ class ProApi:
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
+            skip_expression_validation=skip_expression_validation,
             extra_params={"section": ",".join(sections)},
         )
 
@@ -179,6 +187,7 @@ class ProApi:
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
         filter_expression: Optional[FilterExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[False] = False,
     ) -> List[Package]: ...
 
@@ -190,6 +199,7 @@ class ProApi:
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
         filter_expression: Optional[FilterExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[True] = True,
     ) -> Iterator[Page]: ...
 
@@ -200,6 +210,7 @@ class ProApi:
         page_size: int = 100,
         sort_expression: Optional[SortExpression] = None,
         filter_expression: Optional[FilterExpression] = None,
+        skip_expression_validation: Optional[bool] = False,
         return_generator: bool = False,
     ) -> Union[List[Package], Iterator[Page]]:
         """Returns a list of package records.
@@ -234,6 +245,10 @@ class ProApi:
 
         :type filter_expression: FilterExpression
 
+        :param skip_expression_validation: (optional) If ``True`` sort and filter field values validation is skipped.
+            Intended to be used in situations where a newer API version is ahead of the SDK release.
+        :type skip_expression_validation: bool
+
         :param return_generator: If ``True`` a generator is returned to iterate over pages. By
             default, the results for all pages will be returned in a single response.
         :type return_generator: bool
@@ -242,10 +257,10 @@ class ProApi:
         :rtype: List[~jamf_pro_sdk.models.pro.packages.package] | Iterator[Page]
 
         """
-        if sort_expression:
+        if sort_expression and not skip_expression_validation:
             sort_expression.validate(get_packages_v1_allowed_sort_fields)
 
-        if filter_expression:
+        if filter_expression and not skip_expression_validation:
             filter_expression.validate(get_packages_v1_allowed_filter_fields)
 
         paginator = Paginator(
@@ -257,6 +272,7 @@ class ProApi:
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
+            skip_expression_validation=skip_expression_validation,
         )
 
         return paginator(return_generator=return_generator)
@@ -393,6 +409,7 @@ class ProApi:
         end_page: Optional[int] = ...,
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[False] = False,
     ) -> List[MdmCommandStatus]: ...
 
@@ -404,6 +421,7 @@ class ProApi:
         end_page: Optional[int] = ...,
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[True] = True,
     ) -> Iterator[Page]: ...
 
@@ -414,6 +432,7 @@ class ProApi:
         end_page: Optional[int] = None,
         page_size: int = 100,
         sort_expression: Optional[SortExpression] = None,
+        skip_expression_validation: Optional[bool] = False,
         return_generator: bool = False,
     ) -> Union[List[MdmCommandStatus], Iterator[Page]]:
         """Returns a list of MDM commands.
@@ -449,6 +468,10 @@ class ProApi:
 
         :type sort_expression: SortExpression
 
+        :param skip_expression_validation: (optional) If ``True`` sort and filter field values validation is skipped.
+            Intended to be used in situations where a newer API version is ahead of the SDK release.
+        :type skip_expression_validation: bool
+
         :param return_generator: If ``True`` an iterator is returned that yields pages. By default,
             the results for all pages will be returned in a single response.
         :type return_generator: bool
@@ -465,10 +488,10 @@ class ProApi:
                     f"Values for 'command' filters must be one of: {', '.join(get_mdm_commands_v2_allowed_command_types)}"
                 )
 
-        if sort_expression:
+        if sort_expression and not skip_expression_validation:
             sort_expression.validate(get_mdm_commands_v2_allowed_sort_fields)
 
-        if filter_expression:
+        if filter_expression and not skip_expression_validation:
             filter_expression.validate(get_mdm_commands_v2_allowed_filter_fields)
 
         paginator = Paginator(
@@ -480,6 +503,7 @@ class ProApi:
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
+            skip_expression_validation=skip_expression_validation,
         )
 
         return paginator(return_generator=return_generator)
@@ -495,6 +519,7 @@ class ProApi:
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
         filter_expression: Optional[FilterExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[False] = False,
     ) -> List[MobileDevice]: ...
 
@@ -507,6 +532,7 @@ class ProApi:
         page_size: int = ...,
         sort_expression: Optional[SortExpression] = ...,
         filter_expression: Optional[FilterExpression] = ...,
+        skip_expression_validation: Optional[bool] = ...,
         return_generator: Literal[True] = True,
     ) -> Iterator[Page]: ...
 
@@ -518,6 +544,7 @@ class ProApi:
         page_size: int = 100,
         sort_expression: Optional[SortExpression] = None,
         filter_expression: Optional[FilterExpression] = None,
+        skip_expression_validation: Optional[bool] = False,
         return_generator: bool = False,
     ) -> Union[List[MobileDevice], Iterator[Page]]:
         """Returns a list of mobile device (iOS and tvOS) inventory records.
@@ -562,6 +589,10 @@ class ProApi:
 
         :type filter_expression: FilterExpression
 
+        :param skip_expression_validation: (optional) If ``True`` sort and filter field values validation is skipped.
+            Intended to be used in situations where a newer API version is ahead of the SDK release.
+        :type skip_expression_validation: bool
+
         :param return_generator: If ``True`` a generator is returned to iterate over pages. By
             default, the results for all pages will be returned in a single response.
         :type return_generator: bool
@@ -580,10 +611,10 @@ class ProApi:
                 f"Values for 'sections' must be one of: {', '.join(get_mobile_device_inventory_v2_allowed_sections)}"
             )
 
-        if sort_expression:
+        if sort_expression and not skip_expression_validation:
             sort_expression.validate(get_mobile_device_inventory_v2_allowed_sort_fields)
 
-        if filter_expression:
+        if filter_expression and not skip_expression_validation:
             filter_expression.validate(get_mobile_device_inventory_v2_allowed_filter_fields)
 
         paginator = Paginator(
@@ -595,6 +626,7 @@ class ProApi:
             page_size=page_size,
             sort_expression=sort_expression,
             filter_expression=filter_expression,
+            skip_expression_validation=skip_expression_validation,
             extra_params={"section": ",".join(sections)},
         )
 
