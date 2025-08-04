@@ -157,7 +157,7 @@ class ApiClientCredentialsProvider(CredentialsProvider):
     def _request_access_token(self) -> AccessToken:
         """Request a new an API access token using client credentials flow."""
         with self._client.session.post(
-            url=f"{self._client.base_server_url}/api/oauth/token",
+            url=f"{self._client.base_server_url}/api/v1/oauth/token",
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
