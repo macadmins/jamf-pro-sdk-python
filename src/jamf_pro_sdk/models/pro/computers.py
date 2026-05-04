@@ -169,6 +169,8 @@ class ComputerApplication(BaseModel):
     name: Optional[str] = None
     path: Optional[str] = None
     version: Optional[str] = None
+    cfBundleShortVersionString: Optional[str] = None
+    cfBundleVersion: Optional[str] = None
     macAppStore: Optional[bool] = None
     sizeMegabytes: Optional[int] = None
     bundleId: Optional[str] = None
@@ -678,7 +680,12 @@ class ComputerGroupMembership(BaseModel):
 
 
 class Computer(BaseModel):
-    """Represents a full computer inventory record."""
+    """Represents a full computer inventory record.
+
+    Used for both v1 and v3 endpoints. The v3 API does not return ``plugins`` or ``fonts``
+    (they will be ``None``), and adds ``cfBundleShortVersionString``/``cfBundleVersion``
+    to application entries.
+    """
 
     model_config = ConfigDict(extra="allow")
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+import warnings
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Callable, Iterator, Union
@@ -134,8 +135,54 @@ class JCDS2:
         logger.debug(part_resp)
         return {"PartNumber": part_number, "ETag": part_resp["ETag"]}
 
+    def upload_package(self, file_path: Union[str, Path]) -> None:
+        """Upload a file and create the package object using the new package upload API.
+
+        This method replaces :meth:`upload_file` and does not require the ``aws`` extra dependency.
+        It uses the ``POST /v1/packages/{id}/upload`` endpoint instead of the deprecated JCDS v1
+        S3-based workflow.
+
+        A ``JCDS2FileExistsError`` is raised if any file of the same name exists and is associated
+        to a package.
+
+        :param file_path: The path to the file to upload. Will raise ``FileNotFoundError`` if the
+            path to the file's location does not exist.
+        :type file_path: Union[str, Path]
+        """
+        if not isinstance(file_path, Path):
+            file_path = Path(file_path)
+
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        packages = [
+            self.classic_api_client.get_package_by_id(p)
+            for p in self.classic_api_client.list_all_packages()
+        ]
+
+        for p in packages:
+            if file_path.name == p.filename:
+                raise JCDS2FileExistsError(
+                    f"The file '{file_path.name}' exists and is associated to package "
+                    f"({p.id}) '{p.name}'"
+                )
+
+        new_package = ClassicPackage(name=file_path.name, filename=file_path.name)
+        new_pkg_id = self.classic_api_client.create_package(data=new_package)
+        logger.debug("Created package %s", new_pkg_id)
+
+        try:
+            self.pro_api_client.upload_package_v1(package_id=new_pkg_id, file_path=file_path)
+        except Exception as err:
+            logger.exception(err)
+            raise
+
     def upload_file(self, file_path: Union[str, Path]) -> None:
         """Upload a file to the JCDS and create the package object.
+
+        .. deprecated::
+            The JCDS v1 API is deprecated by Jamf (2025-08-28). Use :meth:`upload_package` instead,
+            which does not require the ``aws`` extra dependency.
 
         If the file is less than 1 GiB in size the upload will be performed in a single request. If
         the file is greater than 1 GiB in size a multipart upload operation will be performed.
@@ -151,6 +198,12 @@ class JCDS2:
             to the file's location does not exist.
         :type file_path: Union[str, Path]
         """
+        warnings.warn(
+            "upload_file() is deprecated. The JCDS v1 API was deprecated by Jamf on 2025-08-28. "
+            "Use upload_package() instead, which does not require the 'aws' extra dependency.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if not BOTO3_IS_INSTALLED:
             raise ImportError("The 'aws' extra dependency is required.")
 

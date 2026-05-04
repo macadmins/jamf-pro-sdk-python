@@ -13,10 +13,25 @@ from .api_options import get_mdm_commands_v2_allowed_command_types
 # a few allowed types.
 
 
+# MDM Command Base
+#
+# All concrete MDM command models inherit from MdmCommand. This gives the
+# public client API a single type to accept (`command: MdmCommand`) while
+# the underlying ``MdmCommandRequest.commandData`` still validates against
+# the discriminated ``BuiltInCommandsV2`` Union for serialization fidelity.
+
+
+class MdmCommand(BaseModel):
+    """Base class for all MDM command models. Concrete subclasses set a
+    ``commandType`` Literal and may declare command-specific fields."""
+
+    commandType: str
+
+
 # Enable Lost Mode Command
 
 
-class EnableLostModeCommand(BaseModel):
+class EnableLostModeCommand(MdmCommand):
     """MDM command to enable Lost Mode.
 
     .. code-block:: python
@@ -73,7 +88,7 @@ class EraseDeviceCommandReturnToService(BaseModel):
 EraseDeviceCommandPin = Annotated[str, StringConstraints(min_length=6, max_length=6)]
 
 
-class EraseDeviceCommand(BaseModel):
+class EraseDeviceCommand(MdmCommand):
     """MDM command to remotely wipe a device. Optionally, set the ``returnToService`` property to
     automatically connect to a wireless network at Setup Assistant.
 
@@ -106,7 +121,7 @@ class EraseDeviceCommand(BaseModel):
 # Log Out User
 
 
-class LogOutUserCommand(BaseModel):
+class LogOutUserCommand(MdmCommand):
     """MDM command to log a user out of the device.
 
     .. code-block:: python
@@ -121,7 +136,7 @@ class LogOutUserCommand(BaseModel):
 # Restart Device
 
 
-class RestartDeviceCommand(BaseModel):
+class RestartDeviceCommand(MdmCommand):
     """MDM command to restart a device.
 
     ``kextPaths`` is only used if ``rebuildKernelCache`` is ``true``.
@@ -151,7 +166,7 @@ class RestartDeviceCommand(BaseModel):
 # Set Recovery Lock
 
 
-class SetRecoveryLockCommand(BaseModel):
+class SetRecoveryLockCommand(MdmCommand):
     """MDM command to set Recovery Lock on a device.
 
     Set ``newPassword`` to an empty string to clear the Recovery Lock password.
@@ -180,7 +195,7 @@ class SetRecoveryLockCommand(BaseModel):
 # Shut Down Device
 
 
-class ShutDownDeviceCommand(BaseModel):
+class ShutDownDeviceCommand(MdmCommand):
     """MDM command to shut down a device.
 
     .. code-block:: python
@@ -195,7 +210,7 @@ class ShutDownDeviceCommand(BaseModel):
 # Custom Command
 
 
-class CustomCommand(BaseModel):
+class CustomCommand(MdmCommand):
     """A free form model for new commands not yet supported by the SDK."""
 
     model_config = ConfigDict(extra="allow")
@@ -203,7 +218,178 @@ class CustomCommand(BaseModel):
     commandType: str
 
 
-# MDM Send Command Models
+# V2 MDM Command Models
+
+
+class ApplyRedemptionCodeCommand(MdmCommand):
+    """MDM command to apply a redemption code to a device."""
+
+    commandType: Literal["APPLY_REDEMPTION_CODE"] = "APPLY_REDEMPTION_CODE"
+    redemptionCode: str
+
+
+class CertificateListCommand(MdmCommand):
+    """MDM command to request a certificate list from a device."""
+
+    commandType: Literal["CERTIFICATE_LIST"] = "CERTIFICATE_LIST"
+
+
+class ClearPasscodeCommand(MdmCommand):
+    """MDM command to clear the passcode on a device."""
+
+    commandType: Literal["CLEAR_PASSCODE"] = "CLEAR_PASSCODE"
+
+
+class ClearRestrictionsPasswordCommand(MdmCommand):
+    """MDM command to clear restrictions password on a device."""
+
+    commandType: Literal["CLEAR_RESTRICTIONS_PASSWORD"] = "CLEAR_RESTRICTIONS_PASSWORD"
+
+
+class DeclarativeManagementCommand(MdmCommand):
+    """MDM command for declarative device management."""
+
+    commandType: Literal["DECLARATIVE_MANAGEMENT"] = "DECLARATIVE_MANAGEMENT"
+
+
+class DeleteUserCommand(MdmCommand):
+    """MDM command to delete a user from a shared device."""
+
+    commandType: Literal["DELETE_USER"] = "DELETE_USER"
+    userName: Optional[str] = None
+    forceDeletion: Optional[bool] = None
+
+
+class DeviceInformationCommand(MdmCommand):
+    """MDM command to request device information."""
+
+    commandType: Literal["DEVICE_INFORMATION"] = "DEVICE_INFORMATION"
+
+
+class DeviceLocationCommand(MdmCommand):
+    """MDM command to request device location."""
+
+    commandType: Literal["DEVICE_LOCATION"] = "DEVICE_LOCATION"
+
+
+class DeviceLockCommand(MdmCommand):
+    """MDM command to lock a device."""
+
+    commandType: Literal["DEVICE_LOCK"] = "DEVICE_LOCK"
+    pin: Optional[str] = None
+    message: Optional[str] = None
+    phoneNumber: Optional[str] = None
+
+
+class DisableLostModeCommand(MdmCommand):
+    """MDM command to disable Lost Mode on a device."""
+
+    commandType: Literal["DISABLE_LOST_MODE"] = "DISABLE_LOST_MODE"
+
+
+class DisableRemoteDesktopCommand(MdmCommand):
+    """MDM command to disable Remote Desktop on a Mac."""
+
+    commandType: Literal["DISABLE_REMOTE_DESKTOP"] = "DISABLE_REMOTE_DESKTOP"
+
+
+class EnableRemoteDesktopCommand(MdmCommand):
+    """MDM command to enable Remote Desktop on a Mac."""
+
+    commandType: Literal["ENABLE_REMOTE_DESKTOP"] = "ENABLE_REMOTE_DESKTOP"
+
+
+class InstalledApplicationListCommand(MdmCommand):
+    """MDM command to request the list of installed applications."""
+
+    commandType: Literal["INSTALLED_APPLICATION_LIST"] = "INSTALLED_APPLICATION_LIST"
+
+
+class ManagedApplicationListCommand(MdmCommand):
+    """MDM command to request the list of managed applications."""
+
+    commandType: Literal["MANAGED_APPLICATION_LIST"] = "MANAGED_APPLICATION_LIST"
+
+
+class ManagedMediaListCommand(MdmCommand):
+    """MDM command to request the list of managed media."""
+
+    commandType: Literal["MANAGED_MEDIA_LIST"] = "MANAGED_MEDIA_LIST"
+
+
+class PlayLostModeSoundCommand(MdmCommand):
+    """MDM command to play a sound on a device in Lost Mode."""
+
+    commandType: Literal["PLAY_LOST_MODE_SOUND"] = "PLAY_LOST_MODE_SOUND"
+
+
+class ProvisioningProfileListCommand(MdmCommand):
+    """MDM command to request the list of provisioning profiles."""
+
+    commandType: Literal["PROVISIONING_PROFILE_LIST"] = "PROVISIONING_PROFILE_LIST"
+
+
+class RefreshCellularPlansCommand(MdmCommand):
+    """MDM command to refresh cellular plans on a device."""
+
+    commandType: Literal["REFRESH_CELLULAR_PLANS"] = "REFRESH_CELLULAR_PLANS"
+
+
+class RequestMirroringCommand(MdmCommand):
+    """MDM command to request AirPlay mirroring."""
+
+    commandType: Literal["REQUEST_MIRRORING"] = "REQUEST_MIRRORING"
+
+
+class SecurityInfoCommand(MdmCommand):
+    """MDM command to request security information from a device."""
+
+    commandType: Literal["SECURITY_INFO"] = "SECURITY_INFO"
+
+
+class SetAutoAdminPasswordCommand(MdmCommand):
+    """MDM command to set the auto admin password."""
+
+    commandType: Literal["SET_AUTO_ADMIN_PASSWORD"] = "SET_AUTO_ADMIN_PASSWORD"
+    guid: str
+    password: str
+
+
+class SettingsCommand(MdmCommand):
+    """MDM command to update device settings."""
+
+    model_config = ConfigDict(extra="allow")
+
+    commandType: Literal["SETTINGS"] = "SETTINGS"
+
+
+class StopMirroringCommand(MdmCommand):
+    """MDM command to stop AirPlay mirroring."""
+
+    commandType: Literal["STOP_MIRRORING"] = "STOP_MIRRORING"
+
+
+class UnlockUserAccountCommand(MdmCommand):
+    """MDM command to unlock a user account on a device."""
+
+    commandType: Literal["UNLOCK_USER_ACCOUNT"] = "UNLOCK_USER_ACCOUNT"
+    userName: str
+
+
+class ValidateApplicationsCommand(MdmCommand):
+    """MDM command to validate managed applications on a device."""
+
+    commandType: Literal["VALIDATE_APPLICATIONS"] = "VALIDATE_APPLICATIONS"
+
+
+class VerifyRecoveryLockCommand(MdmCommand):
+    """MDM command to verify the Recovery Lock password on a device."""
+
+    commandType: Literal["VERIFY_RECOVERY_LOCK"] = "VERIFY_RECOVERY_LOCK"
+    password: str
+
+
+# MDM Send Command Models (Preview - Deprecated)
 
 
 class SendMdmCommandClientData(BaseModel):
@@ -226,6 +412,57 @@ BuiltInCommands = Annotated[
 class SendMdmCommand(BaseModel):
     clientData: List[SendMdmCommandClientData]
     commandData: Union[BuiltInCommands, CustomCommand]
+
+
+# MDM Send Command Models (V2)
+
+
+class MdmCommandClientRequest(BaseModel):
+    managementId: Union[str, UUID]
+
+
+BuiltInCommandsV2 = Annotated[
+    Union[
+        ApplyRedemptionCodeCommand,
+        CertificateListCommand,
+        ClearPasscodeCommand,
+        ClearRestrictionsPasswordCommand,
+        DeclarativeManagementCommand,
+        DeleteUserCommand,
+        DeviceInformationCommand,
+        DeviceLocationCommand,
+        DeviceLockCommand,
+        DisableLostModeCommand,
+        DisableRemoteDesktopCommand,
+        EnableLostModeCommand,
+        EnableRemoteDesktopCommand,
+        EraseDeviceCommand,
+        InstalledApplicationListCommand,
+        LogOutUserCommand,
+        ManagedApplicationListCommand,
+        ManagedMediaListCommand,
+        PlayLostModeSoundCommand,
+        ProvisioningProfileListCommand,
+        RefreshCellularPlansCommand,
+        RequestMirroringCommand,
+        RestartDeviceCommand,
+        SecurityInfoCommand,
+        SetAutoAdminPasswordCommand,
+        SetRecoveryLockCommand,
+        SettingsCommand,
+        ShutDownDeviceCommand,
+        StopMirroringCommand,
+        UnlockUserAccountCommand,
+        ValidateApplicationsCommand,
+        VerifyRecoveryLockCommand,
+    ],
+    Field(..., discriminator="commandType"),
+]
+
+
+class MdmCommandRequest(BaseModel):
+    clientData: List[MdmCommandClientRequest]
+    commandData: Union[BuiltInCommandsV2, CustomCommand]
 
 
 # MDM Command Responses
