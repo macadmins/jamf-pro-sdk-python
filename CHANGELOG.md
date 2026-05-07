@@ -7,6 +7,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9a1] - 2026-05-07
+
+This release replaces several Jamf Pro API endpoints that Jamf has deprecated or removed. All previous methods are preserved with `DeprecationWarning` notices, and new methods are added alongside them. No breaking changes. 
+
+Big thanks to [@cr3ation](https://github.com/cr3ation) for driving the API endpoint refresh.
+
+### Added
+
+- v3 computer inventory endpoints: `get_computer_inventory_v3()`, `get_computer_inventory_detail_v3()`, `get_computer_v3()`, `update_computer_v3()`, `delete_computer_v3()`
+- `send_mdm_commandv2()` plus ~25 new MDM command models (`DeviceLockCommand`, `DeviceInformationCommand`, `EnableRemoteDesktopCommand`, `SecurityInfoCommand`, etc.) and a shared `MdmCommand` base class for typed method signatures.
+- Direct package upload via `upload_package_v1()` and `client.jcds2.upload_package()` -- no extra deps required
+- `cfBundleShortVersionString` and `cfBundleVersion` fields on `ComputerApplication`.
+- `lastInventoryUpdateDate` filter field for the mobile inventory API. 
+
+### Changed
+
+- `_request_access_token` method in `ApiClientCredentialsProvider` updated.
+
+### Deprecated
+
+- `get_computer_inventory_v1()` (Jamf deprecated 2025-06-30) - use `get_computer_inventory_v3()`.
+- `send_mdm_command_preview()` (remove from Jamf API schema) - use `send_mdm_command_v2()`.
+- `create_jcds_file_v1()` and `client.jcds2.upload_file()` (Jamf deprecated 2025-08-28) - use `upload_package_v1()` / `client.jcds2.upload_package()`.
+
+### Fixed
+
+- Typo in `api_options`: `serAndLocation.buildingId` → `userAndLocation.buildingId`. 
+
+### PRs Included
+
+- [#65](https://github.com/macadmins/jamf-pro-sdk-python/pull/65)
+- [#66](https://github.com/macadmins/jamf-pro-sdk-python/pull/66)
+- [#79](https://github.com/macadmins/jamf-pro-sdk-python/pull/79)
+
 ## [0.8a1] - 2025-05-19
 
 This version includes **breaking changes** for credential providers. `BasicAuthCredentialProvider` has been deprecated and removed.
