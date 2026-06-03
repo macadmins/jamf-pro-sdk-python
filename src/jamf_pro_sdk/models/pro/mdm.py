@@ -485,6 +485,15 @@ class RenewMdmProfileResponse(BaseModel):
     udidsNotProcessed: Optional[List[UUID]]
 
 
+class RedeployManagementFrameworkResponse(BaseModel):
+    """The response returned when redeploying the Jamf management framework to a computer."""
+
+    model_config = ConfigDict(extra="allow")
+
+    deviceId: Optional[str] = None
+    commandUuid: Optional[str] = None
+
+
 # MDM Command Status Models
 
 

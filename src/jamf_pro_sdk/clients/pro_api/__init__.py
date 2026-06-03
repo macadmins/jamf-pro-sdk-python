@@ -29,6 +29,7 @@ from ...models.pro.mdm import (
     MdmCommandClientRequest,
     MdmCommandRequest,
     MdmCommandStatus,
+    RedeployManagementFrameworkResponse,
     RenewMdmProfileResponse,
     SendMdmCommand,
     SendMdmCommandClientData,
@@ -607,6 +608,28 @@ class ProApi:
             )
         except KeyError:
             return RenewMdmProfileResponse(udidsNotProcessed=[])
+
+    def redeploy_management_framework_v1(
+        self, computer_id: Union[int, str]
+    ) -> RedeployManagementFrameworkResponse:
+        """Redeploy the Jamf management framework to a computer.
+
+        This reinstalls the Jamf binary and management framework on the target computer. It is
+        useful for client remediation workflows, such as when the management framework becomes
+        unresponsive or needs to be reinstalled for re-enrollment scenarios.
+
+        :param computer_id: The ID of the computer to redeploy the management framework to.
+        :type computer_id: Union[int, str]
+
+        :return: A response containing the device ID and the UUID of the issued command.
+        :rtype: RedeployManagementFrameworkResponse
+        """
+        resp = self.api_request(
+            method="post",
+            resource_path=f"v1/jamf-management-framework/redeploy/{computer_id}",
+        )
+
+        return RedeployManagementFrameworkResponse(**resp.json())
 
     def send_mdm_command_preview(
         self,
