@@ -24,6 +24,7 @@ from src.jamf_pro_sdk.models.pro.mdm import (
     MdmCommandRequest,
     PlayLostModeSoundCommand,
     ProvisioningProfileListCommand,
+    RedeployManagementFrameworkResponse,
     RefreshCellularPlansCommand,
     RequestMirroringCommand,
     RestartDeviceCommand,
@@ -226,3 +227,11 @@ def test_mdm_command_request_parsing_from_dict():
     assert len(request.clientData) == 2
     assert request.commandData.commandType == "ERASE_DEVICE"
     assert request.commandData.pin == "654321"
+
+
+def test_redeploy_management_framework_response_parsing():
+    """Verify the redeploy management framework response parses from the API JSON."""
+    raw = {"deviceId": "123", "commandUuid": "4eecc1fb-f52d-48c5-9560-c246b23601d3"}
+    response = RedeployManagementFrameworkResponse.model_validate(raw)
+    assert response.deviceId == "123"
+    assert response.commandUuid == "4eecc1fb-f52d-48c5-9560-c246b23601d3"
