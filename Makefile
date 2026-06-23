@@ -2,7 +2,7 @@ SHELL 		:= /bin/bash
 UV			:= uv
 VENV_DIR	:= .venv
 
-.PHONY: venv install uninstall clean test test-all lint format build docs
+.PHONY: venv install uninstall clean test test-all lint format build docs lock upgrade
 
 install:
 	$(UV) sync --all-extras
@@ -33,3 +33,10 @@ build:
 docs:
 	rm -f docs/reference/_autosummary/*.rst
 	$(UV) run sphinx-build -b html docs/ build/docs/
+
+lock:
+	$(UV) lock
+
+upgrade:
+	$(UV) lock --upgrade
+	$(UV) sync --all-extras
