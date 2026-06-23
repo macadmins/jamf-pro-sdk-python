@@ -1,32 +1,42 @@
-SHELL := /bin/bash
-.PHONY: docs
+SHELL 		:= /bin/bash
+UV			:= uv
+VENV_DIR	:= .venv
+
+.PHONY: venv install uninstall clean test test-all lint format build docs lock upgrade
 
 install:
-	python3 -m pip install --upgrade --force-reinstall --editable '.[dev]'
+	$(UV) sync --all-extras
 
 uninstall:
-	python3 -m pip uninstall -y -r <(python3 -m pip freeze)
+	rm -rf $(VENV_DIR)
 
 clean:
 	rm -rf build/ dist/ src/*.egg-info **/__pycache__ .coverage .pytest_cache/ .ruff_cache/
 
 test:
-	pytest tests/unit
+	$(UV) run pytest tests/unit
 
 test-all:
-	pytest tests
+	$(UV) run pytest tests
 
 lint:
-	ruff format --check src tests
-	ruff check src tests
+	$(UV) run ruff format --check src tests
+	$(UV) run ruff check src tests
 
 format:
-	ruff format src tests
-	ruff check --select I001 --fix src tests # Only fixes import order
+	$(UV) run ruff format src tests
+	$(UV) run ruff check --select I001 --fix src tests # Only fixes import order
 
 build:
-	python3 -m build --sdist --wheel
+	$(UV) build
 
 docs:
 	rm -f docs/reference/_autosummary/*.rst
-	sphinx-build -b html docs/ build/docs/
+	$(UV) run sphinx-build -b html docs/ build/docs/
+
+lock:
+	$(UV) lock
+
+upgrade:
+	$(UV) lock --upgrade
+	$(UV) sync --all-extras

@@ -4,3 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      python-deps:
+        patterns: ["*"]
