@@ -113,6 +113,17 @@ Packages
     ClassicPackage
     ClassicPackageItem
 
+Sites
+-----
+
+.. currentmodule:: jamf_pro_sdk.models.classic.sites
+
+.. autosummary::
+    :toctree: _autosummary
+
+    ClassicSite
+    ClassicSiteItem
+
 Group and Search Criteria
 -------------------------
 
