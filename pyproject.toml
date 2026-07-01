@@ -38,12 +38,12 @@ macOS = [
     "keyring>=23.13.1"
 ]
 webhooks = [
-    "polyfactory>=2.1.1,<3"
+    "polyfactory>=2.1.1,<4"
 ]
 dev = [
     "boto3>=1.26.45,<2",
     "keyring>=23.13.1",
-    "polyfactory>=2.1.1,<3",
+    "polyfactory>=2.1.1,<4",
     "ruff",
     "coverage[toml]",
     "pytest >= 6",
