@@ -37,7 +37,6 @@ def remove_fields(data: Any, values_to_remove: Iterable = None):
             elif isinstance(v, list):
                 new_v = []
                 for i in v:
-                    print("Array item: ", i)
                     if new_i := remove_fields(i, values_to_remove):
                         new_v.append(new_i)
                 v = new_v
